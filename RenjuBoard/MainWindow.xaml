@@ -1,0 +1,35 @@
+﻿<Window x:Class="RenjuBoard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        xmlns:control="clr-namespace:RenjuBoard.Controls"
+        xmlns:local="clr-namespace:RenjuBoard"
+        mc:Ignorable="d"
+        xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
+        Title="MainWindow" Height="530" Width="525">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type renju:BoardPoint}">
+            <control:BoardPiece MouseUp="OnBoardPieceMouseUp" x:Name="drop" Background="Transparent" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
+                    <Setter TargetName="drop" Property="Background" Value="Black" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.White}">
+                    <Setter TargetName="drop" Property="Background" Value="Gray" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+    <control:GameBoardPanel ItemsSource="{Binding Points}"
+                            Size="{Binding BoardSize}">
+        <control:GameBoardPanel.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid IsItemsHost="True"
+                             Columns="{Binding BoardSize}" />
+            </ItemsPanelTemplate>
+        </control:GameBoardPanel.ItemsPanel>
+    </control:GameBoardPanel>
+</Window>

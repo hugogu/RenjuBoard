@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenjuBoard", "RenjuBoard\RenjuBoard.csproj", "{66177046-5686-4E57-9C91-BE934627B914}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Core", "Renju.Core\Renju.Core.csproj", "{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.AI", "Renju.AI\Renju.AI.csproj", "{A162380E-72B1-41A5-BB12-FC4D458C5986}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runju.Infrastructure", "Runju.Infrastructure\Runju.Infrastructure.csproj", "{3BE7EA02-29E3-4586-B644-A22421E3AD2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66177046-5686-4E57-9C91-BE934627B914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66177046-5686-4E57-9C91-BE934627B914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66177046-5686-4E57-9C91-BE934627B914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66177046-5686-4E57-9C91-BE934627B914}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A162380E-72B1-41A5-BB12-FC4D458C5986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A162380E-72B1-41A5-BB12-FC4D458C5986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A162380E-72B1-41A5-BB12-FC4D458C5986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A162380E-72B1-41A5-BB12-FC4D458C5986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
