@@ -46,6 +46,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BoardPoint.cs" />
+    <Compile Include="BoardPosition.cs" />
     <Compile Include="DefaultGameRuleEngine.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="DropResult.cs" />
@@ -53,6 +54,8 @@
     <Compile Include="IGameRule.cs" />
     <Compile Include="IGameRuleEngine.cs" />
     <Compile Include="PieceDrop.cs" />
+    <Compile Include="PieceLine.cs" />
+    <Compile Include="GameBoardUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\FiveWinRule.cs" />
     <Compile Include="Rules\WinRule.cs" />

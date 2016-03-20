@@ -15,7 +15,7 @@ namespace Renju.Core
         {
             Size = size;
             _gameRuleEngine = gameRuleEngine;
-            _points = new List<BoardPoint>(Enumerable.Range(0, size * size).Select(i => CreateBoardPoint()));
+            _points = new List<BoardPoint>(Enumerable.Range(0, size * size).Select(i => CreateBoardPoint(PositionOfIndex(i))));
         }
 
         public int Size { get; private set; }
@@ -30,19 +30,17 @@ namespace Renju.Core
             get { return _points[y * Size + x]; }
         }
 
+        public BoardPoint this[BoardPosition position]
+        {
+            get { return _points[position.Y * Size + position.X]; }
+        }
+
         public DropResult Drop(BoardPoint point)
         {
             if (_expectedNextTurn.HasValue)
-                return ActOnPoint(point, (x, y) => Put(new PieceDrop(x, y, _expectedNextTurn.Value)));
+                return Put(new PieceDrop(point.Position.X, point.Position.Y, _expectedNextTurn.Value));
             else
                 throw new InvalidOperationException();
-        }
-
-        public T ActOnPoint<T>(BoardPoint point, Func<int, int, T> actionOnPoint)
-        {
-            var index = _points.IndexOf(point);
-
-            return actionOnPoint(index % Size, index / Size);
         }
 
         public DropResult Put(PieceDrop drop)
@@ -53,9 +51,14 @@ namespace Renju.Core
             return result;
         }
 
-        protected virtual BoardPoint CreateBoardPoint()
+        protected virtual BoardPoint CreateBoardPoint(BoardPosition position)
         {
-            return new BoardPoint();
+            return new BoardPoint(position);
+        }
+
+        private BoardPosition PositionOfIndex(int index)
+        {
+            return new BoardPosition(index % Size, index / Size);
         }
     }
 }

@@ -21,6 +21,15 @@
             };
         }
 
+        public static DropResult AlreadyDropped(Side nextSide)
+        {
+            return new DropResult()
+            {
+                HasAnySideWon = false,
+                ExpectedNextSide = nextSide,
+            };
+        }
+
         public bool HasAnySideWon { get; private set; }
 
         public Side? WonSide { get; private set; }

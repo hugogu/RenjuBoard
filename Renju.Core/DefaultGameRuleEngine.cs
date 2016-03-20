@@ -19,7 +19,11 @@ namespace Renju.Core
 
         public DropResult ProcessDrop(GameBoard board, PieceDrop drop)
         {
-            foreach(var rule in _rules)
+            var point = board[drop.X, drop.Y];
+            if (point.Status != null)
+                return DropResult.AlreadyDropped(drop.Side);
+
+            foreach (var rule in _rules)
             {
                 var canDrop = rule.CanDropOn(board, drop);
                 if (canDrop.HasValue && canDrop == false)
@@ -27,7 +31,7 @@ namespace Renju.Core
                     throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, rule.Name));
                 }
             }
-            board[drop.X, drop.Y].Status = drop.Side;
+            point.Status = drop.Side;
             foreach(var rule in _rules)
             {
                 var win = rule.Win(board, drop);
