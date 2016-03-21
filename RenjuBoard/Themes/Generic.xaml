@@ -16,6 +16,16 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <local:LinedGrid IsItemsHost="True"
+                                     Columns="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
+                                     Rows="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
+                                     Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="{x:Type local:BoardPiece}">

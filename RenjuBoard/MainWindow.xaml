@@ -28,11 +28,5 @@
     </Window.Resources>
     <control:GameBoardPanel ItemsSource="{Binding Points}"
                             Size="{Binding BoardSize}">
-        <control:GameBoardPanel.ItemsPanel>
-            <ItemsPanelTemplate>
-                <UniformGrid IsItemsHost="True"
-                             Columns="{Binding BoardSize}" />
-            </ItemsPanelTemplate>
-        </control:GameBoardPanel.ItemsPanel>
     </control:GameBoardPanel>
 </Window>
