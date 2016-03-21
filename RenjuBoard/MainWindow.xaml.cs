@@ -9,19 +9,35 @@ namespace RenjuBoard
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel _maiViewModel = new MainWindowViewModel();
+        private MainWindowViewModel _mainViewModel;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = _maiViewModel;
+            StartNewGame();
         }
 
         private void OnBoardPieceMouseUp(object sender, MouseButtonEventArgs e)
         {
             var boardPoint = (sender as FrameworkElement).DataContext as BoardPoint;
 
-            _maiViewModel.DropPoint(boardPoint);
+            _mainViewModel.DropPoint(boardPoint);
+        }
+
+        private void OnNewGameButtonClick(object sender, RoutedEventArgs e)
+        {
+            StartNewGame();
+        }
+
+        private void OnUndoButtonClick(object sender, RoutedEventArgs e)
+        {
+            _mainViewModel.Board.UndoLastDrop();
+        }
+
+        private void StartNewGame()
+        {
+            _mainViewModel = new MainWindowViewModel();
+            DataContext = _mainViewModel;
         }
     }
 }

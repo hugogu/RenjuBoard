@@ -26,7 +26,14 @@
             </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
-    <control:GameBoardPanel ItemsSource="{Binding Points}"
-                            Size="{Binding BoardSize}">
-    </control:GameBoardPanel>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+            <Button Content="New Game" Click="OnNewGameButtonClick" />
+            <Button Content="Undo" Click="OnUndoButtonClick" />
+        </DockPanel>
+        <control:GameBoardPanel ItemsSource="{Binding Points}"
+                                Size="{Binding BoardSize}">
+        </control:GameBoardPanel>
+    </DockPanel>
+    
 </Window>

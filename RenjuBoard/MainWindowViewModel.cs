@@ -17,6 +17,11 @@ namespace RenjuBoard
             }));
         }
 
+        public GameBoard Board
+        {
+            get { return _gameBoard; }
+        }
+
         public void DropPoint(BoardPoint point)
         {
             _gameBoard.Drop(point);

@@ -49,6 +49,22 @@ namespace Renju.Core
                 throw new InvalidOperationException();
         }
 
+        public void UndoLastDrop()
+        {
+            Take(Drops.Last());
+        }
+
+        public void Take(PieceDrop drop)
+        {
+            if (_drops.Remove(drop))
+            {
+                var point = this[drop.X, drop.Y];
+                _expectedNextTurn = point.Status.Value;
+                point.Status = null;
+                point.Index = null;
+            }
+        }
+
         public DropResult Put(PieceDrop drop)
         {
             var result = _gameRuleEngine.ProcessDrop(this, drop);
