@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RenjuBoard.Controls
 {
@@ -22,6 +10,13 @@ namespace RenjuBoard.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BoardPiece), new FrameworkPropertyMetadata(typeof(BoardPiece)));
         }
 
+        public int? SequenceNumber
+        {
+            get { return (int?)GetValue(SequenceNumberProperty); }
+            set { SetValue(SequenceNumberProperty, value); }
+        }
 
+        public static readonly DependencyProperty SequenceNumberProperty =
+            DependencyProperty.Register("SequenceNumber", typeof(int?), typeof(BoardPiece), new FrameworkPropertyMetadata());
     }
 }

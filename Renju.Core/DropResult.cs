@@ -1,7 +1,9 @@
 ﻿namespace Renju.Core
 {
-    public struct DropResult
+    public class DropResult
     {
+        public static DropResult InvalidDrop { get; private set; } = new DropResult() { HasAnySideWon = false };
+
         public static DropResult Win(Side side)
         {
             return new DropResult()
@@ -13,15 +15,6 @@
         }
 
         public static DropResult NoWin(Side nextSide)
-        {
-            return new DropResult()
-            {
-                HasAnySideWon = false,
-                ExpectedNextSide = nextSide,
-            };
-        }
-
-        public static DropResult AlreadyDropped(Side nextSide)
         {
             return new DropResult()
             {

@@ -12,7 +12,10 @@
         Title="MainWindow" Height="530" Width="525">
     <Window.Resources>
         <DataTemplate DataType="{x:Type renju:BoardPoint}">
-            <control:BoardPiece MouseUp="OnBoardPieceMouseUp" x:Name="drop" Background="Transparent" />
+            <control:BoardPiece x:Name="drop"
+                                Background="Transparent"
+                                MouseUp="OnBoardPieceMouseUp"
+                                SequenceNumber="{Binding Index}" />
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
                     <Setter TargetName="drop" Property="Background" Value="Black" />

@@ -8,6 +8,7 @@ namespace Renju.Core
     public class GameBoard
     {
         private List<BoardPoint> _points;
+        private List<PieceDrop> _drops = new List<PieceDrop>();
         private IGameRuleEngine _gameRuleEngine;
         private Side? _expectedNextTurn = Side.Black;
 
@@ -20,9 +21,14 @@ namespace Renju.Core
 
         public int Size { get; private set; }
 
-        public IEnumerable<BoardPoint> Points
+        public IReadOnlyCollection<BoardPoint> Points
         {
             get { return new ReadOnlyCollection<BoardPoint>(_points); }
+        }
+
+        public IReadOnlyCollection<PieceDrop> Drops
+        {
+            get { return _drops; }
         }
 
         public BoardPoint this[int x, int y]
@@ -46,7 +52,11 @@ namespace Renju.Core
         public DropResult Put(PieceDrop drop)
         {
             var result = _gameRuleEngine.ProcessDrop(this, drop);
-            _expectedNextTurn = result.ExpectedNextSide;
+            if (result != DropResult.InvalidDrop)
+            {
+                _drops.Add(drop);
+                _expectedNextTurn = result.ExpectedNextSide;
+            }
 
             return result;
         }

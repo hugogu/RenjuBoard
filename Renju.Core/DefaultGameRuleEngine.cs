@@ -21,7 +21,7 @@ namespace Renju.Core
         {
             var point = board[drop.X, drop.Y];
             if (point.Status != null)
-                return DropResult.AlreadyDropped(drop.Side);
+                return DropResult.InvalidDrop;
 
             foreach (var rule in _rules)
             {
@@ -32,6 +32,7 @@ namespace Renju.Core
                 }
             }
             point.Status = drop.Side;
+            point.Index = board.Drops.Count + 1;
             foreach(var rule in _rules)
             {
                 var win = rule.Win(board, drop);
