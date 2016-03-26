@@ -17,20 +17,21 @@ namespace Renju.Core
             get { return _rules; }
         }
 
+        public bool CanDropOn(GameBoard board, PieceDrop drop)
+        {
+            return GetRuleStopDropOn(board, drop) == null;
+        }
+
         public DropResult ProcessDrop(GameBoard board, PieceDrop drop)
         {
             var point = board[drop.X, drop.Y];
             if (point.Status != null)
                 return DropResult.InvalidDrop;
 
-            foreach (var rule in _rules)
-            {
-                var canDrop = rule.CanDropOn(board, drop);
-                if (canDrop.HasValue && canDrop == false)
-                {
-                    throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, rule.Name));
-                }
-            }
+            var notDroppingRule = GetRuleStopDropOn(board, drop);
+            if (notDroppingRule != null)
+                throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, notDroppingRule.Name));
+
             point.Status = drop.Side;
             point.Index = board.Drops.Count + 1;
             foreach(var rule in _rules)
@@ -51,6 +52,19 @@ namespace Renju.Core
             }
 
             return DropResult.NoWin(Sides.Opposite(drop.Side));
+        }
+
+        public IGameRule GetRuleStopDropOn(GameBoard board, PieceDrop drop)
+        {
+            foreach (var rule in _rules)
+            {
+                var canDrop = rule.CanDropOn(board, drop);
+                if (canDrop.HasValue && canDrop == false)
+                {
+                    return rule;
+                }
+            }
+            return null;
         }
     }
 }

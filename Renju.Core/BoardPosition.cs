@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Renju.Core
 {
-    [DebuggerDisplay("(X={X}, Y={Y})")]
+    [DebuggerDisplay("[X={X}, Y={Y}]")]
     public class BoardPosition : IEquatable<BoardPosition>
     {
         public BoardPosition() { }

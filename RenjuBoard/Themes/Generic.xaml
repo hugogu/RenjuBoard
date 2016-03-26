@@ -45,9 +45,17 @@
                                  Stroke="{TemplateBinding BorderBrush}"
                                  StrokeThickness="{TemplateBinding BorderThickness}">
                         </Ellipse>
+
                         <ContentPresenter Content="{TemplateBinding SequenceNumber}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        <ContentControl Content="{TemplateBinding Weight}"
+                                        Foreground="Red"
+                                        TextBlock.FontSize="10pt"
+                                        TextBlock.FontWeight="Normal"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

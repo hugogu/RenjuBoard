@@ -23,6 +23,11 @@ namespace Renju.Core
 
         public int Size { get; private set; }
 
+        public IGameRuleEngine RuleEngine
+        {
+            get { return _gameRuleEngine; }
+        }
+
         public IReadOnlyCollection<BoardPoint> Points
         {
             get { return new ReadOnlyCollection<BoardPoint>(_points); }
@@ -31,6 +36,11 @@ namespace Renju.Core
         public IReadOnlyCollection<PieceDrop> Drops
         {
             get { return _drops; }
+        }
+
+        public Side? ExpectedNextTurn
+        {
+            get { return _expectedNextTurn; }
         }
 
         public BoardPoint this[int x, int y]

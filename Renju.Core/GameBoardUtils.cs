@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Renju.Core
 {
@@ -12,18 +8,29 @@ namespace Renju.Core
         {
             foreach(var direction in GetAllDirections())
             {
+                Side? endSide = point.Status;
                 var endPosition = point.Position;
-
                 do
                 {
-                    endPosition = endPosition + direction;
-                } while (endPosition.IsOnBoard(board) &&
-                         (Equals(board[endPosition].Status, point.Status) ||
+                    endPosition += direction;
+                    if (!endPosition.IsOnBoard(board))
+                    {
+                        endPosition -= direction;
+                        break;
+                    }
+                    var endPoint = board[endPosition];
+                    if (endSide == null && endPoint.Status.HasValue)
+                    {
+                        includeBlank = false;
+                        endSide = endPoint.Status;
+                    }
+                } while ((Equals(board[endPosition].Status, endSide) ||
                              (includeBlank && board[endPosition].Status == null)));
 
-                endPosition = endPosition - direction;
+                if (!Equals(board[endPosition].Status, endSide))
+                    endPosition -= direction;
 
-                if (!Equals(endPosition, point.Position))
+                if (!Equals(endPosition, point.Position) && endSide.HasValue)
                     yield return new PieceLine(board, point.Position, endPosition);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Renju.AI;
+using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Core.Rules;
 using Runju.Infrastructure;
@@ -9,7 +10,7 @@ namespace RenjuBoard
     public class MainWindowViewModel : ModelBase
     {
         private GameBoard _gameBoard;
-        private AIGamePlayer _aiPlayer = new AIGamePlayer();
+        private AIGamePlayer _aiPlayer = new AIGamePlayer(new WeightedDropSelector());
 
         public MainWindowViewModel()
         {

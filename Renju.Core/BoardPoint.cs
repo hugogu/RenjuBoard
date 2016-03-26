@@ -4,11 +4,12 @@ using Runju.Infrastructure;
 
 namespace Renju.Core
 {
-    [DebuggerDisplay("[{Index}-{Position}:{Status}]")]
+    [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
     public class BoardPoint : ModelBase
     {
         private int? _index;
         private Side? _status = null;
+        private int _weight;
 
         public BoardPoint(BoardPosition position)
         {
@@ -28,6 +29,12 @@ namespace Renju.Core
         {
             get { return _status; }
             set { SetProperty(ref _status, value, () => Status); }
+        }
+
+        public int Weight
+        {
+            get { return _weight; }
+            set { SetProperty(ref _weight, value, () => Weight); }
         }
 
         public void ResetToEmpty()

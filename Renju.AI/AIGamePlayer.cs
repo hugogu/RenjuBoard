@@ -7,6 +7,12 @@ namespace Renju.AI
     public class AIGamePlayer : IGamePlayer
     {
         private GameBoard _board;
+        private IDropSelector _dropSelector;
+
+        public AIGamePlayer(IDropSelector dropSelector)
+        {
+            _dropSelector = dropSelector;
+        }
 
         public GameBoard Board
         {
@@ -22,21 +28,14 @@ namespace Renju.AI
             }
         }
 
-        public Side Side
-        {
-            get;
-            set;
-        }
+        public Side Side { get; set; }
 
         private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
-            if (Board.Drops.Last().Side != Side)
+            if (Board.ExpectedNextTurn == Side)
             {
-                var drop = Board[e.Drop.X + 1, e.Drop.Y];
-                while (drop.Status != null)
-                    drop = Board[drop.Position.X + 1, drop.Position.Y];
-
-                Board.Drop(drop);
+                var drops = _dropSelector.SelectDrops(Board, Side);
+                Board.Drop(drops.First());
             }
         }
     }

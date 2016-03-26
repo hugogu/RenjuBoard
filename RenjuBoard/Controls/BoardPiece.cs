@@ -10,6 +10,15 @@ namespace RenjuBoard.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BoardPiece), new FrameworkPropertyMetadata(typeof(BoardPiece)));
         }
 
+        public int Weight
+        {
+            get { return (int)GetValue(WeightProperty); }
+            set { SetValue(WeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty WeightProperty =
+            DependencyProperty.Register("Weight", typeof(int), typeof(BoardPiece), new FrameworkPropertyMetadata());
+
         public int? SequenceNumber
         {
             get { return (int?)GetValue(SequenceNumberProperty); }

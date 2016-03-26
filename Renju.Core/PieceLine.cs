@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Renju.Core
 {
-    [DebuggerDisplay("{StartPosition}->{EndPosition}")]
+    [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {
         private GameBoard _board;
@@ -22,11 +23,14 @@ namespace Renju.Core
             _board = board;
             StartPosition = start;
             EndPosition = end;
+            Direction = new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y));
         }
 
         public BoardPosition StartPosition { get; private set; }
 
         public BoardPosition EndPosition { get; private set; }
+
+        public BoardPosition Direction { get; private set; }
 
         public int Length
         {
@@ -37,19 +41,37 @@ namespace Renju.Core
         {
             get
             {
-                int startX = StartPosition.X;
-                int startY = StartPosition.Y;
-                int endX = EndPosition.X;
-                int endY = EndPosition.Y;
-
-                int offsetX = startX == endX ? 0 : (startX < endX ? 1 : -1);
-                int offsetY = startY == endY ? 0 : (startY < endY ? 1 : -1);
-
-                for (int x = startX, y = startY; x <= endX && y <= endY; x += offsetX, y += offsetY)
+                var position = StartPosition;
+                while (!Equals(position, EndPosition))
                 {
-                    yield return _board[x, y];
+                    yield return _board[position];
+                    position += Direction;
                 }
+                yield return _board[EndPosition];
             }
+        }
+
+        public int DroppedCount
+        {
+            get { return Points.Count(p => p.Status.HasValue); }
+        }
+
+        public PieceLine TrimEnd()
+        {
+            var endPosition = EndPosition;
+            while (!_board[endPosition].Status.HasValue)
+            {
+                endPosition -= Direction;
+                if (Equals(StartPosition, endPosition))
+                    return null;
+            }
+
+            return new PieceLine(_board, StartPosition, endPosition);
+        }
+
+        internal static int GetDirection(int a, int b)
+        {
+            return a == b ? 0 : a < b ? 1 : -1;
         }
     }
 }

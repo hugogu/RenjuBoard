@@ -44,7 +44,9 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AIGamePlayer.cs" />
+    <Compile Include="IDropSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Weights\WeightedDropSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Renju.Core\Renju.Core.csproj">
