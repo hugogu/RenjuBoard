@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
     public interface IGamePlayer
     {
+        Side Side { get; set; }
 
+        GameBoard Board { get; set; }
     }
 }

@@ -29,5 +29,11 @@ namespace Renju.Core
             get { return _status; }
             set { SetProperty(ref _status, value, () => Status); }
         }
+
+        public void ResetToEmpty()
+        {
+            Index = null;
+            Status = null;
+        }
     }
 }

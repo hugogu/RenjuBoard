@@ -19,6 +19,8 @@ namespace Renju.Core
             _points = new List<BoardPoint>(Enumerable.Range(0, size * size).Select(i => CreateBoardPoint(PositionOfIndex(i))));
         }
 
+        public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
+
         public int Size { get; private set; }
 
         public IReadOnlyCollection<BoardPoint> Points
@@ -46,7 +48,7 @@ namespace Renju.Core
             if (_expectedNextTurn.HasValue)
                 return Put(new PieceDrop(point.Position.X, point.Position.Y, _expectedNextTurn.Value));
             else
-                throw new InvalidOperationException();
+                return DropResult.InvalidDrop;
         }
 
         public void UndoLastDrop()
@@ -60,8 +62,7 @@ namespace Renju.Core
             {
                 var point = this[drop.X, drop.Y];
                 _expectedNextTurn = point.Status.Value;
-                point.Status = null;
-                point.Index = null;
+                point.ResetToEmpty();
             }
         }
 
@@ -72,6 +73,7 @@ namespace Renju.Core
             {
                 _drops.Add(drop);
                 _expectedNextTurn = result.ExpectedNextSide;
+                RaisePeiceDroppedEvent(drop);
             }
 
             return result;
@@ -80,6 +82,15 @@ namespace Renju.Core
         protected virtual BoardPoint CreateBoardPoint(BoardPosition position)
         {
             return new BoardPoint(position);
+        }
+
+        protected virtual void RaisePeiceDroppedEvent(PieceDrop drop)
+        {
+            var temp = PieceDropped;
+            if (temp != null)
+            {
+                temp(this, new PieceDropEventArgs(drop));
+            }
         }
 
         private BoardPosition PositionOfIndex(int index)
