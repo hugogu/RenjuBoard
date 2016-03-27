@@ -6,7 +6,7 @@ namespace Renju.AI.Weights
 {
     public class WeightedDropSelector : IDropSelector
     {
-        public IEnumerable<BoardPoint> SelectDrops(GameBoard board, Side side)
+        public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side)
         {
             foreach(var applicablePoint in from point in board.Points
                                            where point.Status == null
@@ -21,7 +21,7 @@ namespace Renju.AI.Weights
             return board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight);
         }
 
-        private int WeightLine(GameBoard board, PieceLine line, Side nextSide)
+        private int WeightLine(IReadBoardState board, PieceLine line, Side nextSide)
         {
             if (line.DroppedCount >= 4)
             {

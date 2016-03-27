@@ -5,7 +5,7 @@ namespace Renju.Core
 {
     public static class GameBoardUtils
     {
-        public static IEnumerable<PieceLine> GetLinesOnBoard(this BoardPoint point, GameBoard board, bool includeBlank = false)
+        public static IEnumerable<PieceLine> GetLinesOnBoard(this IReadOnlyBoardPoint point, IReadBoardState board, bool includeBlank = false)
         {
             foreach(var direction in GetHalfDirections())
             {
@@ -30,7 +30,7 @@ namespace Renju.Core
             }
         }
 
-        public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, GameBoard board, BoardPosition direction)
+        public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
         {
             if (!board[position].Status.HasValue)
                 throw new InvalidOperationException("ContinousLine can't start with blank.");
@@ -45,7 +45,7 @@ namespace Renju.Core
             return Equals(position, endPosition) ? null : new PieceLine(board, position, endPosition);
         }
 
-        public static PieceLine GetDashLineOnBoard(this BoardPosition position, GameBoard board, BoardPosition direction)
+        public static PieceLine GetDashLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
         {
             var firstState = board[position].Status;
             var endPosition = position;
@@ -58,7 +58,7 @@ namespace Renju.Core
                     null : new PieceLine(board, position, endPosition).TrimEnd();
         }
 
-        public static bool IsOnBoard(this BoardPosition position, GameBoard board)
+        public static bool IsOnBoard(this BoardPosition position, IReadBoardState board)
         {
             return position.X >= 0 && position.Y >= 0 && position.X < board.Size && position.Y < board.Size;
         }
@@ -76,7 +76,7 @@ namespace Renju.Core
             yield return new BoardPosition(-1, 1);
         }
 
-        private static bool CanMoveAlone(this BoardPosition position, GameBoard board, BoardPosition direction, ref Side? pickedSide)
+        private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)
         {
             var nextPosition = position + direction;
             if (!nextPosition.IsOnBoard(board))

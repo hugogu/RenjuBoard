@@ -5,6 +5,6 @@ namespace Renju.AI
 {
     public interface IDropSelector
     {
-        IEnumerable<BoardPoint> SelectDrops(GameBoard board, Side side);
+        IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side);
     }
 }

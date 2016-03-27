@@ -4,16 +4,16 @@
     {
         public abstract string Name { get; }
 
-        public bool? CanDropOn(GameBoard board, PieceDrop drop)
+        public bool? CanDropOn(IReadBoardState board, PieceDrop drop)
         {
             return null;
         }
 
-        public Side? NextSide(GameBoard board)
+        public Side? NextSide(IReadBoardState board)
         {
             return null;
         }
 
-        public abstract bool? Win(GameBoard board, PieceDrop drop);
+        public abstract bool? Win(IReadBoardState board, PieceDrop drop);
     }
 }

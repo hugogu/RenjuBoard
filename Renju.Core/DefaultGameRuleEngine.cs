@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Renju.Core
 {
@@ -17,12 +18,12 @@ namespace Renju.Core
             get { return _rules; }
         }
 
-        public bool CanDropOn(GameBoard board, PieceDrop drop)
+        public bool CanDropOn(IReadBoardState board, PieceDrop drop)
         {
             return GetRuleStopDropOn(board, drop) == null;
         }
 
-        public DropResult ProcessDrop(GameBoard board, PieceDrop drop)
+        public DropResult ProcessDrop(IGameBoard board, PieceDrop drop)
         {
             var point = board[drop.X, drop.Y];
             if (point.Status != null)
@@ -32,8 +33,8 @@ namespace Renju.Core
             if (notDroppingRule != null)
                 throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, notDroppingRule.Name));
 
-            point.Status = drop.Side;
-            point.Index = board.Drops.Count + 1;
+            board.SetState(point.Position, drop.Side);
+            board.SetIndex(point.Position, board.Drops.Count() + 1);
             foreach(var rule in _rules)
             {
                 var win = rule.Win(board, drop);
@@ -54,7 +55,7 @@ namespace Renju.Core
             return DropResult.NoWin(Sides.Opposite(drop.Side));
         }
 
-        public IGameRule GetRuleStopDropOn(GameBoard board, PieceDrop drop)
+        public IGameRule GetRuleStopDropOn(IReadBoardState board, PieceDrop drop)
         {
             foreach (var rule in _rules)
             {

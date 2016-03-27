@@ -8,9 +8,9 @@ namespace Renju.Core
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {
-        private GameBoard _board;
+        private IReadBoardState _board;
 
-        public PieceLine(GameBoard board, BoardPosition start, BoardPosition end)
+        public PieceLine(IReadBoardState board, BoardPosition start, BoardPosition end)
         {
             if (start.X != end.X &&
                 start.Y != end.Y &&
@@ -59,7 +59,7 @@ namespace Renju.Core
             get { return Math.Max(Math.Abs(StartPosition.X - EndPosition.X), Math.Abs(StartPosition.Y - EndPosition.Y)) + 1; }
         }
 
-        public IEnumerable<BoardPoint> Points
+        public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get
             {

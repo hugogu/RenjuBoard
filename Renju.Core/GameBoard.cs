@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Renju.Core
 {
-    public class GameBoard
+    public class GameBoard : IGameBoard, IAIPlayground
     {
         private List<BoardPoint> _points;
         private List<PieceDrop> _drops = new List<PieceDrop>();
@@ -28,12 +27,12 @@ namespace Renju.Core
             get { return _gameRuleEngine; }
         }
 
-        public IReadOnlyCollection<BoardPoint> Points
+        public IEnumerable<IReadOnlyBoardPoint> Points
         {
-            get { return new ReadOnlyCollection<BoardPoint>(_points); }
+            get { return _points; }
         }
 
-        public IReadOnlyCollection<PieceDrop> Drops
+        public IEnumerable<PieceDrop> Drops
         {
             get { return _drops; }
         }
@@ -43,17 +42,17 @@ namespace Renju.Core
             get { return _expectedNextTurn; }
         }
 
-        public BoardPoint this[int x, int y]
+        public IReadOnlyBoardPoint this[int x, int y]
         {
-            get { return _points[y * Size + x]; }
+            get { return GetPoint(x, y); }
         }
 
-        public BoardPoint this[BoardPosition position]
+        public IReadOnlyBoardPoint this[BoardPosition position]
         {
-            get { return _points[position.Y * Size + position.X]; }
+            get { return GetPoint(position.X, position.Y); }
         }
 
-        public DropResult Drop(BoardPoint point)
+        public DropResult Drop(IReadOnlyBoardPoint point)
         {
             if (_expectedNextTurn.HasValue)
                 return Put(new PieceDrop(point.Position.X, point.Position.Y, _expectedNextTurn.Value));
@@ -70,7 +69,7 @@ namespace Renju.Core
         {
             if (_drops.Remove(drop))
             {
-                var point = this[drop.X, drop.Y];
+                var point = GetPoint(drop.X, drop.Y);
                 _expectedNextTurn = point.Status.Value;
                 point.ResetToEmpty();
             }
@@ -89,6 +88,16 @@ namespace Renju.Core
             return result;
         }
 
+        public void SetState(BoardPosition position, Side side)
+        {
+            GetPoint(position.X, position.Y).Status = side;
+        }
+
+        public void SetIndex(BoardPosition position, int index)
+        {
+            GetPoint(position.X, position.Y).Index = index;
+        }
+
         protected virtual BoardPoint CreateBoardPoint(BoardPosition position)
         {
             return new BoardPoint(position);
@@ -101,6 +110,11 @@ namespace Renju.Core
             {
                 temp(this, new PieceDropEventArgs(drop));
             }
+        }
+
+        private BoardPoint GetPoint(int x, int y)
+        {
+            return _points[y * Size + x];
         }
 
         private BoardPosition PositionOfIndex(int index)

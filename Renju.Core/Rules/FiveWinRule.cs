@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Renju.Core;
+﻿using System.Linq;
 
 namespace Renju.Core.Rules
 {
@@ -11,7 +9,7 @@ namespace Renju.Core.Rules
             get { return "Win"; }
         }
 
-        public override bool? Win(GameBoard board, PieceDrop drop)
+        public override bool? Win(IReadBoardState board, PieceDrop drop)
         {
             return board[drop.X, drop.Y].GetLinesOnBoard(board).Any(line => line.Length > 4);
         }

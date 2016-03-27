@@ -6,8 +6,8 @@ namespace Renju.Core
     {
         IEnumerable<IGameRule> ApplicableRules { get; }
 
-        DropResult ProcessDrop(GameBoard board, PieceDrop drop);
+        DropResult ProcessDrop(IGameBoard board, PieceDrop drop);
 
-        bool CanDropOn(GameBoard board, PieceDrop drop);
+        bool CanDropOn(IReadBoardState board, PieceDrop drop);
     }
 }

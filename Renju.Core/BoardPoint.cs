@@ -5,7 +5,7 @@ using Runju.Infrastructure;
 namespace Renju.Core
 {
     [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
-    public class BoardPoint : ModelBase
+    public class BoardPoint : ModelBase, IReadOnlyBoardPoint
     {
         private int? _index;
         private Side? _status = null;

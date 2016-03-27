@@ -32,7 +32,7 @@ namespace RenjuBoard
             _gameBoard.Drop(point);
         }
 
-        public IEnumerable<BoardPoint> Points
+        public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _gameBoard.Points; }
         }
