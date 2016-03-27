@@ -14,8 +14,8 @@ namespace Renju.AI.Weights
                                            where board.RuleEngine.CanDropOn(board, drop)
                                            select point)
             {
-                var linesFromPoint = applicablePoint.GetLinesOnBoard(board, true).Select(l => l.TrimEnd()).Where(l => l != null);
-                applicablePoint.Weight = linesFromPoint.Sum(l => WeightLine(board, l, side) + WeightLine(board, l, Sides.Opposite(side)));
+                var linesFromPoint = applicablePoint.GetLinesOnBoard(board, true).Where(l => l != null);
+                applicablePoint.Weight = linesFromPoint.Sum(l => WeightLine(board, l, side));
             }
 
             return board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight);
@@ -24,9 +24,46 @@ namespace Renju.AI.Weights
         private int WeightLine(GameBoard board, PieceLine line, Side nextSide)
         {
             if (line.DroppedCount >= 4)
-                return board[line.EndPosition].Status == nextSide ? 1000 : 149;
-
-            return line.DroppedCount * line.DroppedCount * 9 - line.Length;
+            {
+                if (line.Length == 5)
+                    return 1000;
+                return 0;
+            }
+            else if (line.DroppedCount == 3)
+            {
+                if (line.IsEndClosed || line.IsStartClosed)
+                {
+                    return 40;
+                }
+                else
+                {
+                    if (line.Length == 4)
+                        return 249;
+                    if (line.Length == 5)
+                        return 200;
+                    return 0;
+                }
+            }
+            else if (line.DroppedCount == 2)
+            {
+                if (line.Length == 3)
+                {
+                    return line.IsStartClosed || line.IsEndClosed ? 5 : 55;
+                }
+                if (line.Length == 4)
+                {
+                    return line.IsEndClosed || line.IsStartClosed ? 4 : 50;
+                }
+                if (line.Length == 5)
+                {
+                    return line.IsStartClosed || line.IsEndClosed ? 1 : 10;
+                }
+            }
+            else if (line.DroppedCount == 1)
+            {
+                return 6 - line.Length;
+            }
+            return 0;
         }
     }
 }

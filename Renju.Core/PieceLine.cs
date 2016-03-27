@@ -24,6 +24,8 @@ namespace Renju.Core
             StartPosition = start;
             EndPosition = end;
             Direction = new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y));
+            ValidatePoint();
+            Side = Points.Select(p => p.Status).Where(s => s.HasValue).First().Value;
         }
 
         public BoardPosition StartPosition { get; private set; }
@@ -31,6 +33,26 @@ namespace Renju.Core
         public BoardPosition EndPosition { get; private set; }
 
         public BoardPosition Direction { get; private set; }
+
+        public Side Side { get; private set; }
+
+        public bool IsEndClosed
+        {
+            get
+            {
+                var endPos = EndPosition + Direction;
+                return !endPos.IsOnBoard(_board) || (_board[endPos].Status.HasValue && _board[endPos].Status != _board[EndPosition].Status);
+            }
+        }
+
+        public bool IsStartClosed
+        {
+            get
+            {
+                var beforePos = StartPosition - Direction;
+                return !beforePos.IsOnBoard(_board) || (_board[beforePos].Status.HasValue && _board[beforePos].Status != _board[StartPosition].Status);
+            }
+        }
 
         public int Length
         {
@@ -56,6 +78,32 @@ namespace Renju.Core
             get { return Points.Count(p => p.Status.HasValue); }
         }
 
+        public static PieceLine operator +(PieceLine a, PieceLine b)
+        {
+            if (a == null || b == null)
+                return null;
+
+            if (a._board != b._board)
+                throw new InvalidOperationException("Two line is not on the same game board.");
+
+            if (a.Side != b.Side)
+                return null;
+
+            if (!Equals(a.Direction, b.Direction) && !Equals(a.Direction, b.Direction.GetOpposite()))
+                return null;
+
+            if (Equals(a.StartPosition, b.EndPosition))
+                return new PieceLine(a._board, b.StartPosition, a.EndPosition);
+            else if (Equals(a.StartPosition, b.StartPosition))
+                return new PieceLine(a._board, a.EndPosition, b.EndPosition);
+            else if (Equals(a.EndPosition, b.StartPosition))
+                return new PieceLine(a._board, a.StartPosition, b.EndPosition);
+            else if (Equals(a.EndPosition, b.EndPosition))
+                return new PieceLine(a._board, a.StartPosition, b.StartPosition);
+            else
+                return null;
+        }
+
         public PieceLine TrimEnd()
         {
             var endPosition = EndPosition;
@@ -69,9 +117,34 @@ namespace Renju.Core
             return new PieceLine(_board, StartPosition, endPosition);
         }
 
+        public PieceLine ExtendToMaxLength(bool allowBlankInMiddle = false)
+        {
+            var startPosition = StartPosition;
+            do
+            {
+                startPosition -= Direction;
+                if (!startPosition.IsOnBoard(_board))
+                    break;
+                if (_board[startPosition].Status.HasValue)
+                    allowBlankInMiddle = false;
+            } while (_board[startPosition].Status == Side || (allowBlankInMiddle && _board[startPosition].Status == null));
+
+            if (allowBlankInMiddle && _board[startPosition].Status == null)
+                return this;
+
+            return new PieceLine(_board, startPosition + Direction, EndPosition);
+        }
+
         internal static int GetDirection(int a, int b)
         {
             return a == b ? 0 : a < b ? 1 : -1;
+        }
+
+        [Conditional("DEBUG")]
+        private void ValidatePoint()
+        {
+            if (Points.GroupBy(p => p.Status).Count() > 2)
+                throw new InvalidOperationException("A PieceLine shouldn't contains 3 kinds of states.");
         }
     }
 }
