@@ -9,14 +9,8 @@ namespace Renju.Core
         {
             foreach(var direction in GetHalfDirections())
             {
-                var line = includeBlank ?
-                           point.Position.GetDashLineOnBoard(board, direction) :
-                           point.Position.GetContinuousLineOnBoard(board, direction);
-
-                var oppositeLine = includeBlank ?
-                                   point.Position.GetDashLineOnBoard(board, direction.GetOpposite()) :
-                                   point.Position.GetContinuousLineOnBoard(board, direction.GetOpposite());
-
+                var line = GetLineOnBoard(point.Position, board, direction, includeBlank);
+                var oppositeLine = GetLineOnBoard(point.Position, board, direction.GetOpposite(), includeBlank);
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
@@ -28,6 +22,11 @@ namespace Renju.Core
                 if (oppositeLine != null)
                     yield return oppositeLine;
             }
+        }
+
+        public static PieceLine GetLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction, bool includeBlank)
+        {
+            return includeBlank ? position.GetDashLineOnBoard(board, direction) : position.GetContinuousLineOnBoard(board, direction);
         }
 
         public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
@@ -74,6 +73,16 @@ namespace Renju.Core
             yield return new BoardPosition(1, 1);
             yield return new BoardPosition(0, 1);
             yield return new BoardPosition(-1, 1);
+        }
+
+        public static IReadBoardState With(this IReadBoardState board, IReadOnlyBoardPoint point)
+        {
+            return new GameBoardDecoration(board, point);
+        }
+
+        public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side)
+        {
+            return new VirtualBoardPoint(point, side);
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)

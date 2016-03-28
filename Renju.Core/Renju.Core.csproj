@@ -66,6 +66,7 @@
     <Compile Include="Rules\FiveWinRule.cs" />
     <Compile Include="Rules\WinRule.cs" />
     <Compile Include="Side.cs" />
+    <Compile Include="VirtualBoardPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Runju.Infrastructure\Runju.Infrastructure.csproj">

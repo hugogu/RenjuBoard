@@ -4,15 +4,23 @@ using System.Linq;
 
 namespace Renju.Core
 {
-    public class GameBoardDecoration : IGameBoard
+    public class GameBoardDecoration : IReadBoardState
     {
-        private IGameBoard _decoratedBoard;
+        private IReadBoardState _decoratedBoard;
         private IReadOnlyBoardPoint _decorationPoint;
 
-        public GameBoardDecoration(IGameBoard board, IReadOnlyBoardPoint decorationPoint)
+        public GameBoardDecoration(IReadBoardState board, IReadOnlyBoardPoint decorationPoint)
         {
             if (board[decorationPoint.Position].Status.HasValue)
                 throw new InvalidOperationException("Can't decorate with a point already in use.");
+
+            if (!decorationPoint.Status.HasValue)
+                throw new ArgumentException("decoration Point much has a Side. ", "decorationPoint");
+
+            var lastPoint = board.Points.Where(p => p.Index.HasValue).OrderByDescending(p => p.Index.Value).FirstOrDefault();
+            if ((lastPoint == null && decorationPoint.Status == Side.White) ||
+                (lastPoint != null && lastPoint.Status.Value == decorationPoint.Status.Value))
+                throw new ArgumentException("Side of decorationPoint is wrong.", "decorationPoint");
 
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
@@ -36,11 +44,6 @@ namespace Renju.Core
             get { return this[new BoardPosition(x, y)]; }
         }
 
-        public IEnumerable<PieceDrop> Drops
-        {
-            get { throw new NotSupportedException(); }
-        }
-
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _decoratedBoard.Points.Concat(new[] { _decorationPoint }); }
@@ -54,16 +57,6 @@ namespace Renju.Core
         public int Size
         {
             get { return _decoratedBoard.Size; }
-        }
-
-        public void SetIndex(BoardPosition position, int index)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void SetState(BoardPosition position, Side side)
-        {
-            throw new NotSupportedException();
         }
     }
 }

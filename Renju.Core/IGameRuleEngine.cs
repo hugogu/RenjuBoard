@@ -9,5 +9,7 @@ namespace Renju.Core
         DropResult ProcessDrop(IGameBoard board, PieceDrop drop);
 
         bool CanDropOn(IReadBoardState board, PieceDrop drop);
+
+        Side? IsWin(IReadBoardState board, PieceDrop drop);
     }
 }

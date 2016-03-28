@@ -117,24 +117,6 @@ namespace Renju.Core
             return new PieceLine(_board, StartPosition, endPosition);
         }
 
-        public PieceLine ExtendToMaxLength(bool allowBlankInMiddle = false)
-        {
-            var startPosition = StartPosition;
-            do
-            {
-                startPosition -= Direction;
-                if (!startPosition.IsOnBoard(_board))
-                    break;
-                if (_board[startPosition].Status.HasValue)
-                    allowBlankInMiddle = false;
-            } while (_board[startPosition].Status == Side || (allowBlankInMiddle && _board[startPosition].Status == null));
-
-            if (allowBlankInMiddle && _board[startPosition].Status == null)
-                return this;
-
-            return new PieceLine(_board, startPosition + Direction, EndPosition);
-        }
-
         internal static int GetDirection(int a, int b)
         {
             return a == b ? 0 : a < b ? 1 : -1;

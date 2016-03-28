@@ -23,6 +23,11 @@ namespace Renju.Core
             return GetRuleStopDropOn(board, drop) == null;
         }
 
+        public Side? IsWin(IReadBoardState board, PieceDrop drop)
+        {
+            return GetRuleWin(board, drop) != null ? drop.Side : (Side?)null;
+        }
+
         public DropResult ProcessDrop(IGameBoard board, PieceDrop drop)
         {
             var point = board[drop.X, drop.Y];
@@ -55,7 +60,20 @@ namespace Renju.Core
             return DropResult.NoWin(Sides.Opposite(drop.Side));
         }
 
-        public IGameRule GetRuleStopDropOn(IReadBoardState board, PieceDrop drop)
+        protected virtual IGameRule GetRuleWin(IReadBoardState board, PieceDrop drop)
+        {
+            foreach (var rule in _rules)
+            {
+                var win = rule.Win(board, drop);
+                if (win.HasValue && win.Value)
+                {
+                    return rule;
+                }
+            }
+            return null;
+        }
+
+        protected virtual IGameRule GetRuleStopDropOn(IReadBoardState board, PieceDrop drop)
         {
             foreach (var rule in _rules)
             {
