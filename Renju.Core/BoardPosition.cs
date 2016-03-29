@@ -28,6 +28,11 @@ namespace Renju.Core
             return new BoardPosition(a.X - b.X, a.Y - b.Y);
         }
 
+        public override string ToString()
+        {
+            return String.Format("({0},{1})", X, Y);
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as BoardPosition);

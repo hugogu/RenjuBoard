@@ -42,5 +42,10 @@ namespace Renju.Core
             Index = null;
             Status = null;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}{1}", Position, Status == null ? "" : (Status.Value == Side.Black ? "●" : "○"));
+        }
     }
 }

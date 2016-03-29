@@ -4,16 +4,18 @@
     {
         private readonly IReadOnlyBoardPoint _originalPoint;
         private readonly Side _side;
+        private readonly int _index;
 
-        public VirtualBoardPoint(IReadOnlyBoardPoint originalPoint, Side side)
+        public VirtualBoardPoint(IReadOnlyBoardPoint originalPoint, Side side, int index)
         {
             _side = side;
+            _index = index;
             _originalPoint = originalPoint;
         }
 
         public int? Index
         {
-            get { return _originalPoint.Index; }
+            get { return _index; }
         }
 
         public BoardPosition Position

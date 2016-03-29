@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Renju.Core
 {
@@ -80,9 +81,9 @@ namespace Renju.Core
             return new GameBoardDecoration(board, point);
         }
 
-        public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side)
+        public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState board)
         {
-            return new VirtualBoardPoint(point, side);
+            return new VirtualBoardPoint(point, side, board.Points.Where(p => p.Index.HasValue).Max(p => p.Index.Value) + 1);
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)

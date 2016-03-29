@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Renju.Core;
 
 namespace Renju.AI
@@ -7,9 +8,9 @@ namespace Renju.AI
     public class AIGamePlayer : IGamePlayer
     {
         private GameBoard _board;
-        private IDropSelector _dropSelector;
+        private IDropResolver _dropSelector;
 
-        public AIGamePlayer(IDropSelector dropSelector)
+        public AIGamePlayer(IDropResolver dropSelector)
         {
             _dropSelector = dropSelector;
         }
@@ -34,8 +35,11 @@ namespace Renju.AI
         {
             if (Board.ExpectedNextTurn == Side)
             {
-                var drops = _dropSelector.SelectDrops(Board, Side);
-                Board.Drop(drops.First());
+                Task.Factory.StartNew(() =>
+                {
+                    var drops = _dropSelector.Resolve(Board, Side);
+                    Board.Drop(drops.First());
+                });
             }
         }
     }

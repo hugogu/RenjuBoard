@@ -28,15 +28,7 @@ namespace Renju.Core
 
         public IReadOnlyBoardPoint this[BoardPosition position]
         {
-            get
-            {
-                var point = _decoratedBoard[position];
-                if (point == null && Equals(_decorationPoint.Position, position))
-                {
-                    point = _decorationPoint;
-                }
-                return point;
-            }
+            get { return Equals(_decorationPoint.Position, position) ? _decorationPoint : _decoratedBoard[position]; }
         }
 
         public IReadOnlyBoardPoint this[int x, int y]
@@ -46,7 +38,16 @@ namespace Renju.Core
 
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
-            get { return _decoratedBoard.Points.Concat(new[] { _decorationPoint }); }
+            get
+            {
+                foreach(var point in _decoratedBoard.Points)
+                {
+                    if (Equals(point.Position, _decorationPoint.Position))
+                        yield return _decorationPoint;
+                    else
+                        yield return point;
+                }
+            }
         }
 
         public IGameRuleEngine RuleEngine

@@ -18,7 +18,12 @@ namespace Renju.AI.Weights
                 applicablePoint.Weight = linesFromPoint.Sum(l => WeightLine(board, l, side));
             }
 
-            return board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight);
+            var orderedPoints = board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight);
+
+            if (orderedPoints.Any(p => p.Weight >= 1000))
+                return orderedPoints.Where(p => p.Weight >= 1000);
+
+            return orderedPoints;
         }
 
         private int WeightLine(IReadBoardState board, PieceLine line, Side nextSide)
