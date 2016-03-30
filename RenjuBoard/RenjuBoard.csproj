@@ -69,6 +69,7 @@
     <Compile Include="Controls\BoardPiece.cs" />
     <Compile Include="Controls\GameBoardPanel.cs" />
     <Compile Include="Controls\LinedGrid.cs" />
+    <Compile Include="Converters\WeightToBrushConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

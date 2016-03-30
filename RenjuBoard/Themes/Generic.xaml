@@ -1,7 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:RenjuBoard.Controls">
+    xmlns:local="clr-namespace:RenjuBoard.Controls"
+    xmlns:c="clr-namespace:RenjuBoard.Converters">
     <Style TargetType="{x:Type local:GameBoardPanel}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Black" />
@@ -11,7 +12,41 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <ItemsPresenter />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ItemsControl Grid.Row="1"
+                                          Margin="0,3"
+                                          TextBlock.TextAlignment="Center"
+                                          ItemsSource="{Binding XLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                            <ItemsControl Grid.Column="1"
+                                          Margin="3,0"
+                                          ItemsSource="{Binding YLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Rows="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                            <ItemsPresenter />
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -20,6 +55,7 @@
             <Setter.Value>
                 <ItemsPanelTemplate>
                     <local:LinedGrid IsItemsHost="True"
+                                     Background="#FF007C0B"
                                      Columns="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
                                      Rows="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}" />
@@ -27,6 +63,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <c:WeightToBrushConverter x:Key="WeightToBrushConverter" />
 
     <Style TargetType="{x:Type local:BoardPiece}">
         <Setter Property="Background" Value="Transparent" />
@@ -41,21 +79,19 @@
                 <ControlTemplate TargetType="{x:Type local:BoardPiece}">
                     <Grid>
                         <Ellipse Stretch="Fill"
+                                 ToolTip="{TemplateBinding Weight}"
                                  Fill="{TemplateBinding Background}"
                                  Stroke="{TemplateBinding BorderBrush}"
-                                 StrokeThickness="{TemplateBinding BorderThickness}">
-                        </Ellipse>
+                                 StrokeThickness="{TemplateBinding BorderThickness}" />
+
+                        <Ellipse Fill="{TemplateBinding Weight, Converter={StaticResource WeightToBrushConverter}}"
+                                 Width="5" Height="5"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
 
                         <ContentPresenter Content="{TemplateBinding SequenceNumber}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-
-                        <ContentControl Content="{TemplateBinding Weight}"
-                                        Foreground="Red"
-                                        TextBlock.FontSize="10pt"
-                                        TextBlock.FontWeight="Normal"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

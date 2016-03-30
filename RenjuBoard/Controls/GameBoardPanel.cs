@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace RenjuBoard.Controls
@@ -16,9 +18,18 @@ namespace RenjuBoard.Controls
             set { SetValue(SizeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Size.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SizeProperty =
             DependencyProperty.Register("Size", typeof(int), typeof(GameBoardPanel),
                 new FrameworkPropertyMetadata(15, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        public IEnumerable<string> XLables
+        {
+            get { return Enumerable.Range(0, Size).Select(i => ((char)(i + 'A')).ToString()); }
+        }
+
+        public IEnumerable<string> YLables
+        {
+            get { return Enumerable.Range(0, Size).Select(i => (Size - i).ToString()); }
+        }
     }
 }

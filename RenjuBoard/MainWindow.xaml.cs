@@ -39,5 +39,10 @@ namespace RenjuBoard
             _mainViewModel = new MainWindowViewModel();
             DataContext = _mainViewModel;
         }
+
+        private void OnRedoButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
