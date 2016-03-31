@@ -3,34 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:control="clr-namespace:RenjuBoard.Controls"
         xmlns:local="clr-namespace:RenjuBoard"
-        xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
+        xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display"
         Title="Renju Board"
-        Height="500" Width="555">
+        Height="500" Width="950">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type renju:BoardPoint}">
-            <control:BoardPiece x:Name="drop"
-                                Background="Transparent"
-                                MouseUp="OnBoardPieceMouseUp"
-                                SequenceNumber="{Binding Index}"
-                                Weight="{Binding Weight}" />
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
-                    <Setter TargetName="drop" Property="Background" Value="Black" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.White}">
-                    <Setter TargetName="drop" Property="Background" Value="Gray" />
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0,5,0,0" />
             <Setter Property="Padding" Value="5,1" />
         </Style>
     </Window.Resources>
-    <DockPanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="380" />
+        </Grid.ColumnDefinitions>
         <DockPanel Margin="5"
                    LastChildFill="False">
             <Button Content="New Game"
@@ -43,9 +34,15 @@
                     DockPanel.Dock="Top"
                     Click="OnRedoButtonClick" />
         </DockPanel>
-        <control:GameBoardPanel ItemsSource="{Binding Points}"
+        <control:GameBoardPanel Grid.Column="1"
+                                ItemsSource="{Binding Points}"
                                 Size="{Binding BoardSize}">
         </control:GameBoardPanel>
-    </DockPanel>
-    
+        <GridSplitter Grid.Column="2"
+                      Width="5"
+                      HorizontalAlignment="Stretch" />
+        <ContentControl Grid.Column="3">
+            <vm:LogsViewModel />
+        </ContentControl>
+    </Grid>
 </Window>

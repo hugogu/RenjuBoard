@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
-using Renju.Core;
 
 namespace RenjuBoard
 {
@@ -15,13 +13,6 @@ namespace RenjuBoard
         {
             InitializeComponent();
             StartNewGame();
-        }
-
-        private void OnBoardPieceMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            var boardPoint = (sender as FrameworkElement).DataContext as BoardPoint;
-
-            _mainViewModel.DropPoint(boardPoint);
         }
 
         private void OnNewGameButtonClick(object sender, RoutedEventArgs e)

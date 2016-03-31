@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
+using Prism.Commands;
 using Renju.AI;
 using Renju.AI.Resolving;
 using Renju.AI.Weights;
@@ -11,6 +13,7 @@ namespace RenjuBoard
     public class MainWindowViewModel : ModelBase
     {
         private GameBoard _gameBoard;
+        private ICommand _dropPointCommand;
         private AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector()));
 
         public MainWindowViewModel()
@@ -21,6 +24,7 @@ namespace RenjuBoard
             }));
             _aiPlayer.Side = Side.White;
             _aiPlayer.Board = _gameBoard;
+            _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(point => _gameBoard.Drop(point));
         }
 
         public GameBoard Board
@@ -28,9 +32,9 @@ namespace RenjuBoard
             get { return _gameBoard; }
         }
 
-        public void DropPoint(BoardPoint point)
+        public ICommand DropPointCommand
         {
-            _gameBoard.Drop(point);
+            get { return _dropPointCommand; }
         }
 
         public IEnumerable<IReadOnlyBoardPoint> Points
