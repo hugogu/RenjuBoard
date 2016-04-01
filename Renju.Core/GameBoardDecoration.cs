@@ -24,6 +24,7 @@ namespace Renju.Core
 
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
+            _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
         }
 
         public IReadOnlyBoardPoint this[BoardPosition position]
@@ -58,6 +59,17 @@ namespace Renju.Core
         public int Size
         {
             get { return _decoratedBoard.Size; }
+        }
+
+        public event EventHandler<PieceDropEventArgs> PieceDropped;
+
+        private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
+        {
+            var temp = PieceDropped;
+            if (temp != null)
+            {
+                temp(this, e);
+            }
         }
     }
 }

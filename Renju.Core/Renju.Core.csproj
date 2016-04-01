@@ -47,6 +47,7 @@
     </Compile>
     <Compile Include="BoardPoint.cs" />
     <Compile Include="BoardPosition.cs" />
+    <Compile Include="BoardRecorder.cs" />
     <Compile Include="DefaultGameRuleEngine.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="DropResult.cs" />

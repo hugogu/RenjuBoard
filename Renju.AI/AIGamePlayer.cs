@@ -38,7 +38,7 @@ namespace Renju.AI
                 Task.Factory.StartNew(() =>
                 {
                     var drops = _dropSelector.Resolve(Board, Side);
-                    Board.Drop(drops.First());
+                    Board.Drop(drops.First().Position);
                 });
             }
         }

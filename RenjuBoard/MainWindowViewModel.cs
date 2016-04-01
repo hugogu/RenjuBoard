@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using Prism.Commands;
 using Renju.AI;
@@ -12,9 +15,12 @@ namespace RenjuBoard
 {
     public class MainWindowViewModel : ModelBase
     {
-        private GameBoard _gameBoard;
-        private ICommand _dropPointCommand;
-        private AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector()));
+        private readonly GameBoard _gameBoard;
+        private readonly ICommand _dropPointCommand;
+        private readonly DelegateCommand _undoDropCommand;
+        private readonly DelegateCommand _redoDropCommand;
+        private readonly AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector()));
+        private readonly BoardRecorder _boardRecorder;
 
         public MainWindowViewModel()
         {
@@ -22,9 +28,22 @@ namespace RenjuBoard
             {
                 new FiveWinRule()
             }));
+            _boardRecorder = new BoardRecorder(_gameBoard);
             _aiPlayer.Side = Side.White;
             _aiPlayer.Board = _gameBoard;
-            _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(point => _gameBoard.Drop(point));
+            _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(point => _gameBoard.Drop(point.Position));
+            _undoDropCommand = new DelegateCommand(() => _boardRecorder.UndoDrop(), () => _boardRecorder.CanUndo);
+            _redoDropCommand = new DelegateCommand(() => _boardRecorder.RedoDrop(), () => _boardRecorder.CanRedo);
+            _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
+        }
+
+        private void OnBoardRecorderPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                _undoDropCommand.RaiseCanExecuteChanged();
+                _redoDropCommand.RaiseCanExecuteChanged();
+            }));
         }
 
         public GameBoard Board
@@ -35,6 +54,16 @@ namespace RenjuBoard
         public ICommand DropPointCommand
         {
             get { return _dropPointCommand; }
+        }
+
+        public ICommand UndoCommand
+        {
+            get { return _undoDropCommand; }
+        }
+
+        public ICommand RedoCommand
+        {
+            get { return _redoDropCommand; }
         }
 
         public IEnumerable<IReadOnlyBoardPoint> Points

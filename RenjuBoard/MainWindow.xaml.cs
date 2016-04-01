@@ -20,20 +20,10 @@ namespace RenjuBoard
             StartNewGame();
         }
 
-        private void OnUndoButtonClick(object sender, RoutedEventArgs e)
-        {
-            _mainViewModel.Board.UndoLastDrop();
-        }
-
         private void StartNewGame()
         {
             _mainViewModel = new MainWindowViewModel();
             DataContext = _mainViewModel;
-        }
-
-        private void OnRedoButtonClick(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -6,9 +6,8 @@ namespace Renju.Core
 {
     public class GameBoard : IGameBoard, IAIPlayground
     {
-        private List<BoardPoint> _points;
-        private List<PieceDrop> _drops = new List<PieceDrop>();
-        private IGameRuleEngine _gameRuleEngine;
+        private readonly List<BoardPoint> _points;
+        private readonly IGameRuleEngine _gameRuleEngine;
         private Side? _expectedNextTurn = Side.Black;
 
         public GameBoard(int size, IGameRuleEngine gameRuleEngine)
@@ -32,11 +31,6 @@ namespace Renju.Core
             get { return _points; }
         }
 
-        public IEnumerable<PieceDrop> Drops
-        {
-            get { return _drops; }
-        }
-
         public Side? ExpectedNextTurn
         {
             get { return _expectedNextTurn; }
@@ -52,42 +46,6 @@ namespace Renju.Core
             get { return GetPoint(position.X, position.Y); }
         }
 
-        public DropResult Drop(IReadOnlyBoardPoint point)
-        {
-            if (_expectedNextTurn.HasValue)
-                return Put(new PieceDrop(point.Position.X, point.Position.Y, _expectedNextTurn.Value));
-            else
-                return DropResult.InvalidDrop;
-        }
-
-        public void UndoLastDrop()
-        {
-            Take(Drops.Last());
-        }
-
-        public void Take(PieceDrop drop)
-        {
-            if (_drops.Remove(drop))
-            {
-                var point = GetPoint(drop.X, drop.Y);
-                _expectedNextTurn = point.Status.Value;
-                point.ResetToEmpty();
-            }
-        }
-
-        public DropResult Put(PieceDrop drop)
-        {
-            var result = _gameRuleEngine.ProcessDrop(this, drop);
-            if (result != DropResult.InvalidDrop)
-            {
-                _drops.Add(drop);
-                _expectedNextTurn = result.ExpectedNextSide;
-                RaisePeiceDroppedEvent(drop);
-            }
-
-            return result;
-        }
-
         public void SetState(BoardPosition position, Side side)
         {
             GetPoint(position.X, position.Y).Status = side;
@@ -96,6 +54,35 @@ namespace Renju.Core
         public void SetIndex(BoardPosition position, int index)
         {
             GetPoint(position.X, position.Y).Index = index;
+        }
+
+        public DropResult Drop(BoardPosition position)
+        {
+            if (_expectedNextTurn.HasValue)
+                return Put(new PieceDrop(position.X, position.Y, _expectedNextTurn.Value));
+            else
+                return DropResult.InvalidDrop;
+        }
+
+        public void Take(BoardPosition position)
+        {
+            var point = GetPoint(position.X, position.Y);
+            if (point.Status == null)
+                throw new InvalidOperationException(String.Format("{0} hasn't been dropped.", position));
+            _expectedNextTurn = point.Status.Value;
+            point.ResetToEmpty();
+        }
+
+        protected virtual DropResult Put(PieceDrop drop)
+        {
+            var result = _gameRuleEngine.ProcessDrop(this, drop);
+            if (result != DropResult.InvalidDrop)
+            {
+                _expectedNextTurn = result.ExpectedNextSide;
+                RaisePeiceDroppedEvent(drop);
+            }
+
+            return result;
         }
 
         protected virtual BoardPoint CreateBoardPoint(BoardPosition position)

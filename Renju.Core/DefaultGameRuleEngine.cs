@@ -39,7 +39,7 @@ namespace Renju.Core
                 throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, notDroppingRule.Name));
 
             board.SetState(point.Position, drop.Side);
-            board.SetIndex(point.Position, board.Drops.Count() + 1);
+            board.SetIndex(point.Position, board.Points.Count(p => p.Index.HasValue) + 1);
             foreach(var rule in _rules)
             {
                 var win = rule.Win(board, drop);

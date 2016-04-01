@@ -29,10 +29,10 @@
                     Click="OnNewGameButtonClick" />
             <Button Content="Undo"
                     DockPanel.Dock="Top"
-                    Click="OnUndoButtonClick" />
+                    Command="{Binding UndoCommand}" />
             <Button Content="Redo"
                     DockPanel.Dock="Top"
-                    Click="OnRedoButtonClick" />
+                    Command="{Binding RedoCommand}" />
         </DockPanel>
         <control:GameBoardPanel Grid.Column="1"
                                 ItemsSource="{Binding Points}"
