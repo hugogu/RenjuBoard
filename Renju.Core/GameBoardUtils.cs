@@ -83,7 +83,7 @@ namespace Renju.Core
 
         public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState board)
         {
-            return new VirtualBoardPoint(point, side, board.Points.Where(p => p.Index.HasValue).Max(p => p.Index.Value) + 1);
+            return new VirtualBoardPoint(point, side, board.Points.Count(p => p.Index.HasValue) + 1);
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)

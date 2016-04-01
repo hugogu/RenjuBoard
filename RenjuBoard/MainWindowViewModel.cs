@@ -44,11 +44,6 @@ namespace RenjuBoard
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
         }
 
-        public IGameBoard Board
-        {
-            get { return _gameBoard; }
-        }
-
         public ICommand DropPointCommand
         {
             get { return _dropPointCommand; }
@@ -103,7 +98,7 @@ namespace RenjuBoard
                     {
                         var line = await streamReader.ReadLineAsync();
                         var drop = converter.ConvertFromString(line) as PieceDrop;
-                        _gameBoard.Drop(new BoardPosition(drop.X, drop.Y), OperatorType.Loading);
+                        _gameBoard.Drop(drop, OperatorType.Loading);
                     }
                 }
             }

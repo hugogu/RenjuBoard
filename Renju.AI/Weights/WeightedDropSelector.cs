@@ -10,7 +10,7 @@ namespace Renju.AI.Weights
         {
             foreach(var applicablePoint in from point in board.Points
                                            where point.Status == null
-                                           let drop = new PieceDrop(point.Position.X, point.Position.Y, side)
+                                           let drop = new PieceDrop(point.Position, side)
                                            where board.RuleEngine.CanDropOn(board, drop)
                                            select point)
             {

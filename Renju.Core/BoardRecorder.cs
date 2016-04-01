@@ -50,7 +50,7 @@ namespace Renju.Core
 
             var drop = _undoDrops.Last();
             _undoDrops.RemoveAt(_undoDrops.Count - 1);
-            _board.Take(new BoardPosition(drop.X, drop.Y));
+            _board.Take(drop);
             _redoDrops.Add(drop);
             RaisePropertyChanged(() => CanUndo);
             RaisePropertyChanged(() => CanRedo);
@@ -63,7 +63,7 @@ namespace Renju.Core
 
             var drop = _redoDrops.Last();
             _redoDrops.RemoveAt(_redoDrops.Count - 1);
-            _board.Drop(new BoardPosition(drop.X, drop.Y), OperatorType.UndoOrRedo);
+            _board.Drop(drop, OperatorType.UndoOrRedo);
         }
     }
 }

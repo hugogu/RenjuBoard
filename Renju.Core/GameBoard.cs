@@ -36,37 +36,32 @@ namespace Renju.Core
             get { return _expectedNextTurn; }
         }
 
-        public IReadOnlyBoardPoint this[int x, int y]
-        {
-            get { return GetPoint(x, y); }
-        }
-
         public IReadOnlyBoardPoint this[BoardPosition position]
         {
-            get { return GetPoint(position.X, position.Y); }
+            get { return GetPoint(position); }
         }
 
         public void SetState(BoardPosition position, Side side)
         {
-            GetPoint(position.X, position.Y).Status = side;
+            GetPoint(position).Status = side;
         }
 
         public void SetIndex(BoardPosition position, int index)
         {
-            GetPoint(position.X, position.Y).Index = index;
+            GetPoint(position).Index = index;
         }
 
         public DropResult Drop(BoardPosition position, OperatorType type)
         {
             if (_expectedNextTurn.HasValue)
-                return Put(new PieceDrop(position.X, position.Y, _expectedNextTurn.Value), type);
+                return Put(new PieceDrop(position, _expectedNextTurn.Value), type);
             else
                 return DropResult.InvalidDrop;
         }
 
         public void Take(BoardPosition position)
         {
-            var point = GetPoint(position.X, position.Y);
+            var point = GetPoint(position);
             if (point.Status == null)
                 throw new InvalidOperationException(String.Format("{0} hasn't been dropped.", position));
             _expectedNextTurn = point.Status.Value;
@@ -99,9 +94,9 @@ namespace Renju.Core
             }
         }
 
-        private BoardPoint GetPoint(int x, int y)
+        private BoardPoint GetPoint(BoardPosition position)
         {
-            return _points[y * Size + x];
+            return _points[position.Y * Size + position.X];
         }
 
         private BoardPosition PositionOfIndex(int index)

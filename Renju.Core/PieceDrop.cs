@@ -16,8 +16,10 @@ namespace Renju.Core
             Side = side;
         }
 
-        public int X { get; set; }
-        public int Y { get; set; }
-        public Side Side { get; set; }
+        public PieceDrop(BoardPosition position, Side side) : this(position.X, position.Y, side) { }
+
+        public int X { get; private set; }
+        public int Y { get; private set; }
+        public Side Side { get; private set; }
     }
 }

@@ -28,6 +28,11 @@ namespace Renju.Core
             return new BoardPosition(a.X - b.X, a.Y - b.Y);
         }
 
+        public static implicit operator BoardPosition(PieceDrop drop)
+        {
+            return new BoardPosition(drop.X, drop.Y);
+        }
+
         public override string ToString()
         {
             return String.Format("({0},{1})", X, Y);

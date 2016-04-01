@@ -34,7 +34,7 @@ namespace Renju.AI.Resolving
         {
             var virtualBoard = board.With(point);
             var oppositeSide = Sides.Opposite(point.Status.Value);
-            var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position.X, point.Position.Y, point.Status.Value));
+            var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position, point.Status.Value));
             if (winSide.HasValue)
                 return point.Status.Value == side ? 1.0 : -1.0;
 

@@ -37,15 +37,15 @@ namespace Renju.Core
             set { SetProperty(ref _weight, value, () => Weight); }
         }
 
-        public void ResetToEmpty()
-        {
-            Index = null;
-            Status = null;
-        }
-
         public override string ToString()
         {
             return string.Format("{0}{1}", Position, Status == null ? "" : (Status.Value == Side.Black ? "●" : "○"));
+        }
+
+        internal void ResetToEmpty()
+        {
+            Index = null;
+            Status = null;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Renju.Core
 
         public DropResult ProcessDrop(IGameBoard board, PieceDrop drop)
         {
-            var point = board[drop.X, drop.Y];
+            var point = board[drop];
             if (point.Status != null)
                 return DropResult.InvalidDrop;
 
@@ -40,14 +40,10 @@ namespace Renju.Core
 
             board.SetState(point.Position, drop.Side);
             board.SetIndex(point.Position, board.Points.Count(p => p.Index.HasValue) + 1);
-            foreach(var rule in _rules)
-            {
-                var win = rule.Win(board, drop);
-                if (win.HasValue && win.Value)
-                {
-                    return DropResult.Win(drop.Side);
-                }
-            }
+            var winOnRule = GetRuleWin(board, drop);
+            if (winOnRule != null)
+                return DropResult.Win(drop.Side);
+
             foreach (var rule in _rules)
             {
                 var next = rule.NextSide(board);
