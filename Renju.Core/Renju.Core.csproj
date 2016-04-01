@@ -59,8 +59,10 @@
     <Compile Include="IGameRule.cs" />
     <Compile Include="IGameRuleEngine.cs" />
     <Compile Include="IReadOnlyBoardPoint.cs" />
+    <Compile Include="OperatorType.cs" />
     <Compile Include="PieceDrop.cs" />
     <Compile Include="PieceDropEventArgs.cs" />
+    <Compile Include="PieceDropTypeConverter.cs" />
     <Compile Include="PieceLine.cs" />
     <Compile Include="GameBoardUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

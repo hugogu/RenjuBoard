@@ -43,7 +43,8 @@ namespace RenjuBoard.ViewModels
 
         private void AddLogItem(string message)
         {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => _logs.Insert(0, message)), DispatcherPriority.DataBind);
+            if (Application.Current != null)
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => _logs.Insert(0, message)), DispatcherPriority.DataBind);
         }
     }
 }

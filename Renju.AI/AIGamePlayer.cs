@@ -7,7 +7,7 @@ namespace Renju.AI
 {
     public class AIGamePlayer : IGamePlayer
     {
-        private GameBoard _board;
+        private IGameBoard _board;
         private IDropResolver _dropSelector;
 
         public AIGamePlayer(IDropResolver dropSelector)
@@ -15,7 +15,7 @@ namespace Renju.AI
             _dropSelector = dropSelector;
         }
 
-        public GameBoard Board
+        public IGameBoard Board
         {
             get { return _board; }
             set
@@ -33,12 +33,12 @@ namespace Renju.AI
 
         private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
-            if (Board.ExpectedNextTurn == Side)
+            if (Board.ExpectedNextTurn == Side && e.OperatorType == OperatorType.Human)
             {
                 Task.Factory.StartNew(() =>
                 {
                     var drops = _dropSelector.Resolve(Board, Side);
-                    Board.Drop(drops.First().Position);
+                    Board.Drop(drops.First().Position, OperatorType.AI);
                 });
             }
         }

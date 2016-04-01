@@ -4,6 +4,6 @@
     {
         Side? ExpectedNextTurn { get; }
 
-        DropResult Drop(BoardPosition position);
+        DropResult Drop(BoardPosition position, OperatorType type);
     }
 }

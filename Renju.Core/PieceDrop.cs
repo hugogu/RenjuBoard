@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Renju.Core
 {
     [Serializable]
     [DebuggerDisplay("{Side}: X={X}, Y={Y}")]
+    [TypeConverter(typeof(PieceDropTypeConverter))]
     public class PieceDrop
     {
         public PieceDrop(int x, int y, Side side)

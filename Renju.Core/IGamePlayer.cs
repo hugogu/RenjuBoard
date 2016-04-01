@@ -4,6 +4,6 @@
     {
         Side Side { get; set; }
 
-        GameBoard Board { get; set; }
+        IGameBoard Board { get; set; }
     }
 }

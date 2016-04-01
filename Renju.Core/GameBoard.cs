@@ -56,10 +56,10 @@ namespace Renju.Core
             GetPoint(position.X, position.Y).Index = index;
         }
 
-        public DropResult Drop(BoardPosition position)
+        public DropResult Drop(BoardPosition position, OperatorType type)
         {
             if (_expectedNextTurn.HasValue)
-                return Put(new PieceDrop(position.X, position.Y, _expectedNextTurn.Value));
+                return Put(new PieceDrop(position.X, position.Y, _expectedNextTurn.Value), type);
             else
                 return DropResult.InvalidDrop;
         }
@@ -73,13 +73,13 @@ namespace Renju.Core
             point.ResetToEmpty();
         }
 
-        protected virtual DropResult Put(PieceDrop drop)
+        protected virtual DropResult Put(PieceDrop drop, OperatorType type)
         {
             var result = _gameRuleEngine.ProcessDrop(this, drop);
             if (result != DropResult.InvalidDrop)
             {
                 _expectedNextTurn = result.ExpectedNextSide;
-                RaisePeiceDroppedEvent(drop);
+                RaisePeiceDroppedEvent(drop, type);
             }
 
             return result;
@@ -90,12 +90,12 @@ namespace Renju.Core
             return new BoardPoint(position);
         }
 
-        protected virtual void RaisePeiceDroppedEvent(PieceDrop drop)
+        protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
         {
             var temp = PieceDropped;
             if (temp != null)
             {
-                temp(this, new PieceDropEventArgs(drop));
+                temp(this, new PieceDropEventArgs(drop, operatorType));
             }
         }
 
