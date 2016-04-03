@@ -8,22 +8,18 @@ namespace Renju.AI.Weights
     {
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side)
         {
-            foreach(var applicablePoint in from point in board.Points
-                                           where point.Status == null
-                                           let drop = new PieceDrop(point.Position, side)
-                                           where board.RuleEngine.CanDropOn(board, drop)
-                                           select point)
+            foreach(var weightedPoint in (from point in board.Points
+                                          where point.Status == null
+                                          let drop = new PieceDrop(point.Position, side)
+                                          where board.RuleEngine.CanDropOn(board, drop)
+                                          let lines = point.GetLinesOnBoard(board, true)
+                                          let weightedPoint = new { Point = point, Weight = lines.Sum(l => WeightLine(board, l, side)) }
+                                          orderby weightedPoint.Weight descending
+                                          group weightedPoint by weightedPoint.Weight >= 1000).First())
             {
-                var linesFromPoint = applicablePoint.GetLinesOnBoard(board, true).Where(l => l != null);
-                applicablePoint.Weight = linesFromPoint.Sum(l => WeightLine(board, l, side));
+                weightedPoint.Point.Weight = weightedPoint.Weight;
+                yield return weightedPoint.Point;
             }
-
-            var orderedPoints = board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight);
-
-            if (orderedPoints.Any(p => p.Weight >= 1000))
-                return orderedPoints.Where(p => p.Weight >= 1000);
-
-            return orderedPoints;
         }
 
         private int WeightLine(IReadBoardState board, PieceLine line, Side nextSide)

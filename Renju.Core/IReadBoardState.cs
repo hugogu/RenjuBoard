@@ -13,6 +13,10 @@ namespace Renju.Core
 
         int Size { get; }
 
+        int DropsCount { get; }
+
         IEnumerable<IReadOnlyBoardPoint> Points { get; }
+
+        bool IsDropped(BoardPosition position);
     }
 }

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Runju.Infrastructure;
 
 namespace Renju.Core
 {
-    public class GameBoard : IGameBoard, IAIPlayground
+    public class GameBoard : ModelBase, IGameBoard, IAIPlayground
     {
         private readonly List<BoardPoint> _points;
         private readonly IGameRuleEngine _gameRuleEngine;
         private Side? _expectedNextTurn = Side.Black;
+        private int _dropsCount;
 
         public GameBoard(int size, IGameRuleEngine gameRuleEngine)
         {
@@ -20,6 +22,12 @@ namespace Renju.Core
         public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
 
         public int Size { get; private set; }
+
+        public int DropsCount
+        {
+            get { return _dropsCount; }
+            private set { SetProperty(ref _dropsCount, value, () => DropsCount); }
+        }
 
         public IGameRuleEngine RuleEngine
         {
@@ -39,6 +47,11 @@ namespace Renju.Core
         public IReadOnlyBoardPoint this[BoardPosition position]
         {
             get { return GetPoint(position); }
+        }
+
+        public bool IsDropped(BoardPosition position)
+        {
+            return this[position].Status.HasValue;
         }
 
         public void SetState(BoardPosition position, Side side)
@@ -66,6 +79,7 @@ namespace Renju.Core
                 throw new InvalidOperationException(String.Format("{0} hasn't been dropped.", position));
             _expectedNextTurn = point.Status.Value;
             point.ResetToEmpty();
+            DropsCount--;
         }
 
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)
@@ -74,6 +88,7 @@ namespace Renju.Core
             if (result != DropResult.InvalidDrop)
             {
                 _expectedNextTurn = result.ExpectedNextSide;
+                DropsCount++;
                 RaisePeiceDroppedEvent(drop, type);
             }
 

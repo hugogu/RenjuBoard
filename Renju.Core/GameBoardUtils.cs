@@ -32,11 +32,11 @@ namespace Renju.Core
 
         public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
         {
-            if (!board[position].Status.HasValue)
+            if (!board.IsDropped(position))
                 throw new InvalidOperationException("ContinousLine can't start with blank.");
 
             var endPosition = position + direction;
-            while(endPosition.IsOnBoard(board) && board[endPosition].Status.HasValue && board[endPosition].Status.Value == board[position].Status.Value)
+            while (endPosition.IsOnBoard(board) && board.IsDropped(endPosition) && board[endPosition].Status.Value == board[position].Status.Value)
             {
                 endPosition += direction;
             }
@@ -83,7 +83,7 @@ namespace Renju.Core
 
         public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState board)
         {
-            return new VirtualBoardPoint(point, side, board.Points.Count(p => p.Index.HasValue) + 1);
+            return new VirtualBoardPoint(point, side, board.DropsCount + 1);
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)
@@ -92,7 +92,7 @@ namespace Renju.Core
             if (!nextPosition.IsOnBoard(board))
                 return false;
 
-            if (!board[nextPosition].Status.HasValue)
+            if (!board.IsDropped(nextPosition))
                 return true;
 
             if (pickedSide == null)

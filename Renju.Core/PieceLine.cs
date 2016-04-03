@@ -41,7 +41,7 @@ namespace Renju.Core
             get
             {
                 var endPos = EndPosition + Direction;
-                return !endPos.IsOnBoard(_board) || (_board[endPos].Status.HasValue && _board[endPos].Status != _board[EndPosition].Status);
+                return !endPos.IsOnBoard(_board) || (_board.IsDropped(endPos) && _board[endPos].Status != _board[EndPosition].Status);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Renju.Core
             get
             {
                 var beforePos = StartPosition - Direction;
-                return !beforePos.IsOnBoard(_board) || (_board[beforePos].Status.HasValue && _board[beforePos].Status != _board[StartPosition].Status);
+                return !beforePos.IsOnBoard(_board) || (_board.IsDropped(beforePos) && _board[beforePos].Status != _board[StartPosition].Status);
             }
         }
 
@@ -107,7 +107,7 @@ namespace Renju.Core
         public PieceLine TrimEnd()
         {
             var endPosition = EndPosition;
-            while (!_board[endPosition].Status.HasValue)
+            while (!_board.IsDropped(endPosition))
             {
                 endPosition -= Direction;
                 if (Equals(StartPosition, endPosition))

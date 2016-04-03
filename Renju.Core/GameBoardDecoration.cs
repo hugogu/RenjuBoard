@@ -11,7 +11,7 @@ namespace Renju.Core
 
         public GameBoardDecoration(IReadBoardState board, IReadOnlyBoardPoint decorationPoint)
         {
-            if (board[decorationPoint.Position].Status.HasValue)
+            if (board.IsDropped(decorationPoint.Position))
                 throw new InvalidOperationException("Can't decorate with a point already in use.");
 
             if (!decorationPoint.Status.HasValue)
@@ -37,11 +37,16 @@ namespace Renju.Core
             get { return this[new BoardPosition(x, y)]; }
         }
 
+        public int DropsCount
+        {
+            get { return _decoratedBoard.DropsCount + 1; }
+        }
+
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get
             {
-                foreach(var point in _decoratedBoard.Points)
+                foreach (var point in _decoratedBoard.Points)
                 {
                     if (Equals(point.Position, _decorationPoint.Position))
                         yield return _decorationPoint;
@@ -62,6 +67,11 @@ namespace Renju.Core
         }
 
         public event EventHandler<PieceDropEventArgs> PieceDropped;
+
+        public bool IsDropped(BoardPosition position)
+        {
+            return Equals(_decorationPoint.Position, position) || _decoratedBoard.IsDropped(position);
+        }
 
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
         {

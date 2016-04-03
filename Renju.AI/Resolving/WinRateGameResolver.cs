@@ -19,15 +19,15 @@ namespace Renju.AI.Resolving
 
         public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard board, Side side)
         {
-            var rates = (from point in _selector.SelectDrops(board, side).Where((p, i) => i < Width).Select((p, i) => new { Point = p, Priority = i })
-                        let virtualDrop = point.Point.As(side, board)
-                        let pointWithRate = new { Point = point.Point, WinRate = GetWinRateOf(board, virtualDrop, side, 1) }
-                        orderby pointWithRate.WinRate descending, point.Priority
-                        select pointWithRate).ToList();
-
-            rates.ForEach(p => Debug.WriteLine("{0}:{1}", p.Point, p.WinRate));
-
-            return rates.Select(p => p.Point);
+            foreach (var pointWithRate in from point in _selector.SelectDrops(board, side).Where((p, i) => i < Width)
+                                          let virtualDrop = point.As(side, board)
+                                          let winRate = GetWinRateOf(board, virtualDrop, side, 1)
+                                          orderby winRate descending, point.Weight descending
+                                          select new { Point = point, WinRate = winRate })
+            {
+                Debug.WriteLine("{0}:{1}", pointWithRate.Point, pointWithRate.WinRate);
+                yield return pointWithRate.Point;
+            }
         }
 
         private double GetWinRateOf(IReadBoardState board, IReadOnlyBoardPoint point, Side side, int depth)
@@ -41,11 +41,9 @@ namespace Renju.AI.Resolving
             if (depth > Depth)
                 return 0;
 
-            var dropsWinRate = from drop in _selector.SelectDrops(virtualBoard, oppositeSide).Where((p, i) => i < Width)
-                               let virtualDrop = drop.As(oppositeSide, virtualBoard)
-                               select new { Point = virtualDrop, WinRate = GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1) };
-
-            return dropsWinRate.Sum(pair => pair.WinRate);
+            return (from drop in _selector.SelectDrops(virtualBoard, oppositeSide).Where((p, i) => i < Width)
+                    let virtualDrop = drop.As(oppositeSide, virtualBoard)
+                    select GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1)).Sum();
         }
     }
 }
