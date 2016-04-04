@@ -34,7 +34,7 @@ namespace Renju.Core
         public int Weight
         {
             get { return _weight; }
-            set { SetProperty(ref _weight, value, () => Weight); }
+            set { SetProperty(ref _weight, value, () => Weight, true); }
         }
 
         public override string ToString()

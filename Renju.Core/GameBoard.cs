@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using Runju.Infrastructure;
 
@@ -8,9 +9,9 @@ namespace Renju.Core
     public class GameBoard : ModelBase, IGameBoard, IAIPlayground
     {
         private readonly List<BoardPoint> _points;
+        private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
         private readonly IGameRuleEngine _gameRuleEngine;
         private Side? _expectedNextTurn = Side.Black;
-        private int _dropsCount;
 
         public GameBoard(int size, IGameRuleEngine gameRuleEngine)
         {
@@ -25,8 +26,7 @@ namespace Renju.Core
 
         public int DropsCount
         {
-            get { return _dropsCount; }
-            private set { SetProperty(ref _dropsCount, value, () => DropsCount); }
+            get { return _droppedPoints.Count; }
         }
 
         public IGameRuleEngine RuleEngine
@@ -37,6 +37,11 @@ namespace Renju.Core
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _points; }
+        }
+
+        public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
+        {
+            get { return _droppedPoints; }
         }
 
         public Side? ExpectedNextTurn
@@ -77,9 +82,17 @@ namespace Renju.Core
             var point = GetPoint(position);
             if (point.Status == null)
                 throw new InvalidOperationException(String.Format("{0} hasn't been dropped.", position));
-            _expectedNextTurn = point.Status.Value;
-            point.ResetToEmpty();
-            DropsCount--;
+            Contract.Assert(_droppedPoints.Count > 0);
+            var lastPoint = _droppedPoints[_droppedPoints.Count - 1];
+            if (Equals(point, lastPoint))
+            {
+                _expectedNextTurn = point.Status.Value;
+                point.ResetToEmpty();
+                _droppedPoints.RemoveAt(_droppedPoints.Count - 1);
+                RaisePropertyChanged(() => DropsCount);
+            }
+            else
+                throw new InvalidOperationException(String.Format("{0} wasn't the last drop.", position));
         }
 
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)
@@ -88,8 +101,9 @@ namespace Renju.Core
             if (result != DropResult.InvalidDrop)
             {
                 _expectedNextTurn = result.ExpectedNextSide;
-                DropsCount++;
+                _droppedPoints.Add(GetPoint(drop));
                 RaisePeiceDroppedEvent(drop, type);
+                RaisePropertyChanged(() => DropsCount);
             }
 
             return result;

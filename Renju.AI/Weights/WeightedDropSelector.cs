@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Renju.Core;
 
@@ -6,6 +7,15 @@ namespace Renju.AI.Weights
 {
     public class WeightedDropSelector : IDropSelector
     {
+        private Random _random;
+
+        public WeightedDropSelector()
+        {
+            _random = new Random();
+        }
+
+        public bool RandomEqualSelections { get; set; }
+
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side)
         {
             foreach(var weightedPoint in (from point in board.Points
@@ -14,12 +24,17 @@ namespace Renju.AI.Weights
                                           where board.RuleEngine.CanDropOn(board, drop)
                                           let lines = point.GetLinesOnBoard(board, true)
                                           let weightedPoint = new { Point = point, Weight = lines.Sum(l => WeightLine(board, l, side)) }
-                                          orderby weightedPoint.Weight descending
-                                          group weightedPoint by weightedPoint.Weight >= 1000).First())
+                                          orderby weightedPoint.Weight descending, RandomSeed()
+                                          group weightedPoint by weightedPoint.Weight >= 1000).Where(g => g.Any()).First())
             {
                 weightedPoint.Point.Weight = weightedPoint.Weight;
                 yield return weightedPoint.Point;
             }
+        }
+
+        private int RandomSeed()
+        {
+            return RandomEqualSelections ? _random.Next() : 0;
         }
 
         private int WeightLine(IReadBoardState board, PieceLine line, Side nextSide)
@@ -34,7 +49,10 @@ namespace Renju.AI.Weights
             {
                 if (line.IsEndClosed || line.IsStartClosed)
                 {
-                    return 40;
+                    if (line.Length <= 5)
+                        return 40;
+                    else
+                        return 0;
                 }
                 else
                 {

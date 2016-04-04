@@ -13,6 +13,7 @@ namespace RenjuBoard.ViewModels
     {
         private readonly ObservableCollection<string> _logs = new ObservableCollection<string>();
         private readonly ICommand _clearLogCommand;
+        private bool lastMessageHasNewLine = true;
 
         public LogsViewModel()
         {
@@ -33,18 +34,30 @@ namespace RenjuBoard.ViewModels
 
         public override void Write(string message)
         {
-            AddLogItem(message);
+            if (_logs.Count == 0)
+            {
+                WriteLine(message);
+            }
+            else
+            {
+                if (lastMessageHasNewLine)
+                    AddLogItem(() => _logs.Insert(0, message));
+                else
+                    AddLogItem(() => _logs[_logs.Count - 1] += message);
+            }
+            lastMessageHasNewLine = false;
         }
 
         public override void WriteLine(string message)
         {
-            AddLogItem(message);
+            lastMessageHasNewLine = true;
+            AddLogItem(() => _logs.Insert(0, message));
         }
 
-        private void AddLogItem(string message)
+        private void AddLogItem(Action action)
         {
             if (Application.Current != null)
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => _logs.Insert(0, message)), DispatcherPriority.DataBind);
+                Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
         }
     }
 }

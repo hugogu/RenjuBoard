@@ -56,6 +56,11 @@ namespace Renju.Core
             }
         }
 
+        public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
+        {
+            get { return _decoratedBoard.DroppedPoints.Concat(new[] { _decorationPoint }); }
+        }
+
         public IGameRuleEngine RuleEngine
         {
             get { return _decoratedBoard.RuleEngine; }

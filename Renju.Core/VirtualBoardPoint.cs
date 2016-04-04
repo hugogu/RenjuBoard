@@ -1,5 +1,9 @@
-﻿namespace Renju.Core
+﻿using System;
+using System.Diagnostics;
+
+namespace Renju.Core
 {
+    [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
     public class VirtualBoardPoint : IReadOnlyBoardPoint
     {
         private readonly IReadOnlyBoardPoint _originalPoint;
@@ -32,6 +36,11 @@
         {
             get { return _originalPoint.Weight; }
             set { _originalPoint.Weight = value; }
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{1}{0}", Position, Status.Value == Side.Black ? "●" : "○");
         }
     }
 }

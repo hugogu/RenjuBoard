@@ -24,7 +24,7 @@ namespace RenjuBoard
         private readonly ICommand _dropPointCommand;
         private readonly DelegateCommand _undoDropCommand;
         private readonly DelegateCommand _redoDropCommand;
-        private readonly AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector()));
+        private readonly AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector() { RandomEqualSelections = true }));
         private readonly BoardRecorder _boardRecorder;
 
         public MainWindowViewModel()

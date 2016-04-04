@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Runju.Infrastructure
 {
@@ -19,12 +21,27 @@ namespace Runju.Infrastructure
             }
         }
 
-        protected internal virtual void SetProperty<T>(ref T field, T newValue, Expression<Func<T>> propertyGetter)
+        protected internal virtual void RaisePropertyChangedAsync<T>(Expression<Func<T>> expression)
+        {
+            var handlers = PropertyChanged;
+            if (handlers != null && Application.Current != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    handlers(this, new PropertyChangedEventArgs(expression.GetMemberName()));
+                }), DispatcherPriority.Background);
+            }
+        }
+
+        protected internal virtual void SetProperty<T>(ref T field, T newValue, Expression<Func<T>> propertyGetter, bool asyncNotify = false)
         {
             if (!Equals(field, newValue))
             {
                 field = newValue;
-                RaisePropertyChanged(propertyGetter);
+                if (asyncNotify)
+                    RaisePropertyChangedAsync(propertyGetter);
+                else
+                    RaisePropertyChanged(propertyGetter);
             }
         }
     }
