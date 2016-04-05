@@ -1,14 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Renju.Core
 {
     public static class GameBoardUtils
     {
+        public static void InvalidateNearbyPointsOf(this IReadBoardState board, IReadOnlyBoardPoint point)
+        {
+            foreach (var affectedPoint in board.IterateNearbyPointsOf(point))
+            {
+                affectedPoint.RequiresReevaluateWeight = true;
+            }
+        }
+
+        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState board, IReadOnlyBoardPoint point, bool onLineOnly = true)
+        {
+            for (var x = Math.Max(0, point.Position.X - 4); x < Math.Min(board.Size, point.Position.X + 5); x++)
+            {
+                for (var y = Math.Max(0, point.Position.Y - 4); y < Math.Min(board.Size, point.Position.Y + 5); y++)
+                {
+                    if (x != point.Position.X || y != point.Position.Y)
+                    {
+                        var position = new BoardPosition(x, y);
+                        if (!onLineOnly || position.IsOnLineWith(point.Position))
+                            yield return board[position];
+                    }
+                }
+            }
+        }
+
+        public static bool IsOnLineWith(this BoardPosition position, BoardPosition anotherPosition)
+        {
+            var diff = position - anotherPosition;
+
+            return diff.X == 0 || diff.Y == 0 || Math.Abs(diff.X) == Math.Abs(diff.Y);
+        }
+
         public static IEnumerable<PieceLine> GetLinesOnBoard(this IReadOnlyBoardPoint point, IReadBoardState board, bool includeBlank = false)
         {
-            foreach(var direction in GetHalfDirections())
+            foreach (var direction in GetHalfDirections())
             {
                 var line = GetLineOnBoard(point.Position, board, direction, includeBlank);
                 var oppositeLine = GetLineOnBoard(point.Position, board, direction.GetOpposite(), includeBlank);
@@ -49,7 +79,7 @@ namespace Renju.Core
         {
             var firstState = board[position].Status;
             var endPosition = position;
-            while(endPosition.CanMoveAlone(board, direction, ref firstState))
+            while (endPosition.CanMoveAlone(board, direction, ref firstState))
             {
                 endPosition += direction;
             }

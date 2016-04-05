@@ -8,7 +8,9 @@
 
         Side? Status { get; }
 
-        // TODO: Remvoe setter of Weight
+        // TODO: Move Weight and RequiresReevaluateWeight to a more appropriate place as they are more for AI which is not about point
         int Weight { get; set; }
+
+        bool RequiresReevaluateWeight { get; set; }
     }
 }

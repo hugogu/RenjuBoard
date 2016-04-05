@@ -25,6 +25,7 @@ namespace Renju.Core
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
+            board.InvalidateNearbyPointsOf(decorationPoint);
         }
 
         public IReadOnlyBoardPoint this[BoardPosition position]

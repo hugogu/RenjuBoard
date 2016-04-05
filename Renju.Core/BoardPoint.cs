@@ -10,6 +10,7 @@ namespace Renju.Core
         private int? _index;
         private Side? _status = null;
         private int _weight;
+        private bool _requireReevaluateWeight = true;
 
         public BoardPoint(BoardPosition position)
         {
@@ -35,6 +36,12 @@ namespace Renju.Core
         {
             get { return _weight; }
             set { SetProperty(ref _weight, value, () => Weight, true); }
+        }
+
+        public bool RequiresReevaluateWeight
+        {
+            get { return _requireReevaluateWeight; }
+            set { SetProperty(ref _requireReevaluateWeight, value, () => RequiresReevaluateWeight); }
         }
 
         public override string ToString()

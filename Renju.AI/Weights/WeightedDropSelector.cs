@@ -19,7 +19,7 @@ namespace Renju.AI.Weights
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side)
         {
             foreach(var weightedPoint in (from point in board.Points
-                                          where point.Status == null
+                                          where point.Status == null && point.RequiresReevaluateWeight
                                           let drop = new PieceDrop(point.Position, side)
                                           where board.RuleEngine.CanDropOn(board, drop)
                                           let lines = point.GetLinesOnBoard(board, true)
@@ -27,6 +27,7 @@ namespace Renju.AI.Weights
                                           orderby weightedPoint.Weight descending, RandomSeed()
                                           group weightedPoint by weightedPoint.Weight >= 1000).Where(g => g.Any()).First())
             {
+                weightedPoint.Point.RequiresReevaluateWeight = false;
                 weightedPoint.Point.Weight = weightedPoint.Weight;
                 yield return weightedPoint.Point;
             }

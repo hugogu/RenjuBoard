@@ -38,6 +38,12 @@ namespace Renju.Core
             set { _originalPoint.Weight = value; }
         }
 
+        public bool RequiresReevaluateWeight
+        {
+            get { return false; }
+            set { /* Noop */ }
+        }
+
         public override string ToString()
         {
             return String.Format("{1}{0}", Position, Status.Value == Side.Black ? "●" : "○");

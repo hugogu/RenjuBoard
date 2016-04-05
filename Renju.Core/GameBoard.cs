@@ -100,8 +100,10 @@ namespace Renju.Core
             var result = _gameRuleEngine.ProcessDrop(this, drop);
             if (result != DropResult.InvalidDrop)
             {
+                var point = GetPoint(drop);
                 _expectedNextTurn = result.ExpectedNextSide;
-                _droppedPoints.Add(GetPoint(drop));
+                _droppedPoints.Add(point);
+                this.InvalidateNearbyPointsOf(point);
                 RaisePeiceDroppedEvent(drop, type);
                 RaisePropertyChanged(() => DropsCount);
             }
