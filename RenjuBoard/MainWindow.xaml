@@ -33,6 +33,8 @@
                     Command="{Binding SaveCommand}" />
             <Button Content="Load..."
                     Command="{Binding LoadCommand}" />
+            <Separator Margin="0,5" />
+            <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
         </StackPanel>
         <control:GameBoardPanel Grid.Column="1"
                                 ItemsSource="{Binding Points}"

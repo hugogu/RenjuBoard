@@ -52,7 +52,6 @@
     <Compile Include="GameBoard.cs" />
     <Compile Include="DropResult.cs" />
     <Compile Include="GameBoardDecoration.cs" />
-    <Compile Include="IAIPlayground.cs" />
     <Compile Include="IReadBoardState.cs" />
     <Compile Include="IGameBoard.cs" />
     <Compile Include="IGamePlayer.cs" />

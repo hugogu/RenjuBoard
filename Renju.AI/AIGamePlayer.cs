@@ -7,8 +7,9 @@ namespace Renju.AI
 {
     public class AIGamePlayer : IGamePlayer
     {
+        private Side _side = Side.White;
         private IGameBoard _board;
-        private IDropResolver _dropSelector;
+        private readonly IDropResolver _dropSelector;
 
         public AIGamePlayer(IDropResolver dropSelector)
         {
@@ -26,10 +27,27 @@ namespace Renju.AI
                     throw new ArgumentNullException("value");
                 _board = value;
                 _board.PieceDropped += OnBoardPieceDropped;
+                OnPlaygroundChanged();
             }
         }
 
-        public Side Side { get; set; }
+        public Side Side
+        {
+            get { return _side; }
+            set
+            {
+                _side = value;
+                OnPlaygroundChanged();
+            }
+        }
+
+        protected virtual void OnPlaygroundChanged()
+        {
+            if (Side == Side.Black && _board.DropsCount == 0)
+            {
+                _board.Drop(new BoardPosition(7, 7), OperatorType.AI);
+            }
+        }
 
         private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
         {

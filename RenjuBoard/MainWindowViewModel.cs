@@ -79,6 +79,12 @@ namespace RenjuBoard
             get { return _gameBoard.Size; }
         }
 
+        public bool AIFirst
+        {
+            get { return _aiPlayer.Side == Side.Black; }
+            set { _aiPlayer.Side = value ? Side.Black : Side.White; }
+        }
+
         internal void ClearGameBoard()
         {
             while(_boardRecorder.CanUndo)

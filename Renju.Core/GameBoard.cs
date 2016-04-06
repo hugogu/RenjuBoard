@@ -6,7 +6,7 @@ using Runju.Infrastructure;
 
 namespace Renju.Core
 {
-    public class GameBoard : ModelBase, IGameBoard, IAIPlayground
+    public class GameBoard : ModelBase, IGameBoard
     {
         private readonly List<BoardPoint> _points;
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
