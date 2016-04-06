@@ -48,7 +48,7 @@ namespace Renju.AI.Weights
             }
             else if (line.DroppedCount == 3)
             {
-                if (line.IsEndClosed || line.IsStartClosed)
+                if (line.IsClosed)
                 {
                     if (line.Length <= 5)
                         return 40;
@@ -68,15 +68,15 @@ namespace Renju.AI.Weights
             {
                 if (line.Length == 3)
                 {
-                    return line.IsStartClosed || line.IsEndClosed ? 5 : 55;
+                    return line.IsClosed ? 5 : 55;
                 }
                 if (line.Length == 4)
                 {
-                    return line.IsEndClosed || line.IsStartClosed ? 4 : 50;
+                    return line.IsClosed ? 4 : 50;
                 }
                 if (line.Length == 5)
                 {
-                    return line.IsStartClosed || line.IsEndClosed ? 1 : 10;
+                    return line.IsClosed ? 1 : 10;
                 }
             }
             else if (line.DroppedCount == 1)

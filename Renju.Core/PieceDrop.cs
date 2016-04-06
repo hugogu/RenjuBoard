@@ -21,5 +21,10 @@ namespace Renju.Core
         public int X { get; private set; }
         public int Y { get; private set; }
         public Side Side { get; private set; }
+
+        public override string ToString()
+        {
+            return String.Format("({0},{1}){2}", X, Y, Side == Side.Black ? "●" : "○");
+        }
     }
 }

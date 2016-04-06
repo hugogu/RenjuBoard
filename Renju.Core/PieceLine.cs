@@ -36,6 +36,8 @@ namespace Renju.Core
 
         public Side Side { get; private set; }
 
+        public bool IsClosed { get { return IsEndClosed || IsStartClosed; } }
+
         public bool IsEndClosed
         {
             get

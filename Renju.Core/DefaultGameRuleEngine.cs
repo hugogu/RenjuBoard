@@ -36,7 +36,7 @@ namespace Renju.Core
 
             var notDroppingRule = GetRuleStopDropOn(board, drop);
             if (notDroppingRule != null)
-                throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule {1}", drop, notDroppingRule.Name));
+                throw new InvalidOperationException(String.Format("Can't drop on {0} according to rule \"{1}\"", drop, notDroppingRule.Name));
 
             board.SetState(point.Position, drop.Side);
             board.SetIndex(point.Position, board.Points.Count(p => p.Index.HasValue) + 1);

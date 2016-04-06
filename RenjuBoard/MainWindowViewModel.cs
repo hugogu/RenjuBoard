@@ -31,12 +31,13 @@ namespace RenjuBoard
         {
             _gameBoard = new GameBoard(15, new DefaultGameRuleEngine(new IGameRule[]
             {
-                new FiveWinRule()
+                new FiveWinRule(),
+                new BlackForbiddenRules()
             }));
             _boardRecorder = new BoardRecorder(_gameBoard);
             _aiPlayer.Side = Side.White;
             _aiPlayer.Board = _gameBoard;
-            _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(point => _gameBoard.Drop(point.Position, OperatorType.Human));
+            _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
             _undoDropCommand = new DelegateCommand(() => _boardRecorder.UndoDrop(), () => _boardRecorder.CanUndo);
             _redoDropCommand = new DelegateCommand(() => _boardRecorder.RedoDrop(), () => _boardRecorder.CanRedo);
             _saveCommand = new DelegateCommand(OnSaveCommand);
@@ -89,6 +90,18 @@ namespace RenjuBoard
         {
             while(_boardRecorder.CanUndo)
                 _boardRecorder.UndoDrop();
+        }
+
+        private void OnDroppingPiece(IReadOnlyBoardPoint point)
+        {
+            try
+            {
+                _gameBoard.Drop(point.Position, OperatorType.Human);
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Renju Error", MessageBoxButton.OK);
+            }
         }
 
         private async void OnLoadCommand()
