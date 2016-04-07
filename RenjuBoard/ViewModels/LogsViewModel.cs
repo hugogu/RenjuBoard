@@ -1,30 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Prism.Commands;
+using Runju.Infrastructure;
 
 namespace RenjuBoard.ViewModels
 {
-    public class LogsViewModel : TraceListener
+    public class LogsViewModel : ModelBase
     {
-        private readonly ObservableCollection<string> _logs = new ObservableCollection<string>();
+        private string _logText;
+        private string _searchKey;
         private readonly ICommand _clearLogCommand;
-        private bool lastMessageHasNewLine = true;
+        private readonly ICommand _searchCommand;
 
         public LogsViewModel()
         {
-            Trace.Listeners.Add(this);
-            _clearLogCommand = new DelegateCommand(() => _logs.Clear());
+            Trace.Listeners.Add(new LogsViewModelAdeptor(this));
             Trace.WriteLine(typeof(LogsViewModel).Name + " initialized.");
+            _clearLogCommand = new DelegateCommand(() => LogText = String.Empty);
+            _searchCommand = new DelegateCommand<TextBox>(OnSearchCommand);
         }
 
-        public IEnumerable<string> Logs
+        private class LogsViewModelAdeptor : TraceListener
         {
-            get { return _logs; }
+            private readonly LogsViewModel _logVM;
+
+            public LogsViewModelAdeptor(LogsViewModel viewModel)
+            {
+                _logVM = viewModel;
+            }
+
+            public override void Write(string message)
+            {
+                _logVM.PrependMessage(message);
+            }
+
+            public override void WriteLine(string message)
+            {
+                _logVM.PrependMessage(message + Environment.NewLine);
+            }
+        }
+
+        public string LogText
+        {
+            get { return _logText; }
+            set { SetProperty(ref _logText, value, () => LogText, true); }
+        }
+
+        public string SearchKeyword
+        {
+            get { return _searchKey; }
+            set { SetProperty(ref _searchKey, value, () => SearchKeyword); }
         }
 
         public ICommand ClearLogsCommand
@@ -32,29 +61,38 @@ namespace RenjuBoard.ViewModels
             get { return _clearLogCommand; }
         }
 
-        public override void Write(string message)
+        public ICommand SearchCommand
         {
-            if (_logs.Count == 0)
+            get { return _searchCommand; }
+        }
+
+        private void OnSearchCommand(TextBox logBox)
+        {
+            if (String.IsNullOrEmpty(SearchKeyword))
+                return;
+
+            var currentIndex = logBox.CaretIndex;
+            if (logBox.IsSelectionActive)
+                currentIndex = logBox.SelectionStart + logBox.SelectionLength;
+
+            var index = _logText.IndexOf(SearchKeyword, currentIndex);
+            if (index >= 0)
             {
-                WriteLine(message);
+                logBox.Select(index, SearchKeyword.Length);
+                logBox.Focus();
             }
             else
             {
-                if (lastMessageHasNewLine)
-                    AddLogItem(() => _logs.Insert(0, message));
-                else
-                    AddLogItem(() => _logs[_logs.Count - 1] += message);
+                MessageBox.Show(String.Format("Can't find {0} after index {1}", SearchKeyword, currentIndex), "Renju Log Search");
             }
-            lastMessageHasNewLine = false;
         }
 
-        public override void WriteLine(string message)
+        private void PrependMessage(string message)
         {
-            lastMessageHasNewLine = true;
-            AddLogItem(() => _logs.Insert(0, message));
+            AddLogItemAsync(() => LogText = message + LogText);
         }
 
-        private void AddLogItem(Action action)
+        private void AddLogItemAsync(Action action)
         {
             if (Application.Current != null)
                 Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
