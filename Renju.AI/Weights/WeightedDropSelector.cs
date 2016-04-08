@@ -23,7 +23,7 @@ namespace Renju.AI.Weights
                                           let drop = new PieceDrop(point.Position, side)
                                           where board.RuleEngine.CanDropOn(board, drop)
                                           let lines = point.GetLinesOnBoard(board, true)
-                                          let weightedPoint = new { Point = point, Weight = lines.Sum(l => WeightLine(board, l, side)) }
+                                          let weightedPoint = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
                                           orderby weightedPoint.Weight descending, RandomSeed()
                                           group weightedPoint by weightedPoint.Weight >= 1000).Where(g => g.Any()).First())
             {
@@ -36,54 +36,6 @@ namespace Renju.AI.Weights
         private int RandomSeed()
         {
             return RandomEqualSelections ? _random.Next() : 0;
-        }
-
-        private int WeightLine(IReadBoardState board, PieceLine line, Side nextSide)
-        {
-            if (line.DroppedCount >= 4)
-            {
-                if (line.Length == 5)
-                    return 1000;
-                return 0;
-            }
-            else if (line.DroppedCount == 3)
-            {
-                if (line.IsClosed)
-                {
-                    if (line.Length <= 5)
-                        return 40;
-                    else
-                        return 0;
-                }
-                else
-                {
-                    if (line.Length == 4)
-                        return 249;
-                    if (line.Length == 5)
-                        return 200;
-                    return 0;
-                }
-            }
-            else if (line.DroppedCount == 2)
-            {
-                if (line.Length == 3)
-                {
-                    return line.IsClosed ? 5 : 55;
-                }
-                if (line.Length == 4)
-                {
-                    return line.IsClosed ? 4 : 50;
-                }
-                if (line.Length == 5)
-                {
-                    return line.IsClosed ? 1 : 10;
-                }
-            }
-            else if (line.DroppedCount == 1)
-            {
-                return 6 - line.Length;
-            }
-            return 0;
         }
     }
 }

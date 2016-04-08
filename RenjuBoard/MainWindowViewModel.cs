@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -22,13 +23,18 @@ namespace RenjuBoard
         private readonly ICommand _saveCommand;
         private readonly ICommand _loadCommand;
         private readonly ICommand _dropPointCommand;
+        private readonly ICommand _previewLinesCommand;
+        private readonly ICommand _clearPreviewLinesCommand;
         private readonly DelegateCommand _undoDropCommand;
         private readonly DelegateCommand _redoDropCommand;
-        private readonly AIGamePlayer _aiPlayer = new AIGamePlayer(new WinRateGameResolver(new WeightedDropSelector() { RandomEqualSelections = true }));
+        private readonly IDropSelector _dropSelector = new WeightedDropSelector { RandomEqualSelections = true };
+        private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
+        private readonly AIGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
 
         public MainWindowViewModel()
         {
+            _aiPlayer = new AIGamePlayer(new WinRateGameResolver(_dropSelector));
             _gameBoard = new GameBoard(15, new DefaultGameRuleEngine(new IGameRule[]
             {
                 new FiveWinRule(),
@@ -38,6 +44,8 @@ namespace RenjuBoard
             _aiPlayer.Side = Side.White;
             _aiPlayer.Board = _gameBoard;
             _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
+            _previewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnPreviewPointCommand, p => ShowLines);
+            _clearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
             _undoDropCommand = new DelegateCommand(() => _boardRecorder.UndoDrop(), () => _boardRecorder.CanUndo);
             _redoDropCommand = new DelegateCommand(() => _boardRecorder.RedoDrop(), () => _boardRecorder.CanRedo);
             _saveCommand = new DelegateCommand(OnSaveCommand);
@@ -48,6 +56,16 @@ namespace RenjuBoard
         public ICommand DropPointCommand
         {
             get { return _dropPointCommand; }
+        }
+
+        public ICommand PreviewLinesCommand
+        {
+            get { return _previewLinesCommand; }
+        }
+
+        public ICommand ClearPreviewLinesCommand
+        {
+            get { return _clearPreviewLinesCommand; }
         }
 
         public ICommand UndoCommand
@@ -73,6 +91,13 @@ namespace RenjuBoard
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _gameBoard.Points; }
+        }
+
+        public bool ShowLines { get; set; } = true;
+
+        public IEnumerable<PieceLine> PreviewLines
+        {
+            get { return _previewLines; }
         }
 
         public int BoardSize
@@ -102,6 +127,12 @@ namespace RenjuBoard
             {
                 MessageBox.Show(ex.Message, "Renju Error", MessageBoxButton.OK);
             }
+        }
+
+        private void OnPreviewPointCommand(IReadOnlyBoardPoint point)
+        {
+            _previewLines.Clear();
+            _previewLines.AddRange(point.GetLinesOnBoard(_gameBoard, true));
         }
 
         private async void OnLoadCommand()
@@ -169,6 +200,9 @@ namespace RenjuBoard
 
         private void OnBoardRecorderPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (Application.Current == null)
+                return;
+
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 _undoDropCommand.RaiseCanExecuteChanged();

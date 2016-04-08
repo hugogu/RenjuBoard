@@ -116,6 +116,54 @@ namespace Renju.Core
             return new VirtualBoardPoint(point, side, board.DropsCount + 1);
         }
 
+        public static int GetWeightOnBoard(this PieceLine line, IReadBoardState board)
+        {
+            if (line.DroppedCount >= 4)
+            {
+                if (line.Length == 5)
+                    return 1000;
+                return 0;
+            }
+            else if (line.DroppedCount == 3)
+            {
+                if (line.IsClosed)
+                {
+                    if (line.Length <= 5)
+                        return 40;
+                    else
+                        return 0;
+                }
+                else
+                {
+                    if (line.Length == 4)
+                        return 249;
+                    if (line.Length == 5)
+                        return 200;
+                    return 0;
+                }
+            }
+            else if (line.DroppedCount == 2)
+            {
+                if (line.Length == 3)
+                {
+                    return line.IsClosed ? 5 : 55;
+                }
+                if (line.Length == 4)
+                {
+                    return line.IsClosed ? 4 : 50;
+                }
+                if (line.Length == 5)
+                {
+                    return line.IsClosed ? 1 : 10;
+                }
+            }
+            else if (line.DroppedCount == 1)
+            {
+                return 6 - line.Length;
+            }
+            return 0;
+        }
+
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)
         {
             var nextPosition = position + direction;

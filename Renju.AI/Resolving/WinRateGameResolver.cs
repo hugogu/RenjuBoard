@@ -50,9 +50,10 @@ namespace Renju.AI.Resolving
                 return point.Status.Value == side ? 1.0 : -1.0;
             }
 
-            var winRate = (from drop in SelectDropsWithinWidth(virtualBoard, oppositeSide)
+            var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
+            var winRate = (from drop in drops
                            let virtualDrop = drop.As(oppositeSide, virtualBoard)
-                           select GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1)).Sum();
+                           select GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1)).Sum() / drops.Count;
 
             if (depth == 1)
                 Debug.WriteLine("{0}:{1},{2} Iteration: {3}", point, winRate, point.Weight, iteratedBoardCount);

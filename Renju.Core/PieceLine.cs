@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 
 namespace Renju.Core
 {
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {
-        private IReadBoardState _board;
+        private readonly IReadBoardState _board;
 
         public PieceLine(IReadBoardState board, BoardPosition start, BoardPosition end)
         {
@@ -32,9 +33,18 @@ namespace Renju.Core
 
         public BoardPosition EndPosition { get; private set; }
 
+        public Point MiddlePosition
+        {
+            get { return new Point(((double)StartPosition.X + EndPosition.X) / 2, ((double)StartPosition.Y + EndPosition.Y) / 2); }
+        }
+
         public BoardPosition Direction { get; private set; }
 
         public Side Side { get; private set; }
+
+        public IReadBoardState Board { get { return _board; } }
+
+        public int Weight { get { return this.GetWeightOnBoard(_board); } }
 
         public bool IsClosed { get { return IsEndClosed || IsStartClosed; } }
 

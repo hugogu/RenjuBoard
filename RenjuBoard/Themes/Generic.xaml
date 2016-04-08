@@ -46,6 +46,13 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
                             <ItemsPresenter />
+                            <ItemsControl ItemsSource="{Binding Lines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
                         </Grid>
                     </Border>
                 </ControlTemplate>

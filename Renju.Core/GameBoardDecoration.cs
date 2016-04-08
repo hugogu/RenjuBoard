@@ -6,8 +6,8 @@ namespace Renju.Core
 {
     public class GameBoardDecoration : IReadBoardState
     {
-        private IReadBoardState _decoratedBoard;
-        private IReadOnlyBoardPoint _decorationPoint;
+        private readonly IReadBoardState _decoratedBoard;
+        private readonly IReadOnlyBoardPoint _decorationPoint;
 
         public GameBoardDecoration(IReadBoardState board, IReadOnlyBoardPoint decorationPoint)
         {
@@ -25,7 +25,7 @@ namespace Renju.Core
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
-            board.InvalidateNearbyPointsOf(decorationPoint);
+            this.InvalidateNearbyPointsOf(decorationPoint);
         }
 
         public IReadOnlyBoardPoint this[BoardPosition position]

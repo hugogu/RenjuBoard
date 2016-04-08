@@ -3,7 +3,37 @@
                     xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
                     xmlns:interaction="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:control="clr-namespace:RenjuBoard.Controls"
+                    xmlns:converter="clr-namespace:RenjuBoard.Converters"
                     xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core">
+    <converter:WithOffsetConverter x:Key="WithOffsetConverter" />
+    <converter:NumberToMarginConverter x:Key="NumberToMarginConverter" />
+
+    <DataTemplate DataType="{x:Type renju:PieceLine}">
+        <Viewbox IsHitTestVisible="False"
+                 UseLayoutRounding="False"
+                 TextOptions.TextFormattingMode="Ideal">
+            <Grid>
+                <Line X1="{Binding StartPosition.X, Converter={StaticResource WithOffsetConverter}, ConverterParameter=0.5}"
+                      Y1="{Binding StartPosition.Y, Converter={StaticResource WithOffsetConverter}, ConverterParameter=0.5}"
+                      X2="{Binding EndPosition.X, Converter={StaticResource WithOffsetConverter}, ConverterParameter=0.5}"
+                      Y2="{Binding EndPosition.Y, Converter={StaticResource WithOffsetConverter}, ConverterParameter=0.5}"
+                      Width="{Binding Board.Size}"
+                      Height="{Binding Board.Size}"
+                      StrokeThickness="0.1"
+                      Stroke="#AAFF0000" />
+                <TextBlock FontSize="0.5pt"
+                           Foreground="#AA0000FF"
+                           Text="{Binding Weight}">
+                    <TextBlock.Margin>
+                        <MultiBinding Converter="{StaticResource NumberToMarginConverter}">
+                            <Binding Path="MiddlePosition.X" Converter="{StaticResource WithOffsetConverter}" ConverterParameter="0.2" />
+                            <Binding Path="MiddlePosition.Y" Converter="{StaticResource WithOffsetConverter}" ConverterParameter="0.2" />
+                        </MultiBinding>
+                    </TextBlock.Margin>
+                </TextBlock>
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type renju:BoardPoint}">
         <control:BoardPiece x:Name="drop"
                             Background="Transparent"
@@ -11,7 +41,11 @@
                             Weight="{Binding Weight}">
             <interaction:Interaction.Triggers>
                 <interaction:EventTrigger EventName="MouseUp">
-                    <interaction:InvokeCommandAction Command="{Binding DataContext.DropPointCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                    <interaction:InvokeCommandAction Command="{Binding DataContext.DropPointCommand, RelativeSource={RelativeSource AncestorType={x:Type control:GameBoardPanel}}}"
+                                                     CommandParameter="{Binding}"/>
+                </interaction:EventTrigger>
+                <interaction:EventTrigger EventName="MouseEnter">
+                    <interaction:InvokeCommandAction Command="{Binding DataContext.PreviewLinesCommand, RelativeSource={RelativeSource AncestorType={x:Type control:GameBoardPanel}}}"
                                                      CommandParameter="{Binding}"/>
                 </interaction:EventTrigger>
             </interaction:Interaction.Triggers>

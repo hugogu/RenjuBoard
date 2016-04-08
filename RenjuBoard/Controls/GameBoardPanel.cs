@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Renju.Core;
 
 namespace RenjuBoard.Controls
 {
@@ -21,6 +22,15 @@ namespace RenjuBoard.Controls
         public static readonly DependencyProperty SizeProperty =
             DependencyProperty.Register("Size", typeof(int), typeof(GameBoardPanel),
                 new FrameworkPropertyMetadata(15, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        public IEnumerable<PieceLine> Lines
+        {
+            get { return (IEnumerable<PieceLine>)GetValue(LinesProperty); }
+            set { SetValue(LinesProperty, value); }
+        }
+
+        public static readonly DependencyProperty LinesProperty =
+            DependencyProperty.Register("Lines", typeof(IEnumerable<PieceLine>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsArrange));
 
         public IEnumerable<string> XLables
         {

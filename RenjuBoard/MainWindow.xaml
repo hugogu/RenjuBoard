@@ -1,6 +1,7 @@
 ﻿<Window x:Class="RenjuBoard.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:interaction="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:control="clr-namespace:RenjuBoard.Controls"
         xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
         UseLayoutRounding="True"
@@ -12,6 +13,9 @@
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0,5,0,0" />
             <Setter Property="Padding" Value="5,1" />
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="0,5,0,0" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -35,10 +39,18 @@
                     Command="{Binding LoadCommand}" />
             <Separator Margin="0,5" />
             <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
+            <CheckBox Content="Show Lines" IsChecked="{Binding ShowLines}" />
         </StackPanel>
         <control:GameBoardPanel Grid.Column="1"
                                 ItemsSource="{Binding Points}"
-                                Size="{Binding BoardSize}" />
+                                Lines="{Binding PreviewLines}"
+                                Size="{Binding BoardSize}">
+            <interaction:Interaction.Triggers>
+                <interaction:EventTrigger EventName="MouseLeave">
+                    <interaction:InvokeCommandAction Command="{Binding ClearPreviewLinesCommand}" />
+                </interaction:EventTrigger>
+            </interaction:Interaction.Triggers>
+        </control:GameBoardPanel>
         <GridSplitter Grid.Column="2"
                       Width="5"
                       HorizontalAlignment="Stretch" />
