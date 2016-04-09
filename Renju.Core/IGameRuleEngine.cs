@@ -6,10 +6,10 @@ namespace Renju.Core
     {
         IEnumerable<IGameRule> ApplicableRules { get; }
 
-        DropResult ProcessDrop(IGameBoard board, PieceDrop drop);
+        DropResult ProcessDrop(IGameBoard<IReadOnlyBoardPoint> board, PieceDrop drop);
 
-        bool CanDropOn(IReadBoardState board, PieceDrop drop);
+        bool CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);
 
-        Side? IsWin(IReadBoardState board, PieceDrop drop);
+        Side? IsWin(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);
     }
 }

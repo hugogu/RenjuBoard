@@ -4,6 +4,6 @@
     {
         Side Side { get; set; }
 
-        IGameBoard Board { get; set; }
+        IGameBoard<IReadOnlyBoardPoint> Board { get; set; }
     }
 }

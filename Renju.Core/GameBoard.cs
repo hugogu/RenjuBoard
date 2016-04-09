@@ -1,45 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using Runju.Infrastructure;
 
 namespace Renju.Core
 {
-    public class GameBoard : ModelBase, IGameBoard
+    public class GameBoard : VirtualGameBoard<BoardPoint>, IGameBoard<BoardPoint>
     {
-        private readonly List<BoardPoint> _points;
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
-        private readonly IGameRuleEngine _gameRuleEngine;
         private Side? _expectedNextTurn = Side.Black;
 
         public GameBoard(int size, IGameRuleEngine gameRuleEngine)
+            : base(size, i => CreateBoardPoint(PositionOfIndex(i, size)))
         {
-            Size = size;
-            _gameRuleEngine = gameRuleEngine;
-            _points = new List<BoardPoint>(Enumerable.Range(0, size * size).Select(i => CreateBoardPoint(PositionOfIndex(i))));
+            RuleEngine = gameRuleEngine;
         }
 
-        public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
-
-        public int Size { get; private set; }
-
-        public int DropsCount
+        public override int DropsCount
         {
             get { return _droppedPoints.Count; }
         }
 
-        public IGameRuleEngine RuleEngine
-        {
-            get { return _gameRuleEngine; }
-        }
-
-        public IEnumerable<IReadOnlyBoardPoint> Points
-        {
-            get { return _points; }
-        }
-
-        public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
+        public override IEnumerable<BoardPoint> DroppedPoints
         {
             get { return _droppedPoints; }
         }
@@ -47,16 +28,6 @@ namespace Renju.Core
         public Side? ExpectedNextTurn
         {
             get { return _expectedNextTurn; }
-        }
-
-        public IReadOnlyBoardPoint this[BoardPosition position]
-        {
-            get { return GetPoint(position); }
-        }
-
-        public bool IsDropped(BoardPosition position)
-        {
-            return this[position].Status.HasValue;
         }
 
         public void SetState(BoardPosition position, Side side)
@@ -97,7 +68,7 @@ namespace Renju.Core
 
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)
         {
-            var result = _gameRuleEngine.ProcessDrop(this, drop);
+            var result = RuleEngine.ProcessDrop(this, drop);
             if (result != DropResult.InvalidDrop)
             {
                 var point = GetPoint(drop);
@@ -111,28 +82,14 @@ namespace Renju.Core
             return result;
         }
 
-        protected virtual BoardPoint CreateBoardPoint(BoardPosition position)
+        private static BoardPoint CreateBoardPoint(BoardPosition position)
         {
             return new BoardPoint(position);
         }
 
-        protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
+        private static BoardPosition PositionOfIndex(int index, int size)
         {
-            var temp = PieceDropped;
-            if (temp != null)
-            {
-                temp(this, new PieceDropEventArgs(drop, operatorType));
-            }
-        }
-
-        private BoardPoint GetPoint(BoardPosition position)
-        {
-            return _points[position.Y * Size + position.X];
-        }
-
-        private BoardPosition PositionOfIndex(int index)
-        {
-            return new BoardPosition(index % Size, index / Size);
+            return new BoardPosition(index % size, index / size);
         }
     }
 }

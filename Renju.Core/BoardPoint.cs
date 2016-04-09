@@ -35,7 +35,7 @@ namespace Renju.Core
         public int Weight
         {
             get { return _weight; }
-            set { SetProperty(ref _weight, value, () => Weight, true); }
+            set { SetProperty(ref _weight, value, () => Weight); }
         }
 
         public bool RequiresReevaluateWeight

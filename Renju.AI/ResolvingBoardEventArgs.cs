@@ -5,11 +5,11 @@ namespace Renju.AI
 {
     public class ResolvingBoardEventArgs : EventArgs
     {
-        public ResolvingBoardEventArgs(IReadBoardState board)
+        public ResolvingBoardEventArgs(IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Board = board;
         }
 
-        public IReadBoardState Board { get; private set; }
+        public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
     }
 }

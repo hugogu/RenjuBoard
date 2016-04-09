@@ -9,9 +9,9 @@ namespace Renju.Core
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {
-        private readonly IReadBoardState _board;
+        private readonly IReadBoardState<IReadOnlyBoardPoint> _board;
 
-        public PieceLine(IReadBoardState board, BoardPosition start, BoardPosition end)
+        public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
         {
             if (start.X != end.X &&
                 start.Y != end.Y &&
@@ -42,7 +42,7 @@ namespace Renju.Core
 
         public Side Side { get; private set; }
 
-        public IReadBoardState Board { get { return _board; } }
+        public IReadBoardState<IReadOnlyBoardPoint> Board { get { return _board; } }
 
         public int Weight { get { return this.GetWeightOnBoard(_board); } }
 

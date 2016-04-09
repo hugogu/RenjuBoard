@@ -12,6 +12,6 @@ namespace Renju.AI
 
         event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
-        IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard board, Side side);
+        IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side);
     }
 }

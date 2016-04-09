@@ -9,7 +9,7 @@ namespace Renju.Core.Rules
             get { return "Black Forbidden"; }
         }
 
-        public bool? CanDropOn(IReadBoardState board, PieceDrop drop)
+        public bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             if (drop.Side == Side.White)
                 return true;
@@ -30,12 +30,12 @@ namespace Renju.Core.Rules
             return true;
         }
 
-        public Side? NextSide(IReadBoardState board)
+        public Side? NextSide(IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return null;
         }
 
-        public bool? Win(IReadBoardState board, PieceDrop drop)
+        public bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             return null;
         }

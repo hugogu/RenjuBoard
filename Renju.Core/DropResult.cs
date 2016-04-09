@@ -2,11 +2,11 @@
 {
     public class DropResult
     {
-        public static DropResult InvalidDrop { get; private set; } = new DropResult() { HasAnySideWon = false };
+        public static DropResult InvalidDrop { get; private set; } = new DropResult { HasAnySideWon = false };
 
         public static DropResult Win(Side side)
         {
-            return new DropResult()
+            return new DropResult
             {
                 HasAnySideWon = true,
                 WonSide = side,
@@ -16,7 +16,7 @@
 
         public static DropResult NoWin(Side nextSide)
         {
-            return new DropResult()
+            return new DropResult
             {
                 HasAnySideWon = false,
                 ExpectedNextSide = nextSide,

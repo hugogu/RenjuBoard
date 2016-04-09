@@ -7,11 +7,11 @@ namespace Renju.Core
 {
     public class BoardRecorder : ModelBase
     {
-        private readonly IGameBoard _board;
+        private readonly IGameBoard<IReadOnlyBoardPoint> _board;
         private readonly List<PieceDrop> _undoDrops = new List<PieceDrop>();
         private readonly List<PieceDrop> _redoDrops = new List<PieceDrop>();
 
-        public BoardRecorder(IGameBoard board)
+        public BoardRecorder(IGameBoard<IReadOnlyBoardPoint> board)
         {
             _board = board;
             _board.PieceDropped += OnBoardPieceDropped;

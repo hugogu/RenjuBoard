@@ -4,10 +4,10 @@
     {
         string Name { get; }
 
-        bool? CanDropOn(IReadBoardState board, PieceDrop drop);
+        bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);
 
-        bool? Win(IReadBoardState board, PieceDrop drop);
+        bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);
 
-        Side? NextSide(IReadBoardState board);
+        Side? NextSide(IReadBoardState<IReadOnlyBoardPoint> board);
     }
 }

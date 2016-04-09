@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace Renju.Core
 {
-    public interface IReadBoardState
+    public interface IReadBoardState<out TPoint>
+        where TPoint : IReadOnlyBoardPoint
     {
-        IReadOnlyBoardPoint this[BoardPosition position] { get; }
+        TPoint this[BoardPosition position] { get; }
 
         event EventHandler<PieceDropEventArgs> PieceDropped;
 
@@ -15,9 +16,9 @@ namespace Renju.Core
 
         int DropsCount { get; }
 
-        IEnumerable<IReadOnlyBoardPoint> DroppedPoints { get; }
+        IEnumerable<TPoint> DroppedPoints { get; }
 
-        IEnumerable<IReadOnlyBoardPoint> Points { get; }
+        IEnumerable<TPoint> Points { get; }
 
         bool IsDropped(BoardPosition position);
     }

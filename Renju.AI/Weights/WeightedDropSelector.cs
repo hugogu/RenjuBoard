@@ -16,7 +16,7 @@ namespace Renju.AI.Weights
 
         public bool RandomEqualSelections { get; set; }
 
-        public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState board, Side side)
+        public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
             foreach(var weightedPoint in (from point in board.Points
                                           where point.Status == null && point.RequiresReevaluateWeight

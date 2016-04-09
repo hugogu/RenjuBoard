@@ -5,7 +5,7 @@ namespace Renju.Core
 {
     public static class GameBoardUtils
     {
-        public static void InvalidateNearbyPointsOf(this IReadBoardState board, IReadOnlyBoardPoint point)
+        public static void InvalidateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
             foreach (var affectedPoint in board.IterateNearbyPointsOf(point))
             {
@@ -13,7 +13,7 @@ namespace Renju.Core
             }
         }
 
-        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState board, IReadOnlyBoardPoint point, bool onLineOnly = true)
+        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, bool onLineOnly = true)
         {
             for (var x = Math.Max(0, point.Position.X - 4); x < Math.Min(board.Size, point.Position.X + 5); x++)
             {
@@ -36,7 +36,7 @@ namespace Renju.Core
             return diff.X == 0 || diff.Y == 0 || Math.Abs(diff.X) == Math.Abs(diff.Y);
         }
 
-        public static IEnumerable<PieceLine> GetLinesOnBoard(this IReadOnlyBoardPoint point, IReadBoardState board, bool includeBlank = false)
+        public static IEnumerable<PieceLine> GetLinesOnBoard(this IReadOnlyBoardPoint point, IReadBoardState<IReadOnlyBoardPoint> board, bool includeBlank = false)
         {
             foreach (var direction in GetHalfDirections())
             {
@@ -55,12 +55,12 @@ namespace Renju.Core
             }
         }
 
-        public static PieceLine GetLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction, bool includeBlank)
+        public static PieceLine GetLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, bool includeBlank)
         {
             return includeBlank ? position.GetDashLineOnBoard(board, direction) : position.GetContinuousLineOnBoard(board, direction);
         }
 
-        public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
+        public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
         {
             if (!board.IsDropped(position))
                 throw new InvalidOperationException("ContinousLine can't start with blank.");
@@ -75,7 +75,7 @@ namespace Renju.Core
             return Equals(position, endPosition) ? null : new PieceLine(board, position, endPosition);
         }
 
-        public static PieceLine GetDashLineOnBoard(this BoardPosition position, IReadBoardState board, BoardPosition direction)
+        public static PieceLine GetDashLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
         {
             var firstState = board[position].Status;
             var endPosition = position;
@@ -88,7 +88,7 @@ namespace Renju.Core
                     null : new PieceLine(board, position, endPosition).TrimEnd();
         }
 
-        public static bool IsOnBoard(this BoardPosition position, IReadBoardState board)
+        public static bool IsOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return position.X >= 0 && position.Y >= 0 && position.X < board.Size && position.Y < board.Size;
         }
@@ -106,17 +106,17 @@ namespace Renju.Core
             yield return new BoardPosition(-1, 1);
         }
 
-        public static IReadBoardState With(this IReadBoardState board, IReadOnlyBoardPoint point)
+        public static IReadBoardState<IReadOnlyBoardPoint> With(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
             return new GameBoardDecoration(board, point);
         }
 
-        public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState board)
+        public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return new VirtualBoardPoint(point, side, board.DropsCount + 1);
         }
 
-        public static int GetWeightOnBoard(this PieceLine line, IReadBoardState board)
+        public static int GetWeightOnBoard(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             if (line.DroppedCount >= 4)
             {
@@ -164,7 +164,7 @@ namespace Renju.Core
             return 0;
         }
 
-        private static bool CanMoveAlone(this BoardPosition position, IReadBoardState board, BoardPosition direction, ref Side? pickedSide)
+        private static bool CanMoveAlone(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, ref Side? pickedSide)
         {
             var nextPosition = position + direction;
             if (!nextPosition.IsOnBoard(board))

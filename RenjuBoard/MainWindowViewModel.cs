@@ -19,7 +19,7 @@ namespace RenjuBoard
 {
     public class MainWindowViewModel : ModelBase
     {
-        private readonly IGameBoard _gameBoard;
+        private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
         private readonly ICommand _saveCommand;
         private readonly ICommand _loadCommand;
         private readonly ICommand _dropPointCommand;
@@ -32,7 +32,7 @@ namespace RenjuBoard
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly AIGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
-        private IReadBoardState _resolvingBoard;
+        private IReadBoardState<IReadOnlyBoardPoint> _resolvingBoard;
 
         public MainWindowViewModel()
         {
@@ -113,10 +113,10 @@ namespace RenjuBoard
             set { _aiPlayer.Side = value ? Side.Black : Side.White; }
         }
 
-        public IReadBoardState ResolvingBoard
+        public IReadBoardState<IReadOnlyBoardPoint> ResolvingBoard
         {
             get { return _resolvingBoard; }
-            protected set { SetProperty(ref _resolvingBoard, value, () => ResolvingBoard, true); }
+            protected set { SetProperty(ref _resolvingBoard, value, () => ResolvingBoard); }
         }
 
         internal void ClearGameBoard()

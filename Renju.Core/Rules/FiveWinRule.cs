@@ -9,7 +9,7 @@ namespace Renju.Core.Rules
             get { return "Win"; }
         }
 
-        public override bool? Win(IReadBoardState board, PieceDrop drop)
+        public override bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             return board[drop].GetLinesOnBoard(board).Any(line => line.Length > 4);
         }

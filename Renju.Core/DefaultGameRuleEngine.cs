@@ -18,17 +18,17 @@ namespace Renju.Core
             get { return _rules; }
         }
 
-        public bool CanDropOn(IReadBoardState board, PieceDrop drop)
+        public bool CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             return GetRuleStopDropOn(board, drop) == null;
         }
 
-        public Side? IsWin(IReadBoardState board, PieceDrop drop)
+        public Side? IsWin(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             return GetRuleWin(board, drop) != null ? drop.Side : (Side?)null;
         }
 
-        public DropResult ProcessDrop(IGameBoard board, PieceDrop drop)
+        public DropResult ProcessDrop(IGameBoard<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             var point = board[drop];
             if (point.Status != null)
@@ -56,7 +56,7 @@ namespace Renju.Core
             return DropResult.NoWin(Sides.Opposite(drop.Side));
         }
 
-        protected virtual IGameRule GetRuleWin(IReadBoardState board, PieceDrop drop)
+        protected virtual IGameRule GetRuleWin(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             foreach (var rule in _rules)
             {
@@ -69,7 +69,7 @@ namespace Renju.Core
             return null;
         }
 
-        protected virtual IGameRule GetRuleStopDropOn(IReadBoardState board, PieceDrop drop)
+        protected virtual IGameRule GetRuleStopDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             foreach (var rule in _rules)
             {

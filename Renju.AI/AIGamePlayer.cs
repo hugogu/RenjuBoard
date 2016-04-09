@@ -8,7 +8,7 @@ namespace Renju.AI
     public class AIGamePlayer : IGamePlayer
     {
         private Side _side = Side.White;
-        private IGameBoard _board;
+        private IGameBoard<IReadOnlyBoardPoint> _board;
         private readonly IDropResolver _dropSelector;
 
         public AIGamePlayer(IDropResolver dropSelector)
@@ -16,7 +16,7 @@ namespace Renju.AI
             _dropSelector = dropSelector;
         }
 
-        public IGameBoard Board
+        public IGameBoard<IReadOnlyBoardPoint> Board
         {
             get { return _board; }
             set

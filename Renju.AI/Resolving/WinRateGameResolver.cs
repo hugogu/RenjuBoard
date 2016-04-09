@@ -22,7 +22,7 @@ namespace Renju.AI.Resolving
 
         public event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
-        public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard board, Side side)
+        public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Renju.AI.Resolving
             }
         }
 
-        private double GetWinRateOf(IReadBoardState board, IReadOnlyBoardPoint point, Side side, int depth)
+        private double GetWinRateOf(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, Side side, int depth)
         {
             if (depth > Depth)
                 return 0;
@@ -71,7 +71,7 @@ namespace Renju.AI.Resolving
             return winRate;
         }
 
-        protected virtual void RaiseResolvingBoardEvent(IReadBoardState board)
+        protected virtual void RaiseResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)
         {
             var tmp = ResolvingBoard;
             if (tmp != null)
@@ -80,7 +80,7 @@ namespace Renju.AI.Resolving
             }
         }
 
-        protected virtual IEnumerable<IReadOnlyBoardPoint> SelectDropsWithinWidth(IReadBoardState board, Side side)
+        protected virtual IEnumerable<IReadOnlyBoardPoint> SelectDropsWithinWidth(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
             return _selector.SelectDrops(board, side).Where((p, i) => i < Width);
         }

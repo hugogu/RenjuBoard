@@ -1,6 +1,7 @@
 ﻿namespace Renju.Core
 {
-    public interface IGameBoard : IReadBoardState
+    public interface IGameBoard<out TPoint> : IReadBoardState<TPoint>
+        where TPoint : IReadOnlyBoardPoint
     {
         Side? ExpectedNextTurn { get; }
 

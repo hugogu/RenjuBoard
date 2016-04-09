@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Renju.Core
 {
-    public class GameBoardDecoration : IReadBoardState
+    public class GameBoardDecoration : IReadBoardState<IReadOnlyBoardPoint>
     {
-        private readonly IReadBoardState _decoratedBoard;
+        private readonly IReadBoardState<IReadOnlyBoardPoint> _decoratedBoard;
         private readonly IReadOnlyBoardPoint _decorationPoint;
 
-        public GameBoardDecoration(IReadBoardState board, IReadOnlyBoardPoint decorationPoint)
+        public GameBoardDecoration(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint decorationPoint)
         {
             if (board.IsDropped(decorationPoint.Position))
                 throw new InvalidOperationException("Can't decorate with a point already in use.");
