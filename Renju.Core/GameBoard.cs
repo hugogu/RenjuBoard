@@ -10,7 +10,7 @@ namespace Renju.Core
         private Side? _expectedNextTurn = Side.Black;
 
         public GameBoard(int size, IGameRuleEngine gameRuleEngine)
-            : base(size, i => CreateBoardPoint(PositionOfIndex(i, size)))
+            : base(size,  BoardPoint.CreateIndexBasedFactory(size))
         {
             RuleEngine = gameRuleEngine;
         }
@@ -80,16 +80,6 @@ namespace Renju.Core
             }
 
             return result;
-        }
-
-        private static BoardPoint CreateBoardPoint(BoardPosition position)
-        {
-            return new BoardPoint(position);
-        }
-
-        private static BoardPosition PositionOfIndex(int index, int size)
-        {
-            return new BoardPosition(index % size, index / size);
         }
     }
 }

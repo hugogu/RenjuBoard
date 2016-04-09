@@ -8,7 +8,7 @@ namespace Renju.Core
     public class VirtualGameBoard<TPoint> : ModelBase, IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
-        protected readonly List<TPoint> _points;
+        private readonly List<TPoint> _points;
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
         {

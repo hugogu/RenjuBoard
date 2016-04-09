@@ -32,15 +32,16 @@ namespace RenjuBoard
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly AIGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
-        private IReadBoardState<IReadOnlyBoardPoint> _resolvingBoard;
+        private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(int boardSize = 15)
         {
-            _gameBoard = new GameBoard(15, new DefaultGameRuleEngine(new IGameRule[]
+            _gameBoard = new GameBoard(boardSize, new DefaultGameRuleEngine(new IGameRule[]
                          {
                              new FiveWinRule(),
                              new BlackForbiddenRules()
                          }));
+            _resolvingBoard = new VirtualGameBoard<BoardPoint>(boardSize, BoardPoint.CreateIndexBasedFactory(boardSize));
             _boardRecorder = new BoardRecorder(_gameBoard);
             _dropResolver = new WinRateGameResolver(_dropSelector);
             _aiPlayer = new AIGamePlayer(_dropResolver) { Side = Side.White, Board = _gameBoard };
@@ -116,7 +117,6 @@ namespace RenjuBoard
         public IReadBoardState<IReadOnlyBoardPoint> ResolvingBoard
         {
             get { return _resolvingBoard; }
-            protected set { SetProperty(ref _resolvingBoard, value, () => ResolvingBoard); }
         }
 
         internal void ClearGameBoard()
@@ -127,7 +127,20 @@ namespace RenjuBoard
 
         private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)
         {
-            ResolvingBoard = e.Board;
+            foreach(var point in _gameBoard.Points.Where(p => p.Status == null))
+            {
+                _resolvingBoard[point.Position].ResetToEmpty();
+            }
+
+            if (e.Board != null)
+            {
+                foreach (var point in e.Board.DroppedPoints.Where(p => p is VirtualBoardPoint))
+                {
+                    var resolvingPoint = _resolvingBoard[point.Position];
+                    resolvingPoint.Index = point.Index;
+                    resolvingPoint.Status = point.Status;
+                }
+            }
         }
 
         private void OnDroppingPiece(IReadOnlyBoardPoint point)

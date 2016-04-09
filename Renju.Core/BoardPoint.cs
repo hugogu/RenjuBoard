@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using Runju.Infrastructure;
 
@@ -15,6 +16,11 @@ namespace Renju.Core
         public BoardPoint(BoardPosition position)
         {
             Position = position;
+        }
+
+        public static Func<int, BoardPoint> CreateIndexBasedFactory(int size)
+        {
+            return index => new BoardPoint(new BoardPosition(index % size, index / size));
         }
 
         [ReadOnly(true)]
@@ -49,7 +55,7 @@ namespace Renju.Core
             return string.Format("{0}{1}", Position, Status == null ? "" : (Status.Value == Side.Black ? "●" : "○"));
         }
 
-        internal void ResetToEmpty()
+        public void ResetToEmpty()
         {
             Index = null;
             Status = null;
