@@ -98,6 +98,8 @@ namespace RenjuBoard
 
         public bool ShowLines { get; set; } = true;
 
+        public bool ShowAISteps { get; set; } = true;
+
         public IEnumerable<PieceLine> PreviewLines
         {
             get { return _previewLines; }
@@ -132,7 +134,7 @@ namespace RenjuBoard
                 _resolvingBoard[point.Position].ResetToEmpty();
             }
 
-            if (e.Board != null)
+            if (e.Board != null && ShowAISteps)
             {
                 foreach (var point in e.Board.DroppedPoints.Where(p => p is VirtualBoardPoint))
                 {

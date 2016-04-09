@@ -8,7 +8,7 @@
         SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display"
         Title="Renju Board"
-        Height="500" Width="950">
+        Height="500" Width="1000">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0,5,0,0" />
@@ -40,6 +40,11 @@
             <Separator Margin="0,5" />
             <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
             <CheckBox Content="Show Lines" IsChecked="{Binding ShowLines}" />
+            <CheckBox IsChecked="{Binding ShowAISteps}">
+                <TextBlock Width="90"
+                           Text="Show AI resolving steps"
+                           TextWrapping="Wrap" />
+            </CheckBox>
         </StackPanel>
         <control:GameBoardPanel Grid.Column="1"
                                 ItemsSource="{Binding Points}"
