@@ -47,6 +47,7 @@
     <Compile Include="IDropResolver.cs" />
     <Compile Include="IDropSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResolvingBoardEventArgs.cs" />
     <Compile Include="Resolving\WinRateGameResolver.cs" />
     <Compile Include="Weights\WeightedDropSelector.cs" />
   </ItemGroup>

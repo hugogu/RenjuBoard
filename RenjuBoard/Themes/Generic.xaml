@@ -46,6 +46,16 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
                             <ItemsPresenter />
+                            <ItemsControl DataContext="{Binding ResolvingBoard, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
+                                          ItemsSource="{Binding Points}"
+                                          IsHitTestVisible="False" >
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
+                                                     Rows="{Binding Size, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
                             <ItemsControl ItemsSource="{Binding Lines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>

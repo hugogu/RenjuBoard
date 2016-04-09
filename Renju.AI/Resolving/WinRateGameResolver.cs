@@ -20,18 +20,27 @@ namespace Renju.AI.Resolving
 
         public int Width { get; set; } = 4;
 
+        public event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
+
         public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard board, Side side)
         {
-            var stopWatch = Stopwatch.StartNew();
-            iteratedBoardCount = 0;
-            foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
-                                          let weight = point.Weight
-                                          let winRate = GetWinRateOf(board, point.As(side, board), side, 1)
-                                          orderby winRate descending, weight descending
-                                          select new { Point = point, WinRate = winRate })
+            try
             {
-                Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, stopWatch.ElapsedMilliseconds);
-                yield return pointWithRate.Point;
+                var stopWatch = Stopwatch.StartNew();
+                iteratedBoardCount = 0;
+                foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
+                                              let weight = point.Weight
+                                              let winRate = GetWinRateOf(board, point.As(side, board), side, 1)
+                                              orderby winRate descending, weight descending
+                                              select new { Point = point, WinRate = winRate })
+                {
+                    Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, stopWatch.ElapsedMilliseconds);
+                    yield return pointWithRate.Point;
+                }
+            }
+            finally
+            {
+                RaiseResolvingBoardEvent(null);
             }
         }
 
@@ -42,6 +51,7 @@ namespace Renju.AI.Resolving
 
             iteratedBoardCount++;
             var virtualBoard = board.With(point);
+            RaiseResolvingBoardEvent(virtualBoard);
             var oppositeSide = Sides.Opposite(point.Status.Value);
             var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position, point.Status.Value));
             if (winSide.HasValue)
@@ -59,6 +69,15 @@ namespace Renju.AI.Resolving
                 Debug.WriteLine("{0}:{1},{2} Iteration: {3}", point, winRate, point.Weight, iteratedBoardCount);
 
             return winRate;
+        }
+
+        protected virtual void RaiseResolvingBoardEvent(IReadBoardState board)
+        {
+            var tmp = ResolvingBoard;
+            if (tmp != null)
+            {
+                tmp(this, new ResolvingBoardEventArgs(board));
+            }
         }
 
         protected virtual IEnumerable<IReadOnlyBoardPoint> SelectDropsWithinWidth(IReadBoardState board, Side side)

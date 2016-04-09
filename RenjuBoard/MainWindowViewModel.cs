@@ -28,21 +28,22 @@ namespace RenjuBoard
         private readonly DelegateCommand _undoDropCommand;
         private readonly DelegateCommand _redoDropCommand;
         private readonly IDropSelector _dropSelector = new WeightedDropSelector { RandomEqualSelections = true };
+        private readonly IDropResolver _dropResolver;
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly AIGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
+        private IReadBoardState _resolvingBoard;
 
         public MainWindowViewModel()
         {
-            _aiPlayer = new AIGamePlayer(new WinRateGameResolver(_dropSelector));
             _gameBoard = new GameBoard(15, new DefaultGameRuleEngine(new IGameRule[]
-            {
-                new FiveWinRule(),
-                new BlackForbiddenRules()
-            }));
+                         {
+                             new FiveWinRule(),
+                             new BlackForbiddenRules()
+                         }));
             _boardRecorder = new BoardRecorder(_gameBoard);
-            _aiPlayer.Side = Side.White;
-            _aiPlayer.Board = _gameBoard;
+            _dropResolver = new WinRateGameResolver(_dropSelector);
+            _aiPlayer = new AIGamePlayer(_dropResolver) { Side = Side.White, Board = _gameBoard };
             _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
             _previewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnPreviewPointCommand, p => ShowLines);
             _clearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
@@ -51,6 +52,7 @@ namespace RenjuBoard
             _saveCommand = new DelegateCommand(OnSaveCommand);
             _loadCommand = new DelegateCommand(OnLoadCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
+            _dropResolver.ResolvingBoard += OnResolvingBoard;
         }
 
         public ICommand DropPointCommand
@@ -111,10 +113,21 @@ namespace RenjuBoard
             set { _aiPlayer.Side = value ? Side.Black : Side.White; }
         }
 
+        public IReadBoardState ResolvingBoard
+        {
+            get { return _resolvingBoard; }
+            protected set { SetProperty(ref _resolvingBoard, value, () => ResolvingBoard, true); }
+        }
+
         internal void ClearGameBoard()
         {
             while(_boardRecorder.CanUndo)
                 _boardRecorder.UndoDrop();
+        }
+
+        private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)
+        {
+            ResolvingBoard = e.Board;
         }
 
         private void OnDroppingPiece(IReadOnlyBoardPoint point)

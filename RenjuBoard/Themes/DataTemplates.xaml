@@ -34,6 +34,21 @@
             </Grid>
         </Viewbox>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type renju:VirtualBoardPoint}">
+        <control:BoardPiece x:Name="drop"
+                            Background="Transparent"
+                            SequenceNumber="{Binding Index}"
+                            Weight="{Binding Weight}">
+        </control:BoardPiece>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
+                <Setter TargetName="drop" Property="Background" Value="#77000000" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.White}">
+                <Setter TargetName="drop" Property="Background" Value="#77FFFFFF" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type renju:BoardPoint}">
         <control:BoardPiece x:Name="drop"
                             Background="Transparent"
