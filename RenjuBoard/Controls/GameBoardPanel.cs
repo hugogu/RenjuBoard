@@ -33,14 +33,14 @@ namespace RenjuBoard.Controls
             DependencyProperty.Register("Lines", typeof(IEnumerable<PieceLine>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
 
 
-        public IReadBoardState<IReadOnlyBoardPoint> ResolvingBoard
+        public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {
-            get { return (IReadBoardState<IReadOnlyBoardPoint>)GetValue(ResolvingBoardProperty); }
-            set { SetValue(ResolvingBoardProperty, value); }
+            get { return (IEnumerable<IReadOnlyBoardPoint>)GetValue(ResolvingPointsProperty); }
+            set { SetValue(ResolvingPointsProperty, value); }
         }
 
-        public static readonly DependencyProperty ResolvingBoardProperty =
-            DependencyProperty.Register("ResolvingBoard", typeof(IReadBoardState<IReadOnlyBoardPoint>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty ResolvingPointsProperty =
+            DependencyProperty.Register("ResolvingPoints", typeof(IEnumerable<IReadOnlyBoardPoint>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
 
         public IEnumerable<string> XLables
         {

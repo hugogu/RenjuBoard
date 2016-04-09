@@ -116,31 +116,30 @@ namespace RenjuBoard
             set { _aiPlayer.Side = value ? Side.Black : Side.White; }
         }
 
-        public IReadBoardState<IReadOnlyBoardPoint> ResolvingBoard
+        public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {
-            get { return _resolvingBoard; }
+            get { return _resolvingBoard.Points; }
         }
 
         internal void ClearGameBoard()
         {
-            while(_boardRecorder.CanUndo)
+            while (_boardRecorder.CanUndo)
                 _boardRecorder.UndoDrop();
         }
 
         private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)
         {
-            foreach(var point in _gameBoard.Points.Where(p => p.Status == null))
+            foreach (var showingPoint in _resolvingBoard.Points)
             {
-                _resolvingBoard[point.Position].ResetToEmpty();
-            }
-
-            if (e.Board != null && ShowAISteps)
-            {
-                foreach (var point in e.Board.DroppedPoints.Where(p => p is VirtualBoardPoint))
+                var virtualPoint = e.Board == null ? null : e.Board[showingPoint.Position];
+                if (virtualPoint is VirtualBoardPoint && ShowAISteps)
                 {
-                    var resolvingPoint = _resolvingBoard[point.Position];
-                    resolvingPoint.Index = point.Index;
-                    resolvingPoint.Status = point.Status;
+                    showingPoint.Index = virtualPoint.Index;
+                    showingPoint.Status = virtualPoint.Status;
+                }
+                else if (showingPoint.Index.HasValue)
+                {
+                    showingPoint.ResetToEmpty();
                 }
             }
         }
@@ -190,7 +189,7 @@ namespace RenjuBoard
                 using (var streamWriter = new StreamWriter(File.OpenWrite(saveFile)))
                 {
                     var converter = TypeDescriptor.GetConverter(typeof(PieceDrop));
-                    foreach(var drop in _boardRecorder.Drops.Concat(_boardRecorder.RedoDrops))
+                    foreach (var drop in _boardRecorder.Drops.Concat(_boardRecorder.RedoDrops))
                     {
                         streamWriter.WriteLine(converter.ConvertToString(drop));
                     }

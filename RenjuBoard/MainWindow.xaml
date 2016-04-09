@@ -49,7 +49,7 @@
         <control:GameBoardPanel Grid.Column="1"
                                 ItemsSource="{Binding Points}"
                                 Lines="{Binding PreviewLines}"
-                                ResolvingBoard="{Binding ResolvingBoard}"
+                                ResolvingPoints="{Binding ResolvingPoints}"
                                 Size="{Binding BoardSize}">
             <interaction:Interaction.Triggers>
                 <interaction:EventTrigger EventName="MouseLeave">

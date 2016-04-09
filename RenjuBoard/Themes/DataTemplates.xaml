@@ -34,7 +34,8 @@
             </Grid>
         </Viewbox>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type renju:VirtualBoardPoint}">
+    <DataTemplate x:Key="ResolvingPointTemplate"
+                  DataType="{x:Type renju:BoardPoint}">
         <control:BoardPiece x:Name="drop"
                             Background="Transparent"
                             SequenceNumber="{Binding Index}"
