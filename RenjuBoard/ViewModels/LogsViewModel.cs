@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Prism.Commands;
-using Runju.Infrastructure;
+using Renju.Infrastructure;
 
 namespace RenjuBoard.ViewModels
 {

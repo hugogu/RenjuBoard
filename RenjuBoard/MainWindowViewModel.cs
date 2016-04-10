@@ -13,7 +13,7 @@ using Renju.AI.Resolving;
 using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Core.Rules;
-using Runju.Infrastructure;
+using Renju.Infrastructure;
 
 namespace RenjuBoard
 {

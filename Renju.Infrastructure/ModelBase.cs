@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Runju.Infrastructure
+namespace Renju.Infrastructure
 {
     [Serializable]
     public class ModelBase : INotifyPropertyChanged

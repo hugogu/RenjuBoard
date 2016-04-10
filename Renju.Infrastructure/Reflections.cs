@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Runju.Infrastructure
+namespace Renju.Infrastructure
 {
     public static class Reflections
     {

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Core", "Renju.Core\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.AI", "Renju.AI\Renju.AI.csproj", "{A162380E-72B1-41A5-BB12-FC4D458C5986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runju.Infrastructure", "Runju.Infrastructure\Runju.Infrastructure.csproj", "{3BE7EA02-29E3-4586-B644-A22421E3AD2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Infrastructure", "Renju.Infrastructure\Renju.Infrastructure.csproj", "{3BE7EA02-29E3-4586-B644-A22421E3AD2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
