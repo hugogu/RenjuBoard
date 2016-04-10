@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Renju.Core;
+using Renju.Infrastructure.Execution;
 
 namespace Renju.AI
 {
-    public interface IDropResolver
+    public interface IDropResolver : IReportExecutionStatus
     {
         int Depth { get; set; }
 

@@ -24,13 +24,18 @@ namespace Renju.Infrastructure
         protected internal virtual void RaisePropertyChangedAsync<T>(Expression<Func<T>> expression)
         {
             var handlers = PropertyChanged;
-            if (handlers != null && Application.Current != null)
+            if (handlers != null)
             {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    handlers(this, new PropertyChangedEventArgs(expression.GetMemberName()));
-                }), DispatcherPriority.Background);
+                RunInDispatcher(new Action(() => handlers(this, new PropertyChangedEventArgs(expression.GetMemberName()))), DispatcherPriority.Background);
             }
+        }
+
+        protected virtual void RunInDispatcher(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            if (Application.Current == null)
+                return;
+
+            Application.Current.Dispatcher.BeginInvoke(action, priority);
         }
 
         protected internal virtual void SetProperty<T>(ref T field, T newValue, Expression<Func<T>> propertyGetter, bool asyncNotify = false)

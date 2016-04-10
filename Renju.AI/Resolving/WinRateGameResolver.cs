@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Renju.Core;
+using Renju.Infrastructure.Execution;
 
 namespace Renju.AI.Resolving
 {
-    public class WinRateGameResolver : IDropResolver
+    public class WinRateGameResolver : ReportExecutionObject, IDropResolver
     {
-        private IDropSelector _selector;
+        private readonly IDropSelector _selector;
         private int iteratedBoardCount;
 
         public WinRateGameResolver(IDropSelector selector)
@@ -26,6 +27,7 @@ namespace Renju.AI.Resolving
         {
             try
             {
+                RaiseStartedEvent();
                 var stopWatch = Stopwatch.StartNew();
                 iteratedBoardCount = 0;
                 foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
@@ -41,6 +43,7 @@ namespace Renju.AI.Resolving
             finally
             {
                 RaiseResolvingBoardEvent(null);
+                RaiseFinishedEvent();
             }
         }
 
@@ -51,16 +54,16 @@ namespace Renju.AI.Resolving
 
             iteratedBoardCount++;
             var virtualBoard = board.With(point);
-            RaiseResolvingBoardEvent(virtualBoard);
             var oppositeSide = Sides.Opposite(point.Status.Value);
+            var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
+            RaiseResolvingBoardEvent(virtualBoard);
+            RaiseStepFinishedEvent();
             var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position, point.Status.Value));
             if (winSide.HasValue)
             {
                 Debug.WriteLine("Found a win path: " + String.Join("->", virtualBoard.DroppedPoints.Reverse()));
                 return point.Status.Value == side ? 1.0 : -1.0;
             }
-
-            var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
             var winRate = (from drop in drops
                            let virtualDrop = drop.As(oppositeSide, virtualBoard)
                            select GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1)).Sum() / drops.Count;

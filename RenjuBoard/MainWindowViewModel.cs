@@ -14,6 +14,7 @@ using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Core.Rules;
 using Renju.Infrastructure;
+using RenjuBoard.ViewModels;
 
 namespace RenjuBoard
 {
@@ -54,6 +55,7 @@ namespace RenjuBoard
             _loadCommand = new DelegateCommand(OnLoadCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
             _dropResolver.ResolvingBoard += OnResolvingBoard;
+            AIControllerVM = new AIControllerViewModel(_dropResolver);
         }
 
         public ICommand DropPointCommand
@@ -99,6 +101,8 @@ namespace RenjuBoard
         public bool ShowLines { get; set; } = true;
 
         public bool ShowAISteps { get; set; } = true;
+
+        public AIControllerViewModel AIControllerVM { get; private set; }
 
         public IEnumerable<PieceLine> PreviewLines
         {
@@ -227,10 +231,7 @@ namespace RenjuBoard
 
         private void OnBoardRecorderPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (Application.Current == null)
-                return;
-
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            RunInDispatcher(new Action(() =>
             {
                 _undoDropCommand.RaiseCanExecuteChanged();
                 _redoDropCommand.RaiseCanExecuteChanged();

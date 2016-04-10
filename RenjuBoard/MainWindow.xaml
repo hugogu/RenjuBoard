@@ -8,7 +8,7 @@
         SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display"
         Title="Renju Board"
-        Height="500" Width="1000">
+        Height="500" Width="960">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0,5,0,0" />
@@ -46,17 +46,25 @@
                            TextWrapping="Wrap" />
             </CheckBox>
         </StackPanel>
-        <control:GameBoardPanel Grid.Column="1"
-                                ItemsSource="{Binding Points}"
-                                Lines="{Binding PreviewLines}"
-                                ResolvingPoints="{Binding ResolvingPoints}"
-                                Size="{Binding BoardSize}">
-            <interaction:Interaction.Triggers>
-                <interaction:EventTrigger EventName="MouseLeave">
-                    <interaction:InvokeCommandAction Command="{Binding ClearPreviewLinesCommand}" />
-                </interaction:EventTrigger>
-            </interaction:Interaction.Triggers>
-        </control:GameBoardPanel>
+        <DockPanel Grid.Column="1">
+            <ToolBar DockPanel.Dock="Top" DataContext="{Binding AIControllerVM}">
+                <Button Content="Pause" Command="{Binding PauseAICommand}" />
+                <Button Content="Continue" Command="{Binding ContinueAICommand}" />
+                <Button Content="Next" Command="{Binding NextAIStepComand}" />
+                <Separator />
+                <ToggleButton Content="Pause on start" IsChecked="{Binding PauseOnStart}" />
+            </ToolBar>
+            <control:GameBoardPanel ItemsSource="{Binding Points}"
+                                    Lines="{Binding PreviewLines}"
+                                    ResolvingPoints="{Binding ResolvingPoints}"
+                                    Size="{Binding BoardSize}">
+                <interaction:Interaction.Triggers>
+                    <interaction:EventTrigger EventName="MouseLeave">
+                        <interaction:InvokeCommandAction Command="{Binding ClearPreviewLinesCommand}" />
+                    </interaction:EventTrigger>
+                </interaction:Interaction.Triggers>
+            </control:GameBoardPanel>
+        </DockPanel>
         <GridSplitter Grid.Column="2"
                       Width="5"
                       HorizontalAlignment="Stretch" />
