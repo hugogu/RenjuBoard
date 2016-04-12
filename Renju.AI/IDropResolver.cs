@@ -11,6 +11,10 @@ namespace Renju.AI
 
         int Width { get; set; }
 
+        TimeSpan MaxStepTime { get; set; }
+
+        TimeSpan MaxTotalTime { get; set; }
+
         event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
         IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side);

@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
@@ -14,11 +16,12 @@ using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Core.Rules;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Execution;
 using RenjuBoard.ViewModels;
 
 namespace RenjuBoard
 {
-    public class MainWindowViewModel : ModelBase
+    public class MainWindowViewModel : ModelBase, IDisposable
     {
         private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
         private readonly ICommand _saveCommand;
@@ -34,6 +37,8 @@ namespace RenjuBoard
         private readonly AIGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
+        private readonly HumanExecutionNotifier _humanExecutionNotifier;
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public MainWindowViewModel(int boardSize = 15)
         {
@@ -55,7 +60,16 @@ namespace RenjuBoard
             _loadCommand = new DelegateCommand(OnLoadCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
             _dropResolver.ResolvingBoard += OnResolvingBoard;
+            _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
             AIControllerVM = new AIControllerViewModel(_dropResolver);
+            _disposables.Add(Observable.Merge(_humanExecutionNotifier.ExecutionTimer.ObserveAnyProperties(),
+                                              _dropResolver.ExecutionTimer.ObserveAnyProperties())
+                                       .Subscribe(args =>
+                                       {
+                                           RaisePropertyChanged(() => BlackTime);
+                                           RaisePropertyChanged(() => WhiteTime);
+                                       }));
+            _disposables.Add(_humanExecutionNotifier);
         }
 
         public ICommand DropPointCommand
@@ -120,9 +134,24 @@ namespace RenjuBoard
             set { _aiPlayer.Side = value ? Side.Black : Side.White; }
         }
 
+        public TimeSpan BlackTime
+        {
+            get { return AIFirst ? _dropResolver.ExecutionTimer.TotalExecutionTime : _humanExecutionNotifier.ExecutionTimer.TotalExecutionTime; }
+        }
+
+        public TimeSpan WhiteTime
+        {
+            get { return AIFirst ? _humanExecutionNotifier.ExecutionTimer.TotalExecutionTime : _dropResolver.ExecutionTimer.TotalExecutionTime; }
+        }
+
         public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {
             get { return _resolvingBoard.Points; }
+        }
+
+        public void Dispose()
+        {
+            _disposables.Dispose();
         }
 
         internal void ClearGameBoard()
@@ -236,6 +265,30 @@ namespace RenjuBoard
                 _undoDropCommand.RaiseCanExecuteChanged();
                 _redoDropCommand.RaiseCanExecuteChanged();
             }));
+        }
+
+        private class HumanExecutionNotifier : ReportExecutionObject
+        {
+            private readonly AIGamePlayer _aiPlayer;
+
+            public HumanExecutionNotifier(IGameBoard<IReadOnlyBoardPoint> board, MainWindowViewModel vm)
+            {
+                _aiPlayer = vm._aiPlayer;
+                board.PieceDropped += OnBoardPieceDropped;
+            }
+
+            private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
+            {
+                var board = sender as IGameBoard<IReadOnlyBoardPoint>;
+                if (board.DroppedPoints.Last().Status == _aiPlayer.Side)
+                {
+                    RaiseStartedEvent();
+                }
+                else if (board.DroppedPoints.Last().Status != null)
+                {
+                    RaiseFinishedEvent();
+                }
+            }
         }
     }
 }

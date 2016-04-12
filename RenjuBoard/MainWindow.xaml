@@ -25,27 +25,41 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="380" />
         </Grid.ColumnDefinitions>
-        <StackPanel Margin="5">
-            <Button Content="New Game"
-                    Click="OnNewGameButtonClick" />
-            <Button Content="Undo"
-                    Command="{Binding UndoCommand}" />
-            <Button Content="Redo"
-                    Command="{Binding RedoCommand}" />
-            <Separator Margin="0,5,0,0" />
-            <Button Content="Save..."
-                    Command="{Binding SaveCommand}" />
-            <Button Content="Load..."
-                    Command="{Binding LoadCommand}" />
-            <Separator Margin="0,5" />
-            <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
-            <CheckBox Content="Show Lines" IsChecked="{Binding ShowLines}" />
-            <CheckBox IsChecked="{Binding ShowAISteps}">
-                <TextBlock Width="90"
-                           Text="Show AI resolving steps"
-                           TextWrapping="Wrap" />
-            </CheckBox>
-        </StackPanel>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Bottom"
+                        Margin="5">
+                <TextBlock Text="Black" FontWeight="Black" />
+                <TextBlock>
+                    Used time: <Run Text="{Binding BlackTime, Mode=OneWay, StringFormat=\{0:hh\\:mm\\:ss\}}" />
+                </TextBlock>
+                <Separator />
+                <TextBlock Text="White" FontWeight="Black" />
+                <TextBlock>
+                    Used time: <Run Text="{Binding WhiteTime, Mode=OneWay, StringFormat={}{0:hh}:{0:mm}:{0:ss}}"/>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Margin="5">
+                <Button Content="New Game"
+                        Click="OnNewGameButtonClick" />
+                <Button Content="Undo"
+                        Command="{Binding UndoCommand}" />
+                <Button Content="Redo"
+                        Command="{Binding RedoCommand}" />
+                <Separator Margin="0,5,0,0" />
+                <Button Content="Save..."
+                        Command="{Binding SaveCommand}" />
+                <Button Content="Load..."
+                        Command="{Binding LoadCommand}" />
+                <Separator Margin="0,5" />
+                <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
+                <CheckBox Content="Show Lines" IsChecked="{Binding ShowLines}" />
+                <CheckBox IsChecked="{Binding ShowAISteps}">
+                    <TextBlock Width="90"
+                               Text="Show AI resolving steps"
+                               TextWrapping="Wrap" />
+                </CheckBox>
+            </StackPanel>
+        </DockPanel>
         <DockPanel Grid.Column="1">
             <ToolBar DockPanel.Dock="Top" DataContext="{Binding AIControllerVM}">
                 <Button Content="Pause" Command="{Binding PauseAICommand}" />

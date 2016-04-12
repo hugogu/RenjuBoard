@@ -9,11 +9,11 @@ namespace Renju.AI
     {
         private Side _side = Side.White;
         private IGameBoard<IReadOnlyBoardPoint> _board;
-        private readonly IDropResolver _dropSelector;
+        private readonly IDropResolver _dropResolver;
 
-        public AIGamePlayer(IDropResolver dropSelector)
+        public AIGamePlayer(IDropResolver dropResolver)
         {
-            _dropSelector = dropSelector;
+            _dropResolver = dropResolver;
         }
 
         public IGameBoard<IReadOnlyBoardPoint> Board
@@ -55,7 +55,7 @@ namespace Renju.AI
             {
                 Task.Factory.StartNew(() =>
                 {
-                    var drops = _dropSelector.Resolve(Board, Side);
+                    var drops = _dropResolver.Resolve(Board, Side);
                     Board.Drop(drops.First().Position, OperatorType.AI);
                 });
             }

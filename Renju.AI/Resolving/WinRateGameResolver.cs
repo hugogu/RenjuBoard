@@ -21,22 +21,25 @@ namespace Renju.AI.Resolving
 
         public int Width { get; set; } = 4;
 
+        public TimeSpan MaxStepTime { get; set; } = TimeSpan.FromSeconds(20);
+
+        public TimeSpan MaxTotalTime { get; set; } = TimeSpan.FromSeconds(500);
+
         public event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
         public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
+            iteratedBoardCount = 0;
             try
             {
                 RaiseStartedEvent();
-                var stopWatch = Stopwatch.StartNew();
-                iteratedBoardCount = 0;
                 foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
                                               let weight = point.Weight
                                               let winRate = GetWinRateOf(board, point.As(side, board), side, 1)
                                               orderby winRate descending, weight descending
                                               select new { Point = point, WinRate = winRate })
                 {
-                    Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, stopWatch.ElapsedMilliseconds);
+                    Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, ExecutionTimer.CurrentExecutionTime.TotalMilliseconds);
                     yield return pointWithRate.Point;
                 }
             }
@@ -51,6 +54,12 @@ namespace Renju.AI.Resolving
         {
             if (depth > Depth)
                 return 0;
+
+            if (ExecutionTimer.CurrentExecutionTime > MaxStepTime || ExecutionTimer.TotalExecutionTime > MaxTotalTime)
+            {
+                Trace.TraceWarning(String.Format("Exeeded max step time of {0} or max time of {1}", MaxStepTime, MaxTotalTime));
+                return 0;
+            }
 
             iteratedBoardCount++;
             var virtualBoard = board.With(point);

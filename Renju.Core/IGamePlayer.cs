@@ -1,4 +1,6 @@
-﻿namespace Renju.Core
+﻿using System;
+
+namespace Renju.Core
 {
     public interface IGamePlayer
     {

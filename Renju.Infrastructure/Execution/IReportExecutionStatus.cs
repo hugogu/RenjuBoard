@@ -2,14 +2,12 @@
 
 namespace Renju.Infrastructure.Execution
 {
-    public interface IReportExecutionStatus
+    public interface IReportExecutionStatus : INotifyExecutionTime
     {
         ExecutionState State { get; }
 
-        event EventHandler Started;
+        ExecutionTimer ExecutionTimer { get; }
 
         event EventHandler StepFinished;
-
-        event EventHandler Finished;
     }
 }
