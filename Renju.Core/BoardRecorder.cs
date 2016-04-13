@@ -40,7 +40,7 @@ namespace Renju.Core
         private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
             _undoDrops.Add(e.Drop);
-            RaisePropertyChanged(() => CanUndo);
+            OnPropertyChanged(() => CanUndo);
         }
 
         public void UndoDrop()
@@ -52,8 +52,8 @@ namespace Renju.Core
             _undoDrops.RemoveAt(_undoDrops.Count - 1);
             _board.Take(drop);
             _redoDrops.Add(drop);
-            RaisePropertyChanged(() => CanUndo);
-            RaisePropertyChanged(() => CanRedo);
+            OnPropertyChanged(() => CanUndo);
+            OnPropertyChanged(() => CanRedo);
         }
 
         public void RedoDrop()

@@ -3,9 +3,8 @@ using System.Reactive.Linq;
 
 namespace Renju.Infrastructure.Execution
 {
-    public class ExecutionTimer : ModelBase, IDisposable
+    public class ExecutionTimer : DisposableModelBase
     {
-        private readonly IDisposable _timingNotifier;
         private TimeSpan _executedTime = TimeSpan.FromSeconds(0);
         private DateTime? _lastExecutionStartTime;
         private TimeSpan? _pausedDuration;
@@ -14,14 +13,14 @@ namespace Renju.Infrastructure.Execution
         {
             executor.Started += OnExecutorStarted;
             executor.Finished += OnExecutorFinished;
-            _timingNotifier = Observable.Interval(TimeSpan.FromMilliseconds(notifyIntervalInMs)).Subscribe(_ =>
+            AutoDispose(Observable.Interval(TimeSpan.FromMilliseconds(notifyIntervalInMs)).Subscribe(_ =>
             {
                 if (_lastExecutionStartTime.HasValue)
                 {
-                    RaisePropertyChanged(() => CurrentExecutionTime);
-                    RaisePropertyChanged(() => TotalExecutionTime);
+                    OnPropertyChanged(() => CurrentExecutionTime);
+                    OnPropertyChanged(() => TotalExecutionTime);
                 }
-            });
+            }));
         }
 
         public TimeSpan CurrentExecutionTime
@@ -56,11 +55,6 @@ namespace Renju.Infrastructure.Execution
                 _lastExecutionStartTime = DateTime.Now - _pausedDuration;
                 _pausedDuration = null;
             }
-        }
-
-        public virtual void Dispose()
-        {
-            _timingNotifier.Dispose();
         }
 
         private void OnExecutorFinished(object sender, EventArgs e)

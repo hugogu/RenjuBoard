@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Prism.Commands;
 using Renju.Infrastructure;
 
@@ -47,13 +46,13 @@ namespace RenjuBoard.ViewModels
         public string LogText
         {
             get { return _logText; }
-            set { SetProperty(ref _logText, value, () => LogText, true); }
+            set { SetProperty(ref _logText, value, true); }
         }
 
         public string SearchKeyword
         {
             get { return _searchKey; }
-            set { SetProperty(ref _searchKey, value, () => SearchKeyword); }
+            set { SetProperty(ref _searchKey, value); }
         }
 
         public ICommand ClearLogsCommand
@@ -89,13 +88,7 @@ namespace RenjuBoard.ViewModels
 
         private void PrependMessage(string message)
         {
-            AddLogItemAsync(() => LogText = message + LogText);
-        }
-
-        private void AddLogItemAsync(Action action)
-        {
-            if (Application.Current != null)
-                Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
+            RunInDispatcher(() => LogText = message + LogText);
         }
     }
 }

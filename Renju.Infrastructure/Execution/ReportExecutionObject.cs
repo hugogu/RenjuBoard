@@ -2,11 +2,12 @@
 
 namespace Renju.Infrastructure.Execution
 {
-    public class ReportExecutionObject : IReportExecutionStatus, IDisposable
+    public class ReportExecutionObject : DisposableModelBase, IReportExecutionStatus
     {
         public ReportExecutionObject()
         {
             ExecutionTimer = new ExecutionTimer(this);
+            AutoDispose(ExecutionTimer);
         }
 
         public virtual ExecutionState State { get; protected set; }
@@ -16,11 +17,6 @@ namespace Renju.Infrastructure.Execution
         public event EventHandler Finished;
         public event EventHandler Started;
         public event EventHandler StepFinished;
-
-        public virtual void Dispose()
-        {
-            ExecutionTimer.Dispose();
-        }
 
         protected virtual void RaiseFinishedEvent()
         {
@@ -38,15 +34,6 @@ namespace Renju.Infrastructure.Execution
         {
             State = ExecutionState.AwaitExecuteSignal;
             RaiseEvent(StepFinished);
-        }
-
-        protected void RaiseEvent(EventHandler handler)
-        {
-            var temp = handler;
-            if (temp != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
         }
     }
 }

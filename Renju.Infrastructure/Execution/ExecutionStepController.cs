@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Renju.Infrastructure.Execution
 {
-    public class ExecutionStepController : ModelBase, IStepController, IDisposable
+    public class ExecutionStepController : DisposableModelBase, IStepController
     {
         private readonly ManualResetEvent _event = new ManualResetEvent(true);
         private readonly IReportExecutionStatus _executor;
@@ -18,6 +18,7 @@ namespace Renju.Infrastructure.Execution
             executor.Started += OnExecutorStarted;
             executor.Finished += OnExecutorFinished;
             executor.StepFinished += OnExecutorFinishedStep;
+            AutoDispose(_event);
         }
 
         public int CurrentStep { get; private set; }
@@ -49,31 +50,18 @@ namespace Renju.Infrastructure.Execution
             SetEvent();
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _event.Close();
-            }
-        }
-
         protected virtual void SetEvent()
         {
             _executor.ExecutionTimer.Resume();
             _event.Set();
-            RaisePropertyChanged(() => IsPaused);
+            OnPropertyChanged(() => IsPaused);
         }
 
         protected virtual void ResetEvent()
         {
             _event.Reset();
             _executor.ExecutionTimer.Pause();
-            RaisePropertyChanged(() => IsPaused);
+            OnPropertyChanged(() => IsPaused);
         }
 
         private void OnExecutorFinishedStep(object sender, EventArgs e)

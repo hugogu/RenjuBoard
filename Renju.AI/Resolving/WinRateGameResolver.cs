@@ -45,7 +45,7 @@ namespace Renju.AI.Resolving
             }
             finally
             {
-                RaiseResolvingBoardEvent(null);
+                RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(null));
                 RaiseFinishedEvent();
             }
         }
@@ -65,7 +65,7 @@ namespace Renju.AI.Resolving
             var virtualBoard = board.With(point);
             var oppositeSide = Sides.Opposite(point.Status.Value);
             var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
-            RaiseResolvingBoardEvent(virtualBoard);
+            RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(virtualBoard));
             RaiseStepFinishedEvent();
             var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position, point.Status.Value));
             if (winSide.HasValue)
@@ -81,15 +81,6 @@ namespace Renju.AI.Resolving
                 Debug.WriteLine("{0}:{1},{2} Iteration: {3}", point, winRate, point.Weight, iteratedBoardCount);
 
             return winRate;
-        }
-
-        protected virtual void RaiseResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)
-        {
-            var tmp = ResolvingBoard;
-            if (tmp != null)
-            {
-                tmp(this, new ResolvingBoardEventArgs(board));
-            }
         }
 
         protected virtual IEnumerable<IReadOnlyBoardPoint> SelectDropsWithinWidth(IReadBoardState<IReadOnlyBoardPoint> board, Side side)

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Renju.Infrastructure;
 
 namespace Renju.Core
 {
-    public class GameBoardDecoration : IReadBoardState<IReadOnlyBoardPoint>
+    public class GameBoardDecoration : ModelBase, IReadBoardState<IReadOnlyBoardPoint>
     {
         private readonly IReadBoardState<IReadOnlyBoardPoint> _decoratedBoard;
         private readonly IReadOnlyBoardPoint _decorationPoint;
@@ -81,11 +82,7 @@ namespace Renju.Core
 
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
-            var temp = PieceDropped;
-            if (temp != null)
-            {
-                temp(this, e);
-            }
+            RaiseEvent(PieceDropped, e);
         }
     }
 }

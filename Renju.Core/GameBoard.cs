@@ -60,7 +60,7 @@ namespace Renju.Core
                 _expectedNextTurn = point.Status.Value;
                 point.ResetToEmpty();
                 _droppedPoints.RemoveAt(_droppedPoints.Count - 1);
-                RaisePropertyChanged(() => DropsCount);
+                OnPropertyChanged(() => DropsCount);
             }
             else
                 throw new InvalidOperationException(String.Format("{0} wasn't the last drop.", position));
@@ -76,7 +76,7 @@ namespace Renju.Core
                 _droppedPoints.Add(point);
                 this.InvalidateNearbyPointsOf(point);
                 RaisePeiceDroppedEvent(drop, type);
-                RaisePropertyChanged(() => DropsCount);
+                OnPropertyChanged(() => DropsCount);
             }
 
             return result;

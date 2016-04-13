@@ -29,25 +29,25 @@ namespace Renju.Core
         public int? Index
         {
             get { return _index; }
-            set { SetProperty(ref _index, value, () => Index); }
+            set { SetProperty(ref _index, value); }
         }
 
         public Side? Status
         {
             get { return _status; }
-            set { SetProperty(ref _status, value, () => Status); }
+            set { SetProperty(ref _status, value); }
         }
 
         public int Weight
         {
             get { return _weight; }
-            set { SetProperty(ref _weight, value, () => Weight); }
+            set { SetProperty(ref _weight, value); }
         }
 
         public bool RequiresReevaluateWeight
         {
             get { return _requireReevaluateWeight; }
-            set { SetProperty(ref _requireReevaluateWeight, value, () => RequiresReevaluateWeight); }
+            set { SetProperty(ref _requireReevaluateWeight, value); }
         }
 
         public override string ToString()

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -21,7 +20,7 @@ using RenjuBoard.ViewModels;
 
 namespace RenjuBoard
 {
-    public class MainWindowViewModel : ModelBase, IDisposable
+    public class MainWindowViewModel : DisposableModelBase
     {
         private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
         private readonly ICommand _saveCommand;
@@ -38,7 +37,6 @@ namespace RenjuBoard
         private readonly BoardRecorder _boardRecorder;
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
         private readonly HumanExecutionNotifier _humanExecutionNotifier;
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public MainWindowViewModel(int boardSize = 15)
         {
@@ -62,14 +60,14 @@ namespace RenjuBoard
             _dropResolver.ResolvingBoard += OnResolvingBoard;
             _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
             AIControllerVM = new AIControllerViewModel(_dropResolver);
-            _disposables.Add(Observable.Merge(_humanExecutionNotifier.ExecutionTimer.ObserveAnyProperties(),
-                                              _dropResolver.ExecutionTimer.ObserveAnyProperties())
-                                       .Subscribe(args =>
-                                       {
-                                           RaisePropertyChanged(() => BlackTime);
-                                           RaisePropertyChanged(() => WhiteTime);
-                                       }));
-            _disposables.Add(_humanExecutionNotifier);
+            AutoDispose(Observable.Merge(_humanExecutionNotifier.ExecutionTimer.ObserveAnyProperties(),
+                                         _dropResolver.ExecutionTimer.ObserveAnyProperties())
+                                  .Subscribe(args =>
+                                  {
+                                      OnPropertyChanged(() => BlackTime);
+                                      OnPropertyChanged(() => WhiteTime);
+                                  }));
+            AutoDispose(_humanExecutionNotifier);
         }
 
         public ICommand DropPointCommand
@@ -147,11 +145,6 @@ namespace RenjuBoard
         public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {
             get { return _resolvingBoard.Points; }
-        }
-
-        public void Dispose()
-        {
-            _disposables.Dispose();
         }
 
         internal void ClearGameBoard()

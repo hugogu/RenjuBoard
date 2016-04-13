@@ -55,11 +55,7 @@ namespace Renju.Core
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
         {
-            var temp = PieceDropped;
-            if (temp != null)
-            {
-                temp(this, new PieceDropEventArgs(drop, operatorType));
-            }
+            RaiseEvent(PieceDropped, new PieceDropEventArgs(drop, operatorType));
         }
 
         protected virtual TPoint GetPoint(BoardPosition position)
