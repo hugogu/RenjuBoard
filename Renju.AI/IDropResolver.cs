@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Renju.Core;
 using Renju.Infrastructure.Execution;
 
@@ -14,6 +15,8 @@ namespace Renju.AI
         TimeSpan MaxStepTime { get; set; }
 
         TimeSpan MaxTotalTime { get; set; }
+
+        CancellationToken CancelTaken { get; set; }
 
         event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 

@@ -2,7 +2,7 @@
 
 namespace Renju.Infrastructure.Execution
 {
-    public interface IReportExecutionStatus : INotifyExecutionTime
+    public interface IReportExecutionStatus : INotifyExecutionTime, IDisposable
     {
         ExecutionState State { get; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Renju.Core;
 using Renju.Infrastructure.Execution;
 
@@ -20,6 +21,8 @@ namespace Renju.AI.Resolving
         public int Depth { get; set; } = 5;
 
         public int Width { get; set; } = 4;
+
+        public CancellationToken CancelTaken { get; set; }
 
         public TimeSpan MaxStepTime { get; set; } = TimeSpan.FromSeconds(20);
 
@@ -53,6 +56,9 @@ namespace Renju.AI.Resolving
         private double GetWinRateOf(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, Side side, int depth)
         {
             if (depth > Depth)
+                return 0;
+
+            if (CancelTaken.IsCancellationRequested)
                 return 0;
 
             if (ExecutionTimer.CurrentExecutionTime > MaxStepTime || ExecutionTimer.TotalExecutionTime > MaxTotalTime)

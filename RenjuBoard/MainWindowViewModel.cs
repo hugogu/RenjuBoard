@@ -60,6 +60,9 @@ namespace RenjuBoard
             _dropResolver.ResolvingBoard += OnResolvingBoard;
             _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
             AIControllerVM = new AIControllerViewModel(_dropResolver);
+            AutoDispose(_aiPlayer);
+            AutoDispose(_dropResolver);
+            AutoDispose(AIControllerVM);
             AutoDispose(Observable.Merge(_humanExecutionNotifier.ExecutionTimer.ObserveAnyProperties(),
                                          _dropResolver.ExecutionTimer.ObserveAnyProperties())
                                   .Subscribe(args =>

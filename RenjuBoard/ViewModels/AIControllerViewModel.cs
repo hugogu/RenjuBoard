@@ -7,7 +7,7 @@ using Renju.Infrastructure.Execution;
 
 namespace RenjuBoard.ViewModels
 {
-    public class AIControllerViewModel : ModelBase
+    public class AIControllerViewModel : DisposableModelBase
     {
         private readonly DelegateCommand _pauseAICommand;
         private readonly DelegateCommand _continueAICommand;
@@ -21,6 +21,7 @@ namespace RenjuBoard.ViewModels
             _continueAICommand = new DelegateCommand(() => _resolverController.Resume(), () => _resolverController.IsPaused);
             _nextAIStepCommand = new DelegateCommand(() => _resolverController.StepForward(1), () => _resolverController.IsPaused);
             _resolverController.PropertyChanged += OnResolverControllerPropertyChanged;
+            AutoDispose(_resolverController as IDisposable);
         }
 
         public ICommand PauseAICommand

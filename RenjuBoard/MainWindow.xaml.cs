@@ -22,6 +22,10 @@ namespace RenjuBoard
 
         private void StartNewGame()
         {
+            if (_mainViewModel != null)
+            {
+                _mainViewModel.Dispose();
+            }
             _mainViewModel = new MainWindowViewModel();
             DataContext = _mainViewModel;
         }
