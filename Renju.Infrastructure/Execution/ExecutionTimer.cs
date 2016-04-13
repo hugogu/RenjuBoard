@@ -3,12 +3,12 @@ using System.Reactive.Linq;
 
 namespace Renju.Infrastructure.Execution
 {
-    // TODO: Support pausing
     public class ExecutionTimer : ModelBase, IDisposable
     {
         private readonly IDisposable _timingNotifier;
         private TimeSpan _executedTime = TimeSpan.FromSeconds(0);
         private DateTime? _lastExecutionStartTime;
+        private TimeSpan? _pausedDuration;
 
         public ExecutionTimer(INotifyExecutionTime executor, int notifyIntervalInMs = 1000)
         {
@@ -26,12 +26,36 @@ namespace Renju.Infrastructure.Execution
 
         public TimeSpan CurrentExecutionTime
         {
-            get { return _lastExecutionStartTime.HasValue ? DateTime.Now - _lastExecutionStartTime.Value : TimeSpan.Zero; }
+            get
+            {
+                return _pausedDuration.HasValue ? _pausedDuration.Value :
+                       (_lastExecutionStartTime.HasValue ? DateTime.Now - _lastExecutionStartTime.Value : TimeSpan.Zero);
+            }
         }
 
         public TimeSpan TotalExecutionTime
         {
             get { return _executedTime + CurrentExecutionTime; }
+        }
+
+        public void Pause()
+        {
+            if (_lastExecutionStartTime.HasValue)
+            {
+                _pausedDuration = DateTime.Now - _lastExecutionStartTime.Value;
+                _lastExecutionStartTime = null;
+            }
+            else
+                throw new InvalidOperationException("Can't pause when it is not executing.");
+        }
+
+        public void Resume()
+        {
+            if (_pausedDuration.HasValue)
+            {
+                _lastExecutionStartTime = DateTime.Now - _pausedDuration;
+                _pausedDuration = null;
+            }
         }
 
         public virtual void Dispose()
@@ -46,6 +70,8 @@ namespace Renju.Infrastructure.Execution
                 _executedTime += DateTime.Now - _lastExecutionStartTime.Value;
                 _lastExecutionStartTime = null;
             }
+            else if (_pausedDuration.HasValue)
+                throw new InvalidOperationException("Can handle finished event while paused.");
         }
 
         private void OnExecutorStarted(object sender, EventArgs e)

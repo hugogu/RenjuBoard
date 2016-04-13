@@ -18,7 +18,7 @@ namespace RenjuBoard.ViewModels
         {
             _resolverController = new ExecutionStepController(executor);
             _pauseAICommand = new DelegateCommand(() => _resolverController.Pause(), () => !_resolverController.IsPaused);
-            _continueAICommand = new DelegateCommand(() => _resolverController.Continue(), () => _resolverController.IsPaused);
+            _continueAICommand = new DelegateCommand(() => _resolverController.Resume(), () => _resolverController.IsPaused);
             _nextAIStepCommand = new DelegateCommand(() => _resolverController.StepForward(1), () => _resolverController.IsPaused);
             _resolverController.PropertyChanged += OnResolverControllerPropertyChanged;
         }

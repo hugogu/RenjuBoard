@@ -8,7 +8,7 @@ namespace Renju.Infrastructure.Execution
         bool IsPaused { get; }
         bool PauseOnStart { get; set; }
         void Pause();
-        void Continue();
+        void Resume();
         void StepForward(int steps);
         void StepBackward(int steps);
     }

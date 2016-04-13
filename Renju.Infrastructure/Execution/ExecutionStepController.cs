@@ -7,12 +7,14 @@ namespace Renju.Infrastructure.Execution
     public class ExecutionStepController : ModelBase, IStepController, IDisposable
     {
         private readonly ManualResetEvent _event = new ManualResetEvent(true);
+        private readonly IReportExecutionStatus _executor;
         private bool _isInSteppingMode = false;
         private int _executionID;
         private int _allowedSteps;
 
         public ExecutionStepController(IReportExecutionStatus executor)
         {
+            _executor = executor;
             executor.Started += OnExecutorStarted;
             executor.Finished += OnExecutorFinished;
             executor.StepFinished += OnExecutorFinishedStep;
@@ -24,7 +26,7 @@ namespace Renju.Infrastructure.Execution
 
         public bool PauseOnStart { get; set; }
 
-        public void Continue()
+        public void Resume()
         {
             _isInSteppingMode = false;
             SetEvent();
@@ -62,6 +64,7 @@ namespace Renju.Infrastructure.Execution
 
         protected virtual void SetEvent()
         {
+            _executor.ExecutionTimer.Resume();
             _event.Set();
             RaisePropertyChanged(() => IsPaused);
         }
@@ -69,6 +72,7 @@ namespace Renju.Infrastructure.Execution
         protected virtual void ResetEvent()
         {
             _event.Reset();
+            _executor.ExecutionTimer.Pause();
             RaisePropertyChanged(() => IsPaused);
         }
 
