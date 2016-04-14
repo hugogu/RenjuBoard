@@ -116,6 +116,16 @@ namespace Renju.Core
                 return null;
         }
 
+        public static PieceLine operator +(PieceLine line, int offset)
+        {
+            return new PieceLine(line.Board, line.StartPosition, line.EndPosition + line.Direction * offset);
+        }
+
+        public static PieceLine operator -(PieceLine line, int offset)
+        {
+            return new PieceLine(line.Board, line.StartPosition, line.EndPosition - line.Direction * offset);
+        }
+
         public PieceLine TrimEnd()
         {
             var endPosition = EndPosition;

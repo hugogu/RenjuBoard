@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Renju.Infrastructure;
 
 namespace Renju.Core
 {
@@ -91,6 +93,59 @@ namespace Renju.Core
         public static bool IsOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return position.X >= 0 && position.Y >= 0 && position.X < board.Size && position.Y < board.Size;
+        }
+
+        public static bool IsInLine(this BoardPosition position, PieceLine line)
+        {
+            return position.X.InRang(line.StartPosition.X, line.EndPosition.X) &&
+                   position.Y.InRang(line.StartPosition.Y, line.EndPosition.Y) &&
+                   IsOnLine(position, line);
+        }
+
+        public static bool IsWithInLine(this BoardPosition position, PieceLine line)
+        {
+            return (position.X.WithInRang(line.StartPosition.X, line.EndPosition.X) ||
+                    position.Y.WithInRang(line.StartPosition.Y, line.EndPosition.Y)) &&
+                   IsOnLine(position, line);
+        }
+
+        public static bool IsOnLine(this BoardPosition position, PieceLine line)
+        {
+            return (position.X - line.StartPosition.X) * (position.Y - line.EndPosition.Y) ==
+                   (position.X - line.EndPosition.X) * (position.Y - line.StartPosition.Y);
+        }
+
+        public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position)
+        {
+            Debug.Assert(position.IsWithInLine(line), String.Format("Position {0} is not within line {1}", position, line));
+
+            var startLine = new PieceLine(line.Board, line.StartPosition, position);
+            if (startLine.Length > 2)
+                yield return startLine - 1;
+            var endLine = new PieceLine(line.Board, line.EndPosition, position);
+            if (endLine.Length > 2)
+                yield return endLine - 1;
+        }
+
+        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        {
+            Debug.Assert(point.Status.HasValue);
+
+            foreach (var line in board.Lines)
+            {
+                if (point.Status.Value == line.Side)
+                    if (point.Position.IsOnLine(line))
+                        continue;
+                    else
+                        yield return line;
+                else if (point.Position.IsWithInLine(line))
+                    foreach (var breakLine in line.BreakWith(point.Position))
+                        yield return breakLine;
+                else
+                    yield return line;
+            }
+            foreach (var newLine in point.GetLinesOnBoard(board, true))
+                yield return newLine;
         }
 
         public static BoardPosition GetOpposite(this BoardPosition position)

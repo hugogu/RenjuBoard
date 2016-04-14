@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Renju.Infrastructure;
 
@@ -8,6 +9,7 @@ namespace Renju.Core
     public class VirtualGameBoard<TPoint> : ModelBase, IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
+        protected readonly ObservableCollection<PieceLine> _lines = new ObservableCollection<PieceLine>();
         private readonly List<TPoint> _points;
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
@@ -42,6 +44,11 @@ namespace Renju.Core
             get { return _points; }
         }
 
+        public virtual IEnumerable<PieceLine> Lines
+        {
+            get { return _lines; }
+        }
+
         public IGameRuleEngine RuleEngine { get; protected set; }
 
         public int Size { get; protected set; }
@@ -51,6 +58,15 @@ namespace Renju.Core
         public bool IsDropped(BoardPosition position)
         {
             return this[position].Status.HasValue;
+        }
+
+        protected internal virtual void UpdateLines(IEnumerable<PieceLine> lines)
+        {
+            RunInDispatcher(() =>
+            {
+                _lines.Clear();
+                _lines.AddRange(lines);
+            });
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)

@@ -82,6 +82,7 @@
     <Compile Include="Execution\IReportExecutionStatus.cs" />
     <Compile Include="Execution\IStepController .cs" />
     <Compile Include="ModelBase.cs" />
+    <Compile Include="NumberUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reactives.cs" />
     <Compile Include="Execution\ReportExecutionObject.cs" />

@@ -73,6 +73,11 @@ namespace Renju.Core
             get { return _decoratedBoard.Size; }
         }
 
+        public IEnumerable<PieceLine> Lines
+        {
+            get { return _decoratedBoard.FindAllLinesOnBoardWithNewPoint(_decorationPoint); }
+        }
+
         public event EventHandler<PieceDropEventArgs> PieceDropped;
 
         public bool IsDropped(BoardPosition position)

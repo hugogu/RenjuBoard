@@ -69,7 +69,8 @@
                 <ToggleButton Content="Pause on start" IsChecked="{Binding PauseOnStart}" />
             </ToolBar>
             <control:GameBoardPanel ItemsSource="{Binding Points}"
-                                    Lines="{Binding PreviewLines}"
+                                    Lines="{Binding Lines}"
+                                    PreviewLines="{Binding PreviewLines}"
                                     ResolvingPoints="{Binding ResolvingPoints}"
                                     Size="{Binding BoardSize}">
                 <interaction:Interaction.Triggers>

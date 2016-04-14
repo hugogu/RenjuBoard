@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Renju.Core
 {
@@ -75,6 +76,7 @@ namespace Renju.Core
                 _expectedNextTurn = result.ExpectedNextSide;
                 _droppedPoints.Add(point);
                 this.InvalidateNearbyPointsOf(point);
+                UpdateLines(this.FindAllLinesOnBoardWithNewPoint(point).ToList());
                 RaisePeiceDroppedEvent(drop, type);
                 OnPropertyChanged(() => DropsCount);
             }

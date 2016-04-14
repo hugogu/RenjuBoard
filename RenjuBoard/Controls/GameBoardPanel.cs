@@ -32,6 +32,14 @@ namespace RenjuBoard.Controls
         public static readonly DependencyProperty LinesProperty =
             DependencyProperty.Register("Lines", typeof(IEnumerable<PieceLine>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
 
+        public IEnumerable<PieceLine> PreviewLines
+        {
+            get { return (IEnumerable<PieceLine>)GetValue(PreviewLinesProperty); }
+            set { SetValue(PreviewLinesProperty, value); }
+        }
+
+        public static readonly DependencyProperty PreviewLinesProperty =
+            DependencyProperty.Register("PreviewLines", typeof(IEnumerable<PieceLine>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
 
         public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {

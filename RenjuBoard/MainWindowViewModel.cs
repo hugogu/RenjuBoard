@@ -124,6 +124,11 @@ namespace RenjuBoard
             get { return _previewLines; }
         }
 
+        public IEnumerable<PieceLine> Lines
+        {
+            get { return _gameBoard.Lines; }
+        }
+
         public int BoardSize
         {
             get { return _gameBoard.Size; }
