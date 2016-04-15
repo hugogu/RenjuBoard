@@ -11,7 +11,7 @@ namespace Renju.Core.Rules
 
         public override bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
-            return board[drop].GetLinesOnBoard(board).Any(line => line.Length > 4);
+            return board[drop].GetRowsOnBoard(board).Any(line => line.Length > 4);
         }
     }
 }

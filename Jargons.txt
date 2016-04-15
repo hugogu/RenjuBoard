@@ -1,0 +1,17 @@
+﻿Terms	Explanation in Chinese
+Renju	五子连珠（有禁手）
+Gomoku	无禁手五子棋
+Board	棋盘
+Stone	棋子
+Line	棋盘网格线
+Row	由棋子连成的一行，可为斜线
+Threes	三
+Fours	四
+Open Fours	活四
+Open Threes	活三
+Double Three	双活三
+Overline	长连
+Forbidden Moves	禁手
+Forbidden Points	禁手点
+Trapping the forbidden points	禁手点陷阱
+Fork	？？

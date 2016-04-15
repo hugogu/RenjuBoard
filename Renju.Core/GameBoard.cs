@@ -49,6 +49,11 @@ namespace Renju.Core
                 return DropResult.InvalidDrop;
         }
 
+        protected internal override void UpdateLines(IEnumerable<PieceLine> lines)
+        {
+            RunInDispatcher(() => base.UpdateLines(lines));
+        }
+
         public void Take(BoardPosition position)
         {
             var point = GetPoint(position);

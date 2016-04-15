@@ -14,7 +14,7 @@ namespace Renju.Core.Rules
             if (drop.Side == Side.White)
                 return true;
 
-            var longLines = (from line in board[drop].GetLinesOnBoard(board, true)
+            var longLines = (from line in board[drop].GetRowsOnBoard(board, true)
                              where line.Side == drop.Side && line.DroppedCount >= 2
                              select line).ToList();
 
@@ -24,7 +24,7 @@ namespace Renju.Core.Rules
             if (longLines.Count <= 1)
                 return true;
 
-            if (longLines.Count(l => !l.IsClosed && l.DroppedCount == 2) >= 2)
+            if (longLines.Count(l => !l.IsClosed() && l.DroppedCount == 2) >= 2)
                 return false;
 
             return true;

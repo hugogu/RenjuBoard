@@ -9,9 +9,13 @@ namespace Renju.Core
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {
-        private readonly IReadBoardState<IReadOnlyBoardPoint> _board;
-
         public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
+            : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)))
+        {
+            ValidatePoint();
+        }
+
+        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction)
         {
             if (start.X != end.X &&
                 start.Y != end.Y &&
@@ -21,11 +25,10 @@ namespace Renju.Core
             if (start.X == end.X && start.Y == end.Y)
                 throw new ArgumentException(String.Format("Point {0} and {1} are the same. ", start, end));
 
-            _board = board;
+            Board = board;
             StartPosition = start;
             EndPosition = end;
-            Direction = new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y));
-            ValidatePoint();
+            Direction = direction;
             Side = Points.Select(p => p.Status).Where(s => s.HasValue).First().Value;
         }
 
@@ -42,29 +45,9 @@ namespace Renju.Core
 
         public Side Side { get; private set; }
 
-        public IReadBoardState<IReadOnlyBoardPoint> Board { get { return _board; } }
+        public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
 
-        public int Weight { get { return this.GetWeightOnBoard(_board); } }
-
-        public bool IsClosed { get { return IsEndClosed || IsStartClosed; } }
-
-        public bool IsEndClosed
-        {
-            get
-            {
-                var endPos = EndPosition + Direction;
-                return !endPos.IsOnBoard(_board) || (_board.IsDropped(endPos) && _board[endPos].Status != _board[EndPosition].Status);
-            }
-        }
-
-        public bool IsStartClosed
-        {
-            get
-            {
-                var beforePos = StartPosition - Direction;
-                return !beforePos.IsOnBoard(_board) || (_board.IsDropped(beforePos) && _board[beforePos].Status != _board[StartPosition].Status);
-            }
-        }
+        public int Weight { get { return this.GetWeightOnBoard(Board); } }
 
         public int Length
         {
@@ -78,10 +61,10 @@ namespace Renju.Core
                 var position = StartPosition;
                 while (!Equals(position, EndPosition))
                 {
-                    yield return _board[position];
+                    yield return Board[position];
                     position += Direction;
                 }
-                yield return _board[EndPosition];
+                yield return Board[EndPosition];
             }
         }
 
@@ -95,7 +78,7 @@ namespace Renju.Core
             if (a == null || b == null)
                 return null;
 
-            if (a._board != b._board)
+            if (a.Board != b.Board)
                 throw new InvalidOperationException("Two line is not on the same game board.");
 
             if (a.Side != b.Side)
@@ -105,38 +88,48 @@ namespace Renju.Core
                 return null;
 
             if (Equals(a.StartPosition, b.EndPosition))
-                return new PieceLine(a._board, b.StartPosition, a.EndPosition);
+                return new PieceLine(a.Board, b.StartPosition, a.EndPosition);
             else if (Equals(a.StartPosition, b.StartPosition))
-                return new PieceLine(a._board, a.EndPosition, b.EndPosition);
+                return new PieceLine(a.Board, a.EndPosition, b.EndPosition);
             else if (Equals(a.EndPosition, b.StartPosition))
-                return new PieceLine(a._board, a.StartPosition, b.EndPosition);
+                return new PieceLine(a.Board, a.StartPosition, b.EndPosition);
             else if (Equals(a.EndPosition, b.EndPosition))
-                return new PieceLine(a._board, a.StartPosition, b.StartPosition);
+                return new PieceLine(a.Board, a.StartPosition, b.StartPosition);
             else
                 return null;
         }
 
         public static PieceLine operator +(PieceLine line, int offset)
         {
-            return new PieceLine(line.Board, line.StartPosition, line.EndPosition + line.Direction * offset);
+            return new PieceLine(line.Board, line.StartPosition, line.EndPosition + line.Direction * offset, line.Direction);
         }
 
         public static PieceLine operator -(PieceLine line, int offset)
         {
-            return new PieceLine(line.Board, line.StartPosition, line.EndPosition - line.Direction * offset);
+            return new PieceLine(line.Board, line.StartPosition, line.EndPosition - line.Direction * offset, line.Direction);
+        }
+
+        public static PieceLine operator +(int offset, PieceLine line)
+        {
+            return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
+        }
+
+        public static PieceLine operator -(int offset, PieceLine line)
+        {
+            return new PieceLine(line.Board, line.StartPosition - line.Direction * offset, line.EndPosition, line.Direction);
         }
 
         public PieceLine TrimEnd()
         {
             var endPosition = EndPosition;
-            while (!_board.IsDropped(endPosition))
+            while (!endPosition.IsDropped(Board))
             {
                 endPosition -= Direction;
                 if (Equals(StartPosition, endPosition))
                     return null;
             }
 
-            return new PieceLine(_board, StartPosition, endPosition);
+            return new PieceLine(Board, StartPosition, endPosition);
         }
 
         internal static int GetDirection(int a, int b)

@@ -193,7 +193,7 @@ namespace RenjuBoard
         private void OnPreviewPointCommand(IReadOnlyBoardPoint point)
         {
             _previewLines.Clear();
-            _previewLines.AddRange(point.GetLinesOnBoard(_gameBoard, true));
+            _previewLines.AddRange(point.GetRowsOnBoard(_gameBoard, true));
         }
 
         private async void OnLoadCommand()

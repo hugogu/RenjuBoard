@@ -21,7 +21,5 @@ namespace Renju.Core
         IEnumerable<TPoint> Points { get; }
 
         IEnumerable<PieceLine> Lines { get; }
-
-        bool IsDropped(BoardPosition position);
     }
 }

@@ -22,7 +22,7 @@ namespace Renju.AI.Weights
                                           where point.Status == null && point.RequiresReevaluateWeight
                                           let drop = new PieceDrop(point.Position, side)
                                           where board.RuleEngine.CanDropOn(board, drop)
-                                          let lines = point.GetLinesOnBoard(board, true)
+                                          let lines = point.GetRowsOnBoard(board, true)
                                           let weightedPoint = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
                                           orderby weightedPoint.Weight descending, RandomSeed()
                                           group weightedPoint by weightedPoint.Weight >= 1000).Where(g => g.Any()).First())

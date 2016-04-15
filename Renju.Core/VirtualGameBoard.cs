@@ -55,18 +55,10 @@ namespace Renju.Core
 
         public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
 
-        public bool IsDropped(BoardPosition position)
-        {
-            return this[position].Status.HasValue;
-        }
-
         protected internal virtual void UpdateLines(IEnumerable<PieceLine> lines)
         {
-            RunInDispatcher(() =>
-            {
-                _lines.Clear();
-                _lines.AddRange(lines);
-            });
+            _lines.Clear();
+            _lines.AddRange(lines);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)

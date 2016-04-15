@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Renju.Infrastructure;
 
 namespace Renju.Core
@@ -38,12 +39,12 @@ namespace Renju.Core
             return diff.X == 0 || diff.Y == 0 || Math.Abs(diff.X) == Math.Abs(diff.Y);
         }
 
-        public static IEnumerable<PieceLine> GetLinesOnBoard(this IReadOnlyBoardPoint point, IReadBoardState<IReadOnlyBoardPoint> board, bool includeBlank = false)
+        public static IEnumerable<PieceLine> GetRowsOnBoard(this IReadOnlyBoardPoint point, IReadBoardState<IReadOnlyBoardPoint> board, bool includeBlank = false)
         {
             foreach (var direction in GetHalfDirections())
             {
-                var line = GetLineOnBoard(point.Position, board, direction, includeBlank);
-                var oppositeLine = GetLineOnBoard(point.Position, board, direction.GetOpposite(), includeBlank);
+                var line = GetRowOnBoard(point.Position, board, direction, includeBlank);
+                var oppositeLine = GetRowOnBoard(point.Position, board, direction.GetOpposite(), includeBlank);
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
@@ -57,18 +58,18 @@ namespace Renju.Core
             }
         }
 
-        public static PieceLine GetLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, bool includeBlank)
+        public static PieceLine GetRowOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, bool includeBlank)
         {
-            return includeBlank ? position.GetDashLineOnBoard(board, direction) : position.GetContinuousLineOnBoard(board, direction);
+            return includeBlank ? position.GetDashRowOnBoard(board, direction) : position.GetContinuousRowOnBoard(board, direction);
         }
 
-        public static PieceLine GetContinuousLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
+        public static PieceLine GetContinuousRowOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
         {
-            if (!board.IsDropped(position))
+            if (!position.IsDropped(board))
                 throw new InvalidOperationException("ContinousLine can't start with blank.");
 
             var endPosition = position + direction;
-            while (endPosition.IsOnBoard(board) && board.IsDropped(endPosition) && board[endPosition].Status.Value == board[position].Status.Value)
+            while (endPosition.IsOnBoard(board) && endPosition.IsDropped(board) && board[endPosition].Status.Value == board[position].Status.Value)
             {
                 endPosition += direction;
             }
@@ -77,7 +78,7 @@ namespace Renju.Core
             return Equals(position, endPosition) ? null : new PieceLine(board, position, endPosition);
         }
 
-        public static PieceLine GetDashLineOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
+        public static PieceLine GetDashRowOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction)
         {
             var firstState = board[position].Status;
             var endPosition = position;
@@ -93,6 +94,129 @@ namespace Renju.Core
         public static bool IsOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return position.X >= 0 && position.Y >= 0 && position.X < board.Size && position.Y < board.Size;
+        }
+
+        public static IEnumerable<IReadOnlyBoardPoint> GetBlockPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            Debug.Assert(!line.IsClosed());
+            Debug.Assert(line.DroppedCount >= 3);
+            Debug.Assert(line.StartPosition.IsDropped(board));
+            Debug.Assert(line.EndPosition.IsDropped(board));
+
+            if (line.DroppedCount == 4)
+            {
+                return line.GetBlockPointsForFour(board);
+            }
+            else if (line.DroppedCount == 3)
+            {
+                return line.GetBlockPointsForThree(board);
+            }
+            return new IReadOnlyBoardPoint[0];
+        }
+
+        internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            Debug.Assert(line.DroppedCount >= 4);
+            if (line.Length == line.DroppedCount)
+            {
+                var end = (line + 1).EndPosition;
+                if (!end.IsDropped(board))
+                {
+                    yield return board[end];
+                    yield break;
+                }
+                var start = (1 + line).StartPosition;
+                if (!start.IsDropped(board))
+                {
+                    yield return board[start];
+                }
+            }
+            else if (line.Length == line.DroppedCount + 1)
+            {
+                foreach(var point in line.Points)
+                {
+                    if (point.Status == null)
+                    {
+                        yield return point;
+                    }
+                }
+            }
+        }
+
+        internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            foreach(var point in (1 + line + 1).Points)
+            {
+                if (point.Status == null)
+                    yield return point;
+            }
+        }
+
+        public static IEnumerable<PieceLine> GetFours(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        {
+            return board.Lines.Where(l => l.DroppedCount == 4 && l.Side == side && !l.IsClosed()).ToList();
+        }
+
+        public static IEnumerable<PieceLine> GetThrees(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        {
+            return board.Lines.Where(l => l.DroppedCount == 3 && l.Side == side).ToList();
+        }
+
+        public static IEnumerable<PieceLine> GetOpenThrees(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        {
+            return board.GetThrees(side).Where(l => !l.IsClosed()).ToList();
+        }
+
+        public static bool IsClosed(this PieceLine line)
+        {
+            if (line.DroppedCount <= 3)
+                return line.IsClosedThree();
+            else
+                return line.IsClosedFour();
+        }
+
+        internal static bool IsClosedFour(this PieceLine line)
+        {
+            if (line.Length == 4)
+            {
+                var opponentSide = Sides.Opposite(line.Side);
+                var extendedline = 1 + line + 1;
+                return extendedline.StartPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board) &&
+                       extendedline.EndPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board);
+            }
+            else if (line.Length >= 5)
+                return false;
+            else
+                throw new ArgumentException("Line length must be greater than 3.");
+        }
+
+        internal static bool IsClosedThree(this PieceLine line)
+        {
+            var opponentSide = Sides.Opposite(line.Side);
+            var extendedline = 1 + line + 1;
+            if (extendedline.StartPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board) ||
+                extendedline.EndPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board))
+                return true;
+
+            extendedline = 1 + extendedline + 1;
+
+            return extendedline.StartPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board) &&
+                   extendedline.EndPosition.IsDroppedBySideOrOutOfBoard(opponentSide, line.Board);
+        }
+
+        public static bool IsDropped(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            return board[position].Status.HasValue;
+        }
+
+        public static bool IsEmptyAndWithinBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            return !position.IsDropped(board) && position.IsOnBoard(board);
+        }
+
+        public static bool IsDroppedBySideOrOutOfBoard(this BoardPosition position, Side side, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            return (position.IsDropped(board) && board[position].Status == side) || !position.IsOnBoard(board);
         }
 
         public static bool IsInLine(this BoardPosition position, PieceLine line)
@@ -115,16 +239,16 @@ namespace Renju.Core
                    (position.X - line.EndPosition.X) * (position.Y - line.StartPosition.Y);
         }
 
-        public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position)
+        public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Debug.Assert(position.IsWithInLine(line), String.Format("Position {0} is not within line {1}", position, line));
 
-            var startLine = new PieceLine(line.Board, line.StartPosition, position);
+            var startLine = new PieceLine(board, line.StartPosition, position, line.Direction);
             if (startLine.Length > 2)
                 yield return startLine - 1;
-            var endLine = new PieceLine(line.Board, line.EndPosition, position);
+            var endLine = new PieceLine(board, position, line.EndPosition, line.Direction);
             if (endLine.Length > 2)
-                yield return endLine - 1;
+                yield return 1 - endLine;
         }
 
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
@@ -139,12 +263,12 @@ namespace Renju.Core
                     else
                         yield return line;
                 else if (point.Position.IsWithInLine(line))
-                    foreach (var breakLine in line.BreakWith(point.Position))
+                    foreach (var breakLine in line.BreakWith(point.Position, board))
                         yield return breakLine;
                 else
                     yield return line;
             }
-            foreach (var newLine in point.GetLinesOnBoard(board, true))
+            foreach (var newLine in point.GetRowsOnBoard(board, true))
                 yield return newLine;
         }
 
@@ -181,7 +305,7 @@ namespace Renju.Core
             }
             else if (line.DroppedCount == 3)
             {
-                if (line.IsClosed)
+                if (line.IsClosed())
                 {
                     if (line.Length <= 5)
                         return 40;
@@ -201,15 +325,15 @@ namespace Renju.Core
             {
                 if (line.Length == 3)
                 {
-                    return line.IsClosed ? 5 : 55;
+                    return line.IsClosed() ? 5 : 55;
                 }
                 if (line.Length == 4)
                 {
-                    return line.IsClosed ? 4 : 50;
+                    return line.IsClosed() ? 4 : 50;
                 }
                 if (line.Length == 5)
                 {
-                    return line.IsClosed ? 1 : 10;
+                    return line.IsClosed() ? 1 : 10;
                 }
             }
             else if (line.DroppedCount == 1)
@@ -225,7 +349,7 @@ namespace Renju.Core
             if (!nextPosition.IsOnBoard(board))
                 return false;
 
-            if (!board.IsDropped(nextPosition))
+            if (!nextPosition.IsDropped(board))
                 return true;
 
             if (pickedSide == null)
