@@ -101,7 +101,11 @@ namespace Renju.Core
 
         public static PieceLine operator +(PieceLine line, int offset)
         {
-            return new PieceLine(line.Board, line.StartPosition, line.EndPosition + line.Direction * offset, line.Direction);
+            var newEndPosition = line.EndPosition + line.Direction * offset;
+            if (newEndPosition.IsOnBoard(line.Board))
+                return new PieceLine(line.Board, line.StartPosition, newEndPosition, line.Direction);
+            else
+                return line;
         }
 
         public static PieceLine operator -(PieceLine line, int offset)
@@ -111,12 +115,29 @@ namespace Renju.Core
 
         public static PieceLine operator +(int offset, PieceLine line)
         {
-            return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
+            var newStartPosition = line.StartPosition - line.Direction * offset;
+            if (newStartPosition.IsOnBoard(line.Board))
+                return new PieceLine(line.Board, newStartPosition, line.EndPosition, line.Direction);
+            else
+                return line;
         }
 
         public static PieceLine operator -(int offset, PieceLine line)
         {
-            return new PieceLine(line.Board, line.StartPosition - line.Direction * offset, line.EndPosition, line.Direction);
+            return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
+        }
+
+        public PieceLine TrimStart()
+        {
+            var startPosition = StartPosition;
+            while(!startPosition.IsDropped(Board))
+            {
+                startPosition += Direction;
+                if (Equals(startPosition, EndPosition))
+                    return null;
+            }
+
+            return new PieceLine(Board, startPosition, EndPosition);
         }
 
         public PieceLine TrimEnd()

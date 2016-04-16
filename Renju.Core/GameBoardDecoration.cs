@@ -9,6 +9,7 @@ namespace Renju.Core
     {
         private readonly IReadBoardState<IReadOnlyBoardPoint> _decoratedBoard;
         private readonly IReadOnlyBoardPoint _decorationPoint;
+        private readonly IEnumerable<PieceLine> _lines;
 
         public GameBoardDecoration(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint decorationPoint)
         {
@@ -26,6 +27,7 @@ namespace Renju.Core
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
+            _lines = this.FindAllLinesOnBoardWithNewPoint(_decorationPoint).ToList();
             this.InvalidateNearbyPointsOf(decorationPoint);
         }
 
@@ -75,7 +77,7 @@ namespace Renju.Core
 
         public IEnumerable<PieceLine> Lines
         {
-            get { return _decoratedBoard.FindAllLinesOnBoardWithNewPoint(_decorationPoint); }
+            get { return _lines ?? _decoratedBoard.Lines; }
         }
 
         public event EventHandler<PieceDropEventArgs> PieceDropped;

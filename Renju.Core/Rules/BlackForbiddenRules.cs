@@ -24,7 +24,7 @@ namespace Renju.Core.Rules
             if (longLines.Count <= 1)
                 return true;
 
-            if (longLines.Count(l => !l.IsClosed() && l.DroppedCount == 2) >= 2)
+            if (longLines.Count(l => !l.IsClosed(board) && l.DroppedCount == 2) >= 2)
                 return false;
 
             return true;
