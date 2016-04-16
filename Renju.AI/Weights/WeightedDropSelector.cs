@@ -18,6 +18,44 @@ namespace Renju.AI.Weights
 
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
+            var myFours = board.GetFours(side);
+            foreach(var myFour in myFours)
+            {
+                foreach (var blockPoint in myFour.GetBlockPoints(board))
+                {
+                    yield return blockPoint;
+                    yield break;
+                }
+            }
+            var fours = board.GetFours(Sides.Opposite(side));
+            if (fours.Any())
+            {
+                foreach (var blockPoint in fours.First().GetBlockPoints(board))
+                {
+                    yield return blockPoint;
+                    yield break;
+                }
+            }
+
+            var openThrees = board.GetOpenThrees(Sides.Opposite(side));
+            if (openThrees.Any())
+            {
+                foreach(var openThree in openThrees)
+                {
+                    foreach(var blockPoint in openThree.GetBlockPoints(board))
+                    {
+                        yield return blockPoint;
+                    }
+                }
+                var myThrees = board.GetThrees(side);
+                foreach(var myThree in myThrees)
+                {
+                    foreach (var fourPoint in myThree.GetBlockPoints(board))
+                        yield return fourPoint;
+                }
+                yield break;
+            }
+
             foreach(var weightedPoint in (from point in board.Points
                                           where point.Status == null && point.RequiresReevaluateWeight
                                           let drop = new PieceDrop(point.Position, side)

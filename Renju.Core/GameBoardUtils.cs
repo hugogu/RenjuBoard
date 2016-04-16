@@ -44,7 +44,7 @@ namespace Renju.Core
             foreach (var direction in GetHalfDirections())
             {
                 var line = GetRowOnBoard(point.Position, board, direction, includeBlank);
-                var oppositeLine = GetRowOnBoard(point.Position, board, direction.GetOpposite(), includeBlank);
+                var oppositeLine = GetRowOnBoard(point.Position, board, -direction, includeBlank);
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
@@ -277,11 +277,6 @@ namespace Renju.Core
             }
             foreach (var newLine in point.GetRowsOnBoard(board, true))
                 yield return newLine;
-        }
-
-        public static BoardPosition GetOpposite(this BoardPosition position)
-        {
-            return new BoardPosition(-position.X, -position.Y);
         }
 
         public static IEnumerable<BoardPosition> GetHalfDirections()

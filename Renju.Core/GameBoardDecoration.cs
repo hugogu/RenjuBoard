@@ -48,16 +48,7 @@ namespace Renju.Core
 
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
-            get
-            {
-                foreach (var point in _decoratedBoard.Points)
-                {
-                    if (Equals(point.Position, _decorationPoint.Position))
-                        yield return _decorationPoint;
-                    else
-                        yield return point;
-                }
-            }
+            get { return _decoratedBoard.Points.Select(p => this[p.Position]); }
         }
 
         public IEnumerable<IReadOnlyBoardPoint> DroppedPoints

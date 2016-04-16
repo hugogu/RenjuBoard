@@ -84,7 +84,7 @@ namespace Renju.Core
             if (a.Side != b.Side)
                 return null;
 
-            if (!Equals(a.Direction, b.Direction) && !Equals(a.Direction, b.Direction.GetOpposite()))
+            if (!Equals(a.Direction, b.Direction) && !Equals(a.Direction, -b.Direction))
                 return null;
 
             if (Equals(a.StartPosition, b.EndPosition))
