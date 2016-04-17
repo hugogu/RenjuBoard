@@ -258,6 +258,26 @@ namespace Renju.Core
             }
         }
 
+        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithoutPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        {
+            Debug.Assert(point.Status == null);
+
+            foreach(var line in board.Lines)
+            {
+                if (point.Position.IsOnLine(line))
+                {
+                    var trimLine = line.Trim();
+                    if (trimLine != null)
+                        yield return trimLine;
+                }
+                else
+                    yield return line;
+            }
+            foreach (var jointLine in point.GetRowsOnBoard(board, true))
+                if (jointLine.StartPosition.IsDropped(board) && jointLine.EndPosition.IsDropped(board))
+                    yield return jointLine;
+        }
+
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
             Debug.Assert(point.Status.HasValue);

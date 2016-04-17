@@ -127,6 +127,13 @@ namespace Renju.Core
             return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
         }
 
+        public PieceLine Trim()
+        {
+            var trimEnd = TrimEnd();
+
+            return trimEnd == null ? null : trimEnd.TrimStart();
+        }
+
         public PieceLine TrimStart()
         {
             var startPosition = StartPosition;

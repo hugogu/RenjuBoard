@@ -66,6 +66,7 @@ namespace Renju.Core
                 _expectedNextTurn = point.Status.Value;
                 point.ResetToEmpty();
                 _droppedPoints.RemoveAt(_droppedPoints.Count - 1);
+                UpdateLines(this.FindAllLinesOnBoardWithoutPoint(point).ToList());
                 OnPropertyChanged(() => DropsCount);
             }
             else
