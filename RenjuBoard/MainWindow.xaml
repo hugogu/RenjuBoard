@@ -10,11 +10,7 @@
         Title="Renju Board"
         Height="500" Width="960">
     <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="0,5,0,0" />
-            <Setter Property="Padding" Value="5,1" />
-        </Style>
-        <Style TargetType="{x:Type CheckBox}">
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Margin" Value="0,5,0,0" />
         </Style>
     </Window.Resources>
@@ -50,14 +46,10 @@
                         Command="{Binding SaveCommand}" />
                 <Button Content="Load..."
                         Command="{Binding LoadCommand}" />
-                <Separator Margin="0,5" />
+                <Separator Margin="0,5,0,0" />
+                <Button Content="Options"
+                        Command="{Binding ShowOptionsCommand}" />
                 <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
-                <CheckBox Content="Show Lines" IsChecked="{Binding ShowLines}" />
-                <CheckBox IsChecked="{Binding ShowAISteps}">
-                    <TextBlock Width="90"
-                               Text="Show AI resolving steps"
-                               TextWrapping="Wrap" />
-                </CheckBox>
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Column="1">
@@ -72,6 +64,7 @@
                                     Lines="{Binding Lines}"
                                     PreviewLines="{Binding PreviewLines}"
                                     ResolvingPoints="{Binding ResolvingPoints}"
+                                    ShowCalibrationLabels="{Binding OptionsVM.ShowCalibrationLabels}"
                                     Size="{Binding BoardSize}">
                 <interaction:Interaction.Triggers>
                     <interaction:EventTrigger EventName="MouseLeave">

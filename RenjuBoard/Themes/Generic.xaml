@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:RenjuBoard.Controls"
     xmlns:c="clr-namespace:RenjuBoard.Converters">
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <Style TargetType="{x:Type local:GameBoardPanel}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Black" />
@@ -24,6 +25,7 @@
                             <ItemsControl Grid.Row="1"
                                           Margin="0,3"
                                           TextBlock.TextAlignment="Center"
+                                          Visibility="{Binding ShowCalibrationLabels, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           ItemsSource="{Binding XLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -33,6 +35,7 @@
                             </ItemsControl>
                             <ItemsControl Grid.Column="1"
                                           Margin="3,0"
+                                          Visibility="{Binding ShowCalibrationLabels, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           ItemsSource="{Binding YLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>

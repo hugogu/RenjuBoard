@@ -50,6 +50,15 @@ namespace RenjuBoard.Controls
         public static readonly DependencyProperty ResolvingPointsProperty =
             DependencyProperty.Register("ResolvingPoints", typeof(IEnumerable<IReadOnlyBoardPoint>), typeof(GameBoardPanel), new FrameworkPropertyMetadata(null));
 
+        public bool ShowCalibrationLabels
+        {
+            get { return (bool)GetValue(ShowCalibrationLabelsProperty); }
+            set { SetValue(ShowCalibrationLabelsProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowCalibrationLabelsProperty =
+            DependencyProperty.Register("ShowCalibrationLabels", typeof(bool), typeof(GameBoardPanel), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsParentArrange));
+
         public IEnumerable<string> XLables
         {
             get { return Enumerable.Range(0, Size).Select(i => ((char)(i + 'A')).ToString()); }

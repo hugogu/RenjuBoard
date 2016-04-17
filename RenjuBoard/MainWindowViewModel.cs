@@ -26,6 +26,7 @@ namespace RenjuBoard
         private readonly ICommand _saveCommand;
         private readonly ICommand _loadCommand;
         private readonly ICommand _dropPointCommand;
+        private readonly ICommand _showOptionsCommand;
         private readonly ICommand _previewLinesCommand;
         private readonly ICommand _clearPreviewLinesCommand;
         private readonly DelegateCommand _undoDropCommand;
@@ -50,15 +51,17 @@ namespace RenjuBoard
             _dropResolver = new WinRateGameResolver(_dropSelector);
             _aiPlayer = new AIGamePlayer(_dropResolver) { Side = Side.White, Board = _gameBoard };
             _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
-            _previewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnPreviewPointCommand, p => ShowLines);
+            _previewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnPreviewPointCommand, p => OptionsVM.ShowPreviewLine);
             _clearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
             _undoDropCommand = new DelegateCommand(() => _boardRecorder.UndoDrop(), () => _boardRecorder.CanUndo);
             _redoDropCommand = new DelegateCommand(() => _boardRecorder.RedoDrop(), () => _boardRecorder.CanRedo);
             _saveCommand = new DelegateCommand(OnSaveCommand);
             _loadCommand = new DelegateCommand(OnLoadCommand);
+            _showOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
             _dropResolver.ResolvingBoard += OnResolvingBoard;
             _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
+            OptionsVM = new OptionsViewModel();
             AIControllerVM = new AIControllerViewModel(_dropResolver);
             AutoDispose(_aiPlayer);
             AutoDispose(_dropResolver);
@@ -71,6 +74,10 @@ namespace RenjuBoard
                                       OnPropertyChanged(() => WhiteTime);
                                   }));
             AutoDispose(_humanExecutionNotifier);
+            AutoDispose(OptionsVM.ObserveProperty(() => OptionsVM.ShowLinesOnBoard)
+                                 .Subscribe(_ => OnPropertyChanged(() => Lines)));
+            AutoDispose(OptionsVM.ObserveProperty<object>(() => OptionsVM.IsAITimeLimited, () => OptionsVM.AIStepTimeLimit, () => OptionsVM.AITimeLimit)
+                                 .Subscribe(_ => ReloadAITimeLimitOptions()));
         }
 
         public ICommand DropPointCommand
@@ -108,16 +115,19 @@ namespace RenjuBoard
             get { return _loadCommand; }
         }
 
+        public ICommand ShowOptionsCommand
+        {
+            get { return _showOptionsCommand; }
+        }
+
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _gameBoard.Points; }
         }
 
-        public bool ShowLines { get; set; } = true;
-
-        public bool ShowAISteps { get; set; } = true;
-
         public AIControllerViewModel AIControllerVM { get; private set; }
+
+        public OptionsViewModel OptionsVM { get; private set; }
 
         public IEnumerable<PieceLine> PreviewLines
         {
@@ -126,7 +136,7 @@ namespace RenjuBoard
 
         public IEnumerable<PieceLine> Lines
         {
-            get { return _gameBoard.Lines; }
+            get { return OptionsVM.ShowLinesOnBoard ? _gameBoard.Lines : new PieceLine[0]; }
         }
 
         public int BoardSize
@@ -166,7 +176,7 @@ namespace RenjuBoard
             foreach (var showingPoint in _resolvingBoard.Points)
             {
                 var virtualPoint = e.Board == null ? null : e.Board[showingPoint.Position];
-                if (virtualPoint is VirtualBoardPoint && ShowAISteps)
+                if (virtualPoint is VirtualBoardPoint && OptionsVM.ShowAISteps)
                 {
                     showingPoint.Index = virtualPoint.Index;
                     showingPoint.Status = virtualPoint.Status;
@@ -194,6 +204,41 @@ namespace RenjuBoard
         {
             _previewLines.Clear();
             _previewLines.AddRange(point.GetRowsOnBoard(_gameBoard, true));
+        }
+
+        private void ReloadAITimeLimitOptions()
+        {
+            if (OptionsVM.IsAITimeLimited)
+            {
+                _dropResolver.MaxTotalTime = TimeSpan.FromMilliseconds(OptionsVM.AITimeLimit);
+                _dropResolver.MaxStepTime = TimeSpan.FromMilliseconds(OptionsVM.AIStepTimeLimit);
+            }
+            else
+            {
+                _dropResolver.MaxTotalTime = TimeSpan.MaxValue;
+                _dropResolver.MaxStepTime = TimeSpan.MaxValue;
+            }
+        }
+
+        private void OnShowOptionsCommand()
+        {
+            var optionsCopy = new OptionsViewModel(OptionsVM);
+            var optionsWindow = new Window()
+            {
+                Owner = Application.Current.MainWindow,
+                Title = "Renju Options",
+                Content = optionsCopy,
+                MinHeight = 200,
+                MinWidth = 300,
+                ResizeMode = ResizeMode.NoResize,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStyle = WindowStyle.SingleBorderWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            if (optionsWindow.ShowDialog() == true)
+            {
+                OptionsVM.CopyFrom(optionsCopy);
+            }
         }
 
         private async void OnLoadCommand()
