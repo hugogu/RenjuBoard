@@ -35,30 +35,44 @@
                 </TextBlock>
             </StackPanel>
             <StackPanel Margin="5">
-                <Button Content="New Game"
-                        Click="OnNewGameButtonClick" />
-                <Button Content="Undo"
-                        Command="{Binding UndoCommand}" />
-                <Button Content="Redo"
-                        Command="{Binding RedoCommand}" />
+                <control:ImageButton Content="New Game"
+                                     Click="OnNewGameButtonClick"
+                                     Source="Images/NewGame.png" />
+                <control:ImageButton Content="Undo"
+                                     Source="Images/Undo.png"
+                                     Command="{Binding UndoCommand}" />
+                <control:ImageButton Content="Redo"
+                                     Source="Images/Redo.png"
+                                     Command="{Binding RedoCommand}" />
                 <Separator Margin="0,5,0,0" />
-                <Button Content="Save..."
-                        Command="{Binding SaveCommand}" />
-                <Button Content="Load..."
-                        Command="{Binding LoadCommand}" />
+                <control:ImageButton Content="Save..."
+                                     Source="Images/Save.png"
+                                     Command="{Binding SaveCommand}" />
+                <control:ImageButton Content="Load..."
+                                     Source="Images/Open.png"
+                                     Command="{Binding LoadCommand}" />
                 <Separator Margin="0,5,0,0" />
-                <Button Content="Options"
-                        Command="{Binding ShowOptionsCommand}" />
+                <control:ImageButton Content="Options"
+                                     Source="Images/UserProfile.png"
+                                     Command="{Binding ShowOptionsCommand}" />
                 <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Column="1">
             <ToolBar DockPanel.Dock="Top" DataContext="{Binding AIControllerVM}">
-                <Button Content="Pause" Command="{Binding PauseAICommand}" />
-                <Button Content="Continue" Command="{Binding ContinueAICommand}" />
-                <Button Content="Next" Command="{Binding NextAIStepComand}" />
+                <Button Command="{Binding PauseAICommand}">
+                    <Image Source="Images/Pause.png" Stretch="None" />
+                </Button>
+                <Button Command="{Binding ContinueAICommand}">
+                    <Image Source="Images/Run.png" Stretch="None" />
+                </Button>
+                <Button Command="{Binding NextAIStepComand}">
+                    <Image Source="Images/Next.png" Stretch="None" />
+                </Button>
                 <Separator />
-                <ToggleButton Content="Pause on start" IsChecked="{Binding PauseOnStart}" />
+                <ToggleButton IsChecked="{Binding PauseOnStart}">
+                    <Image Source="Images/RunPause.png" Stretch="None" />
+                </ToggleButton>
             </ToolBar>
             <control:GameBoardPanel ItemsSource="{Binding Points}"
                                     Lines="{Binding Lines}"

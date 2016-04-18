@@ -82,7 +82,9 @@
     <DataTemplate DataType="{x:Type vm:LogsViewModel}">
         <DockPanel Grid.Column="3">
             <ToolBar DockPanel.Dock="Top">
-                <Button Content="Clear" Command="{Binding ClearLogsCommand}" />
+                <Button Command="{Binding ClearLogsCommand}">
+                    <Image Source="../Images/Clean.png" Stretch="None" />
+                </Button>
                 <TextBox Width="100"
                          Margin="5,0"
                          Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}">
@@ -92,9 +94,10 @@
                                     CommandParameter="{Binding ElementName=logBox}" />
                     </TextBox.InputBindings>
                 </TextBox>
-                <Button Content="Search"
-                        Command="{Binding SearchCommand}"
-                        CommandParameter="{Binding ElementName=logBox}" />
+                <Button Command="{Binding SearchCommand}"
+                        CommandParameter="{Binding ElementName=logBox}">
+                    <Image Source="../Images/Search.png" Stretch="None" />
+                </Button>
             </ToolBar>
             <TextBox x:Name="logBox"
                      Text="{Binding LogText}"
