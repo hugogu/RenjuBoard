@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     [DebuggerDisplay("[X={X}, Y={Y}]")]
     public class BoardPosition : IEquatable<BoardPosition>

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     [Serializable]
     [DebuggerDisplay("{Side}: X={X}, Y={Y}")]

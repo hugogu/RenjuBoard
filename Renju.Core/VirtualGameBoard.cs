@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {
@@ -47,6 +48,11 @@ namespace Renju.Core
         public virtual IEnumerable<PieceLine> Lines
         {
             get { return _lines; }
+        }
+
+        public string VisualBoard
+        {
+            get { return this.GetLiternalPresentation(); }
         }
 
         public IGameRuleEngine RuleEngine { get; protected set; }

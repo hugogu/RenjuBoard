@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace RenjuBoard.Controls
+namespace Renju.Controls
 {
     public class LinedGrid : UniformGrid
     {

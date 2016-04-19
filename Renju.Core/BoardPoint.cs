@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {

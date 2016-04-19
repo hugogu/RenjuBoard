@@ -1,4 +1,4 @@
-﻿namespace Renju.Core
+﻿namespace Renju.Infrastructure.Model
 {
     public interface IReadOnlyBoardPoint
     {

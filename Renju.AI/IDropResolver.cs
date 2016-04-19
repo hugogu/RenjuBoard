@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Renju.Core;
 using Renju.Infrastructure.Execution;
+using Renju.Infrastructure.Model;
 
 namespace Renju.AI
 {

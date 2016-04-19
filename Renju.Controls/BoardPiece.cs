@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace RenjuBoard.Controls
+namespace Renju.Controls
 {
     public class BoardPiece : Control
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {
@@ -69,6 +70,11 @@ namespace Renju.Core
         public IEnumerable<PieceLine> Lines
         {
             get { return _lines ?? _decoratedBoard.Lines; }
+        }
+
+        public string VisualBoard
+        {
+            get { return this.GetLiternalPresentation(); }
         }
 
         public event EventHandler<PieceDropEventArgs> PieceDropped;

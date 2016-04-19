@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     public interface IReadBoardState<out TPoint>
         where TPoint : IReadOnlyBoardPoint
@@ -15,6 +15,8 @@ namespace Renju.Core
         int Size { get; }
 
         int DropsCount { get; }
+
+        string VisualBoard { get; }
 
         IEnumerable<TPoint> DroppedPoints { get; }
 

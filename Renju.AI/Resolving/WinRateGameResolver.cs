@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Renju.Core;
 using Renju.Infrastructure.Execution;
+using Renju.Infrastructure.Model;
 
 namespace Renju.AI.Resolving
 {

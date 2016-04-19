@@ -1,4 +1,6 @@
-﻿namespace Renju.Core.Rules
+﻿using Renju.Infrastructure.Model;
+
+namespace Renju.Core.Rules
 {
     public abstract class WinRule : IGameRule
     {

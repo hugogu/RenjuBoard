@@ -16,6 +16,7 @@ using Renju.Core;
 using Renju.Core.Rules;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Execution;
+using Renju.Infrastructure.Model;
 using RenjuBoard.ViewModels;
 
 namespace RenjuBoard

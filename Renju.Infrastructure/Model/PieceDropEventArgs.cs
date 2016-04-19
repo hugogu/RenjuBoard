@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     public class PieceDropEventArgs : EventArgs
     {

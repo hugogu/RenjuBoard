@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {

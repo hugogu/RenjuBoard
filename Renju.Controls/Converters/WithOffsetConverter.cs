@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace RenjuBoard.Converters
+namespace Renju.Controls.Converters
 {
     [ValueConversion(typeof(object), typeof(double))]
     public class WithOffsetConverter : IValueConverter

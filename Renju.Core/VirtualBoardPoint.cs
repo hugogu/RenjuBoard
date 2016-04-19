@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {
@@ -46,7 +48,7 @@ namespace Renju.Core
 
         public override string ToString()
         {
-            return String.Format("{1}{0}", Position, Status.Value == Side.Black ? "●" : "○");
+            return String.Format("{1}{0}", Position, Status.GetLiternalPresentation());
         }
     }
 }

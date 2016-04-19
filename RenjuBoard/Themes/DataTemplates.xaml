@@ -2,13 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
                     xmlns:interaction="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:control="clr-namespace:RenjuBoard.Controls"
-                    xmlns:converter="clr-namespace:RenjuBoard.Converters"
-                    xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core">
+                    xmlns:control="clr-namespace:Renju.Controls;assembly=Renju.Controls"
+                    xmlns:converter="clr-namespace:Renju.Controls.Converters;assembly=Renju.Controls"
+                    xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
+                    xmlns:model="clr-namespace:Renju.Infrastructure.Model;assembly=Renju.Infrastructure">
     <converter:WithOffsetConverter x:Key="WithOffsetConverter" />
     <converter:NumberToMarginConverter x:Key="NumberToMarginConverter" />
 
-    <DataTemplate DataType="{x:Type renju:PieceLine}">
+    <DataTemplate DataType="{x:Type model:PieceLine}">
         <Viewbox IsHitTestVisible="False"
                  UseLayoutRounding="False"
                  TextOptions.TextFormattingMode="Ideal">
@@ -42,10 +43,10 @@
                             Weight="{Binding Weight}">
         </control:BoardPiece>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.Black}">
                 <Setter TargetName="drop" Property="Background" Value="#77000000" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.White}">
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.White}">
                 <Setter TargetName="drop" Property="Background" Value="#77FFFFFF" />
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -67,10 +68,10 @@
             </interaction:Interaction.Triggers>
         </control:BoardPiece>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.Black}">
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.Black}">
                 <Setter TargetName="drop" Property="Background" Value="Black" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static renju:Side.White}">
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.White}">
                 <Setter TargetName="drop" Property="Background" Value="Gray" />
             </DataTrigger>
         </DataTemplate.Triggers>

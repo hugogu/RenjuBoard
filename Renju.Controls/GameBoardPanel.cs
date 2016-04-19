@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Renju.Core;
+using Renju.Infrastructure.Model;
 
-namespace RenjuBoard.Controls
+namespace Renju.Controls
 {
     public class GameBoardPanel : ItemsControl
     {

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Renju.Core;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.AI
 {

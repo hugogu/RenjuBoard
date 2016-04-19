@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace RenjuBoard.Converters
+namespace Renju.Controls.Converters
 {
     public class NumberToMarginConverter : IMultiValueConverter
     {

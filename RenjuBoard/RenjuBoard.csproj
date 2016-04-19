@@ -93,7 +93,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -106,12 +105,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\BoardPiece.cs" />
-    <Compile Include="Controls\GameBoardPanel.cs" />
-    <Compile Include="Controls\LinedGrid.cs" />
-    <Compile Include="Converters\NumberToMarginConverter.cs" />
-    <Compile Include="Converters\WeightToBrushConverter.cs" />
-    <Compile Include="Converters\WithOffsetConverter.cs" />
     <Compile Include="ViewModels\AIControllerViewModel.cs" />
     <Compile Include="ViewModels\LogsViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -121,10 +114,6 @@
     <Page Include="Themes\DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Styles.xaml">
       <SubType>Designer</SubType>
@@ -169,6 +158,10 @@
     <ProjectReference Include="..\Renju.AI\Renju.AI.csproj">
       <Project>{a162380e-72b1-41a5-bb12-fc4d458c5986}</Project>
       <Name>Renju.AI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Renju.Controls\Renju.Controls.csproj">
+      <Project>{6adc2ffa-d00f-4f33-a6df-366768f2f479}</Project>
+      <Name>Renju.Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\Renju.Core\Renju.Core.csproj">
       <Project>{9298f008-11cd-4cc2-b2bc-8d06cba998a4}</Project>

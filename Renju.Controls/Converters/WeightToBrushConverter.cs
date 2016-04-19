@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace RenjuBoard.Converters
+namespace Renju.Controls.Converters
 {
     [ValueConversion(typeof(double), typeof(Brush))]
     public class WeightToBrushConverter : IValueConverter

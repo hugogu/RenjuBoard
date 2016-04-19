@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Jargons.txt = Jargons.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Controls", "Renju.Controls\Renju.Controls.csproj", "{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE7EA02-29E3-4586-B644-A22421E3AD2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace RenjuBoard.Controls
+namespace Renju.Controls
 {
     public class ImageButton : Button
     {

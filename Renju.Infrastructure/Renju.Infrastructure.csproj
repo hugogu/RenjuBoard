@@ -82,6 +82,21 @@
     <Compile Include="Execution\IReportExecutionStatus.cs" />
     <Compile Include="Execution\IStepController .cs" />
     <Compile Include="ModelBase.cs" />
+    <Compile Include="ModelExtensions.cs" />
+    <Compile Include="Model\BoardPosition.cs" />
+    <Compile Include="Model\DropResult.cs" />
+    <Compile Include="Model\IGameBoard.cs" />
+    <Compile Include="Model\IGamePlayer.cs" />
+    <Compile Include="Model\IGameRule.cs" />
+    <Compile Include="Model\IGameRuleEngine.cs" />
+    <Compile Include="Model\IReadBoardState.cs" />
+    <Compile Include="Model\IReadOnlyBoardPoint.cs" />
+    <Compile Include="Model\OperatorType.cs" />
+    <Compile Include="Model\PieceDrop.cs" />
+    <Compile Include="Model\PieceDropEventArgs.cs" />
+    <Compile Include="Model\PieceDropTypeConverter.cs" />
+    <Compile Include="Model\PieceLine.cs" />
+    <Compile Include="Model\Side.cs" />
     <Compile Include="NumberUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reactives.cs" />
@@ -91,6 +106,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

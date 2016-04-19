@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     public class PieceDropTypeConverter : TypeConverter
     {

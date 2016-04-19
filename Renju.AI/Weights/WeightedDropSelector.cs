@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Renju.Core;
+using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.AI.Weights
 {

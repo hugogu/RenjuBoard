@@ -1,5 +1,5 @@
 ﻿using System;
-using Renju.Core;
+using Renju.Infrastructure.Model;
 
 namespace Renju.AI
 {

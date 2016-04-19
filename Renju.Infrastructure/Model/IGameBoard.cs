@@ -1,4 +1,4 @@
-﻿namespace Renju.Core
+﻿namespace Renju.Infrastructure.Model
 {
     public interface IGameBoard<out TPoint> : IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint

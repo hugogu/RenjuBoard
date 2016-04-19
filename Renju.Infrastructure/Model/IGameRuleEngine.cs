@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Renju.Core
+namespace Renju.Infrastructure.Model
 {
     public interface IGameRuleEngine
     {
