@@ -36,7 +36,7 @@
             </StackPanel>
             <StackPanel Margin="5">
                 <control:ImageButton Content="New Game"
-                                     Click="OnNewGameButtonClick"
+                                     Command="{Binding NewGameCommand}"
                                      Source="Images/NewGame.png" />
                 <control:ImageButton Content="Undo"
                                      Source="Images/Undo.png"

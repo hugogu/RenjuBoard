@@ -7,14 +7,17 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Prism.Commands;
+using Prism.Events;
 using Renju.AI;
 using Renju.AI.Resolving;
 using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Core.Rules;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 using RenjuBoard.ViewModels;
@@ -30,6 +33,7 @@ namespace RenjuBoard
         private readonly ICommand _showOptionsCommand;
         private readonly ICommand _previewLinesCommand;
         private readonly ICommand _clearPreviewLinesCommand;
+        private readonly ICommand _newGameCommand;
         private readonly DelegateCommand _undoDropCommand;
         private readonly DelegateCommand _redoDropCommand;
         private readonly IDropSelector _dropSelector = new WeightedDropSelector { RandomEqualSelections = true };
@@ -40,8 +44,12 @@ namespace RenjuBoard
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
         private readonly HumanExecutionNotifier _humanExecutionNotifier;
 
-        public MainWindowViewModel(int boardSize = 15)
+        [Dependency]
+        public IEventAggregator EventAggregator { get; internal set; }
+
+        public MainWindowViewModel(NewGameOptions options)
         {
+            var boardSize = options.BoardSize;
             _gameBoard = new GameBoard(boardSize, new DefaultGameRuleEngine(new IGameRule[]
                          {
                              new FiveWinRule(),
@@ -59,6 +67,7 @@ namespace RenjuBoard
             _saveCommand = new DelegateCommand(OnSaveCommand);
             _loadCommand = new DelegateCommand(OnLoadCommand);
             _showOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
+            _newGameCommand = new DelegateCommand(OnNewGameCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
             _dropResolver.ResolvingBoard += OnResolvingBoard;
             _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
@@ -121,6 +130,11 @@ namespace RenjuBoard
             get { return _showOptionsCommand; }
         }
 
+        public ICommand NewGameCommand
+        {
+            get { return _newGameCommand; }
+        }
+
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _gameBoard.Points; }
@@ -170,6 +184,11 @@ namespace RenjuBoard
         {
             while (_boardRecorder.CanUndo)
                 _boardRecorder.UndoDrop();
+        }
+
+        private void OnNewGameCommand()
+        {
+            EventAggregator.GetEvent<StartNewGameEvent>().Publish(new NewGameOptions());
         }
 
         private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)

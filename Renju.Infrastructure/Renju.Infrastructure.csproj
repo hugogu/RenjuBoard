@@ -75,6 +75,8 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DisposableModelBase.cs" />
+    <Compile Include="Events\NewGameOptions.cs" />
+    <Compile Include="Events\StartNewGameEvent.cs" />
     <Compile Include="Execution\ExecutionState.cs" />
     <Compile Include="Execution\ExecutionStepController.cs" />
     <Compile Include="Execution\ExecutionTimer.cs" />
