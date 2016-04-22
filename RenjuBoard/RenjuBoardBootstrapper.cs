@@ -1,9 +1,8 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using Microsoft.Practices.Unity;
-using Prism.Events;
 using Prism.Modularity;
 using Prism.Unity;
-using Renju.Infrastructure.Events;
 
 namespace RenjuBoard
 {
@@ -22,16 +21,8 @@ namespace RenjuBoard
 
         protected override void InitializeShell()
         {
-            Application.Current.MainWindow = Shell as MainWindow;
+            Debug.Assert(Application.Current.MainWindow != null);
             Application.Current.MainWindow.Show();
-        }
-
-        protected override void InitializeModules()
-        {
-            base.InitializeModules();
-            Container.Resolve<IEventAggregator>()
-                     .GetEvent<StartNewGameEvent>()
-                     .Publish(new NewGameOptions());
         }
     }
 }

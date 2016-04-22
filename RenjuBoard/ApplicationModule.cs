@@ -10,6 +10,8 @@ namespace RenjuBoard
 {
     public class ApplicationModule : IModule
     {
+        private IUnityContainer _currentGameContainer;
+
         [Dependency]
         public IEventAggregator EventAggregator { get; set; }
 
@@ -19,14 +21,15 @@ namespace RenjuBoard
         public void Initialize()
         {
             Application.Current.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
-            Container.RegisterType<MainWindowViewModel>(new PerResolveLifetimeManager());
             EventAggregator.GetEvent<StartNewGameEvent>().Subscribe(OnNewGameEvent, ThreadOption.UIThread, true);
         }
 
         private void OnNewGameEvent(NewGameOptions options)
         {
-            Application.Current.MainWindow.SetValue(FrameworkElement.DataContextProperty,
-                Container.Resolve<MainWindowViewModel>(new ParameterOverride("options", options)));
+            if (_currentGameContainer != null)
+                _currentGameContainer.Dispose();
+            _currentGameContainer = Container.CreateChildContainer();
+            App.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>(new ParameterOverride("options", options));
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

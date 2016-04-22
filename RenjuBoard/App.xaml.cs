@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using Microsoft.Practices.ServiceLocation;
+using Prism.Events;
+using Renju.Infrastructure.Events;
 
 namespace RenjuBoard
 {
@@ -10,6 +14,8 @@ namespace RenjuBoard
         protected override void OnStartup(StartupEventArgs e)
         {
             new RenjuBoardBootstrapper().Run();
+            Debug.Assert(ServiceLocator.IsLocationProviderSet);
+            ServiceLocator.Current.GetInstance<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(new NewGameOptions());
         }
     }
 }
