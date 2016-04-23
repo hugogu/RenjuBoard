@@ -12,10 +12,7 @@ using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Renju.AI;
-using Renju.AI.Resolving;
-using Renju.AI.Weights;
 using Renju.Core;
-using Renju.Core.Rules;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
@@ -26,7 +23,6 @@ namespace RenjuBoard
 {
     public class MainWindowViewModel : DisposableModelBase
     {
-        private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
         private readonly ICommand _saveCommand;
         private readonly ICommand _loadCommand;
         private readonly ICommand _dropPointCommand;
@@ -36,29 +32,24 @@ namespace RenjuBoard
         private readonly ICommand _newGameCommand;
         private readonly DelegateCommand _undoDropCommand;
         private readonly DelegateCommand _redoDropCommand;
-        private readonly IDropSelector _dropSelector = new WeightedDropSelector { RandomEqualSelections = true };
         private readonly IDropResolver _dropResolver;
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
-        private readonly AIGamePlayer _aiPlayer;
+        private readonly IGamePlayer _aiPlayer;
         private readonly BoardRecorder _boardRecorder;
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
         private readonly HumanExecutionNotifier _humanExecutionNotifier;
 
-        [Dependency]
-        public IEventAggregator EventAggregator { get; internal set; }
-
-        public MainWindowViewModel(NewGameOptions options)
+        public MainWindowViewModel(
+            IGameBoard<IReadOnlyBoardPoint> gameBoard,
+            BoardRecorder boardRecorder,
+            IGamePlayer aiPlayer,
+            IDropResolver dropResolver)
         {
-            var boardSize = options.BoardSize;
-            _gameBoard = new GameBoard(boardSize, new DefaultGameRuleEngine(new IGameRule[]
-                         {
-                             new FiveWinRule(),
-                             new BlackForbiddenRules()
-                         }));
-            _resolvingBoard = new VirtualGameBoard<BoardPoint>(boardSize, BoardPoint.CreateIndexBasedFactory(boardSize));
-            _boardRecorder = new BoardRecorder(_gameBoard);
-            _dropResolver = new WinRateGameResolver(_dropSelector);
-            _aiPlayer = new AIGamePlayer(_dropResolver) { Side = Side.White, Board = _gameBoard };
+            GameBoard = gameBoard;
+            _boardRecorder = boardRecorder;
+            _resolvingBoard = new VirtualGameBoard<BoardPoint>(BoardSize, BoardPoint.CreateIndexBasedFactory(BoardSize));
+            _dropResolver = dropResolver;
+            _aiPlayer = aiPlayer;
             _dropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
             _previewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnPreviewPointCommand, p => OptionsVM.ShowPreviewLine);
             _clearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
@@ -70,11 +61,9 @@ namespace RenjuBoard
             _newGameCommand = new DelegateCommand(OnNewGameCommand);
             _boardRecorder.PropertyChanged += OnBoardRecorderPropertyChanged;
             _dropResolver.ResolvingBoard += OnResolvingBoard;
-            _humanExecutionNotifier = new HumanExecutionNotifier(_gameBoard, this);
+            _humanExecutionNotifier = new HumanExecutionNotifier(GameBoard, this);
             OptionsVM = new OptionsViewModel();
-            AIControllerVM = new AIControllerViewModel(_dropResolver);
-            AutoDispose(_aiPlayer);
-            AutoDispose(_dropResolver);
+            AIControllerVM = new AIControllerViewModel(new ExecutionStepController(_dropResolver));
             AutoDispose(AIControllerVM);
             AutoDispose(Observable.Merge(_humanExecutionNotifier.ExecutionTimer.ObserveAnyProperties(),
                                          _dropResolver.ExecutionTimer.ObserveAnyProperties())
@@ -89,6 +78,11 @@ namespace RenjuBoard
             AutoDispose(OptionsVM.ObserveProperty<object>(() => OptionsVM.IsAITimeLimited, () => OptionsVM.AIStepTimeLimit, () => OptionsVM.AITimeLimit)
                                  .Subscribe(_ => ReloadAITimeLimitOptions()));
         }
+
+        [Dependency]
+        public IEventAggregator EventAggregator { get; internal set; }
+
+        public IGameBoard<IReadOnlyBoardPoint> GameBoard { get; private set; }
 
         public ICommand DropPointCommand
         {
@@ -137,7 +131,7 @@ namespace RenjuBoard
 
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
-            get { return _gameBoard.Points; }
+            get { return GameBoard.Points; }
         }
 
         public AIControllerViewModel AIControllerVM { get; private set; }
@@ -151,12 +145,12 @@ namespace RenjuBoard
 
         public IEnumerable<PieceLine> Lines
         {
-            get { return OptionsVM.ShowLinesOnBoard ? _gameBoard.Lines : new PieceLine[0]; }
+            get { return OptionsVM.ShowLinesOnBoard ? GameBoard.Lines : new PieceLine[0]; }
         }
 
         public int BoardSize
         {
-            get { return _gameBoard.Size; }
+            get { return GameBoard.Size; }
         }
 
         public bool AIFirst
@@ -188,7 +182,7 @@ namespace RenjuBoard
 
         private void OnNewGameCommand()
         {
-            EventAggregator.GetEvent<StartNewGameEvent>().Publish(new NewGameOptions());
+            EventAggregator.GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
         }
 
         private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)
@@ -212,7 +206,7 @@ namespace RenjuBoard
         {
             try
             {
-                _gameBoard.Drop(point.Position, OperatorType.Human);
+                GameBoard.Drop(point.Position, OperatorType.Human);
             }
             catch (InvalidOperationException ex)
             {
@@ -223,7 +217,7 @@ namespace RenjuBoard
         private void OnPreviewPointCommand(IReadOnlyBoardPoint point)
         {
             _previewLines.Clear();
-            _previewLines.AddRange(point.GetRowsOnBoard(_gameBoard, true));
+            _previewLines.AddRange(point.GetRowsOnBoard(GameBoard, true));
         }
 
         private void ReloadAITimeLimitOptions()
@@ -274,7 +268,7 @@ namespace RenjuBoard
                     {
                         var line = await streamReader.ReadLineAsync();
                         var drop = converter.ConvertFromString(line) as PieceDrop;
-                        _gameBoard.Drop(drop, OperatorType.Loading);
+                        GameBoard.Drop(drop, OperatorType.Loading);
                     }
                 }
             }
@@ -335,7 +329,7 @@ namespace RenjuBoard
 
         private class HumanExecutionNotifier : ReportExecutionObject
         {
-            private readonly AIGamePlayer _aiPlayer;
+            private readonly IGamePlayer _aiPlayer;
 
             public HumanExecutionNotifier(IGameBoard<IReadOnlyBoardPoint> board, MainWindowViewModel vm)
             {

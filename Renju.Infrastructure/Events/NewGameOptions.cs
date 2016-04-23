@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Practices.Unity;
 using Renju.Infrastructure.Model;
 
 namespace Renju.Infrastructure.Events
@@ -9,6 +9,9 @@ namespace Renju.Infrastructure.Events
 
         public int BoardSize { get; set; } = 15;
 
-        public IEnumerable<IGameRule> Rules { get; set; }
+        [Dependency]
+        public IGameRuleEngine RuleEngine { get; internal set; }
+
+        public static NewGameOptions Default { get; } = new NewGameOptions();
     }
 }

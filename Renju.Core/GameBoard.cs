@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Renju.Infrastructure;
+using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Model;
 
 namespace Renju.Core
@@ -12,10 +14,11 @@ namespace Renju.Core
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
         private Side? _expectedNextTurn = Side.Black;
 
-        public GameBoard(int size, IGameRuleEngine gameRuleEngine)
-            : base(size,  BoardPoint.CreateIndexBasedFactory(size))
+        public GameBoard(NewGameOptions options)
+            : base(options.BoardSize,  BoardPoint.CreateIndexBasedFactory(options.BoardSize))
         {
-            RuleEngine = gameRuleEngine;
+            Debug.Assert(options.RuleEngine != null);
+            RuleEngine = options.RuleEngine;
         }
 
         public override int DropsCount

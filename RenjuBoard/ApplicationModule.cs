@@ -26,10 +26,19 @@ namespace RenjuBoard
 
         private void OnNewGameEvent(NewGameOptions options)
         {
+            App.Current.MainWindow.DataContext = CreateChildContainerForGame(options).Resolve<MainWindowViewModel>();
+        }
+
+        private IUnityContainer CreateChildContainerForGame(NewGameOptions options)
+        {
             if (_currentGameContainer != null)
                 _currentGameContainer.Dispose();
             _currentGameContainer = Container.CreateChildContainer();
-            App.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>(new ParameterOverride("options", options));
+            if (options == NewGameOptions.Default)
+                options = _currentGameContainer.Resolve<NewGameOptions>();
+            _currentGameContainer.RegisterInstance(options);
+
+            return _currentGameContainer;
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

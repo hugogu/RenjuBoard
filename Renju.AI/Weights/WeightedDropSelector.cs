@@ -8,14 +8,14 @@ namespace Renju.AI.Weights
 {
     public class WeightedDropSelector : IDropSelector
     {
-        private Random _random;
+        private readonly Random _random;
 
         public WeightedDropSelector()
         {
             _random = new Random();
         }
 
-        public bool RandomEqualSelections { get; set; }
+        public bool RandomEqualSelections { get; set; } = true;
 
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {

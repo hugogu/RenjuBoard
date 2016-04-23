@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Renju.Infrastructure.Model;
 
@@ -7,10 +8,13 @@ namespace Renju.Core
 {
     public class DefaultGameRuleEngine : IGameRuleEngine
     {
-        private IEnumerable<IGameRule> _rules;
+        private readonly IEnumerable<IGameRule> _rules;
 
         public DefaultGameRuleEngine(IEnumerable<IGameRule> rules)
         {
+            if (rules == null)
+                throw new ArgumentNullException("rules");
+            Debug.Assert(rules.Any());
             _rules = rules;
         }
 

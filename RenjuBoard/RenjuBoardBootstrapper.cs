@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Microsoft.Practices.Unity;
 using Prism.Modularity;
@@ -10,8 +13,18 @@ namespace RenjuBoard
     {
         protected override void ConfigureModuleCatalog()
         {
-            var mainModuleType = typeof(ApplicationModule);
-            ModuleCatalog.AddModule(new ModuleInfo(mainModuleType.Name, mainModuleType.AssemblyQualifiedName));
+            foreach(var type in AllClasses.FromAssembliesInBasePath().Where(t => typeof(IModule).IsAssignableFrom(t)))
+            {
+                Trace.WriteLine(String.Format("Find module " + type.FullName));
+                ModuleCatalog.AddModule(new ModuleInfo(type.Name, type.AssemblyQualifiedName));
+            }
+        }
+
+        protected override void ConfigureContainer()
+        {
+            base.ConfigureContainer();
+            Container.RegisterType(typeof(IEnumerable<>),
+                new InjectionFactory((container, type, name) => container.ResolveAll(type.GetGenericArguments().Single())));
         }
 
         protected override DependencyObject CreateShell()

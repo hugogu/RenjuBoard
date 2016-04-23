@@ -15,7 +15,7 @@ namespace RenjuBoard
         {
             new RenjuBoardBootstrapper().Run();
             Debug.Assert(ServiceLocator.IsLocationProviderSet);
-            ServiceLocator.Current.GetInstance<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(new NewGameOptions());
+            ServiceLocator.Current.GetInstance<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
         }
     }
 }

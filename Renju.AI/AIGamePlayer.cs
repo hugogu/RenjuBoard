@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Practices.Unity;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 
@@ -22,6 +23,7 @@ namespace Renju.AI
             AutoDispose(_aiResolvingCancelTokenSource);
         }
 
+        [Dependency]
         public IGameBoard<IReadOnlyBoardPoint> Board
         {
             get { return _board; }

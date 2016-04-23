@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Prism.Commands;
 using Renju.Infrastructure;
@@ -14,9 +15,10 @@ namespace RenjuBoard.ViewModels
         private readonly DelegateCommand _nextAIStepCommand;
         private readonly IStepController _resolverController;
 
-        public AIControllerViewModel(IReportExecutionStatus executor)
+        public AIControllerViewModel(IStepController aiStepController)
         {
-            _resolverController = new ExecutionStepController(executor);
+            Debug.Assert(aiStepController != null);
+            _resolverController = aiStepController;
             _pauseAICommand = new DelegateCommand(() => _resolverController.Pause(), () => !_resolverController.IsPaused);
             _continueAICommand = new DelegateCommand(() => _resolverController.Resume(), () => _resolverController.IsPaused);
             _nextAIStepCommand = new DelegateCommand(() => _resolverController.StepForward(1), () => _resolverController.IsPaused);
@@ -47,7 +49,7 @@ namespace RenjuBoard.ViewModels
 
         private void OnResolverControllerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            RunInDispatcher(new Action(() =>
+            RunInDispatcher(() =>
             {
                 if (e.PropertyName == "IsPaused")
                 {
@@ -55,7 +57,7 @@ namespace RenjuBoard.ViewModels
                     _continueAICommand.RaiseCanExecuteChanged();
                     _nextAIStepCommand.RaiseCanExecuteChanged();
                 }
-            }));
+            });
         }
     }
 }
