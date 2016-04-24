@@ -25,6 +25,7 @@ namespace RenjuBoard.ViewModels
         {
             _cancelCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = false);
             _saveCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = true);
+            ShowOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
         }
 
         public OptionsViewModel(OptionsViewModel vm)
@@ -32,6 +33,8 @@ namespace RenjuBoard.ViewModels
         {
             CopyFrom(vm);
         }
+
+        public ICommand ShowOptionsCommand { get; private set; }
 
         public bool ShowLinesOnBoard
         {
@@ -91,6 +94,27 @@ namespace RenjuBoard.ViewModels
                                                             .Where(p => p.CanWrite && p.CanRead))
             {
                 property.SetValue(this, property.GetValue(anotherVM));
+            }
+        }
+
+        private void OnShowOptionsCommand()
+        {
+            var optionsCopy = new OptionsViewModel(this);
+            var optionsWindow = new Window()
+            {
+                Owner = Application.Current.MainWindow,
+                Title = "Renju Options",
+                Content = optionsCopy,
+                MinHeight = 200,
+                MinWidth = 300,
+                ResizeMode = ResizeMode.NoResize,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStyle = WindowStyle.SingleBorderWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            if (optionsWindow.ShowDialog() == true)
+            {
+                this.CopyFrom(optionsCopy);
             }
         }
     }

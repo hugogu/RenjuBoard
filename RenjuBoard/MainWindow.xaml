@@ -49,15 +49,15 @@
                 <Separator Margin="0,5,0,0" />
                 <control:ImageButton Content="Save..."
                                      Source="Images/Save.png"
-                                     Command="{Binding SaveCommand}" />
+                                     Command="{Binding SaveLoadVM.SaveCommand}" />
                 <control:ImageButton Content="Load..."
                                      Source="Images/Open.png"
-                                     Command="{Binding LoadCommand}" />
+                                     Command="{Binding SaveLoadVM.LoadCommand}" />
                 <Separator Margin="0,5,0,0" />
                 <control:ImageButton Content="Options"
                                      Source="Images/UserProfile.png"
-                                     Command="{Binding ShowOptionsCommand}" />
-                <CheckBox Content="AI first" IsChecked="{Binding AIFirst}" />
+                                     Command="{Binding OptionsVM.ShowOptionsCommand}" />
+                <CheckBox Content="AI first" IsChecked="{Binding AIControllerVM.AIFirst}" />
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Column="1">
@@ -80,7 +80,7 @@
             <control:GameBoardPanel ItemsSource="{Binding GameBoard.Points}"
                                     Lines="{Binding Lines}"
                                     PreviewLines="{Binding AIControllerVM.PreviewLines}"
-                                    ResolvingPoints="{Binding ResolvingPoints}"
+                                    ResolvingPoints="{Binding AIControllerVM.ResolvingPoints}"
                                     ShowCalibrationLabels="{Binding OptionsVM.ShowCalibrationLabels}"
                                     Size="{Binding GameBoard.Size}">
                 <interaction:Interaction.Triggers>

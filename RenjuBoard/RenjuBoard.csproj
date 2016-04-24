@@ -113,6 +113,7 @@
     <Compile Include="RenjuBoardBootstrapper.cs" />
     <Compile Include="ViewModels\BoardTimingViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
+    <Compile Include="ViewModels\SaveAndLoadViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
