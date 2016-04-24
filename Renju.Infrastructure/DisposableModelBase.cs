@@ -28,10 +28,18 @@ namespace Renju.Infrastructure
 
             if (disposing)
             {
+                Trace.TraceInformation("Disposing " + GetType().Name);
                 _disposables.Dispose();
             }
 
             _disposed = true;
+        }
+
+        protected void AutoCallOnDisposing(Action action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("action");
+            _disposables.Add(Disposable.Create(action));
         }
 
         protected void AutoDispose(IDisposable disposable)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Prism.Commands;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 
@@ -16,7 +18,14 @@ namespace Renju.Core
         {
             _board = board;
             _board.PieceDropped += OnBoardPieceDropped;
+            this.PropertyChanged += OnBoardRecorderPropertyChanged;
+            UndoCommand = new DelegateCommand(() => UndoDrop(), () => CanUndo);
+            RedoCommand = new DelegateCommand(() => RedoDrop(), () => CanRedo);
         }
+
+        public DelegateCommand UndoCommand { get; private set; }
+
+        public DelegateCommand RedoCommand { get; private set; }
 
         public IEnumerable<PieceDrop> Drops
         {
@@ -38,10 +47,10 @@ namespace Renju.Core
             get { return _redoDrops.Any(); }
         }
 
-        private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
+        public void ClearGameBoard()
         {
-            _undoDrops.Add(e.Drop);
-            OnPropertyChanged(() => CanUndo);
+            while (CanUndo)
+                UndoDrop();
         }
 
         public void UndoDrop()
@@ -65,6 +74,21 @@ namespace Renju.Core
             var drop = _redoDrops.Last();
             _redoDrops.RemoveAt(_redoDrops.Count - 1);
             _board.Drop(drop, OperatorType.UndoOrRedo);
+        }
+
+        private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
+        {
+            _undoDrops.Add(e.Drop);
+            OnPropertyChanged(() => CanUndo);
+        }
+
+        private void OnBoardRecorderPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RunInDispatcher(() =>
+            {
+                UndoCommand.RaiseCanExecuteChanged();
+                RedoCommand.RaiseCanExecuteChanged();
+            });
         }
     }
 }

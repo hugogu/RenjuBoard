@@ -95,6 +95,7 @@
     <Compile Include="Execution\INotifyExecutionTime.cs" />
     <Compile Include="Execution\IReportExecutionStatus.cs" />
     <Compile Include="Execution\IStepController .cs" />
+    <Compile Include="Execution\SideExecutionReporter.cs" />
     <Compile Include="InfrastructureModule.cs" />
     <Compile Include="ModelBase.cs" />
     <Compile Include="ModelExtensions.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Reactives.cs" />
     <Compile Include="Execution\ReportExecutionObject.cs" />
     <Compile Include="Reflections.cs" />
+    <Compile Include="ViewModel\VMInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

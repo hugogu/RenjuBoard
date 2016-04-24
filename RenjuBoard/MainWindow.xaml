@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:interaction="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure"
         xmlns:control="clr-namespace:Renju.Controls;assembly=Renju.Controls"
         xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
         UseLayoutRounding="True"
@@ -22,7 +23,8 @@
             <ColumnDefinition Width="380" />
         </Grid.ColumnDefinitions>
         <DockPanel>
-            <StackPanel DockPanel.Dock="Bottom"
+            <StackPanel DataContext="{Binding TimingVM}"
+                        DockPanel.Dock="Bottom"
                         Margin="5">
                 <TextBlock Text="Black" FontWeight="Black" />
                 <TextBlock>
@@ -40,10 +42,10 @@
                                      Source="Images/NewGame.png" />
                 <control:ImageButton Content="Undo"
                                      Source="Images/Undo.png"
-                                     Command="{Binding UndoCommand}" />
+                                     Command="{Binding BoardRecorder.UndoCommand}" />
                 <control:ImageButton Content="Redo"
                                      Source="Images/Redo.png"
-                                     Command="{Binding RedoCommand}" />
+                                     Command="{Binding BoardRecorder.RedoCommand}" />
                 <Separator Margin="0,5,0,0" />
                 <control:ImageButton Content="Save..."
                                      Source="Images/Save.png"
@@ -59,7 +61,8 @@
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Column="1">
-            <ToolBar DockPanel.Dock="Top" DataContext="{Binding AIControllerVM}">
+            <ToolBar DockPanel.Dock="Top"
+                     DataContext="{Binding AIControllerVM}">
                 <Button Command="{Binding PauseAICommand}">
                     <Image Source="Images/Pause.png" />
                 </Button>
@@ -74,15 +77,15 @@
                     <Image Source="Images/RunPause.png" />
                 </ToggleButton>
             </ToolBar>
-            <control:GameBoardPanel ItemsSource="{Binding Points}"
+            <control:GameBoardPanel ItemsSource="{Binding GameBoard.Points}"
                                     Lines="{Binding Lines}"
-                                    PreviewLines="{Binding PreviewLines}"
+                                    PreviewLines="{Binding AIControllerVM.PreviewLines}"
                                     ResolvingPoints="{Binding ResolvingPoints}"
                                     ShowCalibrationLabels="{Binding OptionsVM.ShowCalibrationLabels}"
-                                    Size="{Binding BoardSize}">
+                                    Size="{Binding GameBoard.Size}">
                 <interaction:Interaction.Triggers>
                     <interaction:EventTrigger EventName="MouseLeave">
-                        <interaction:InvokeCommandAction Command="{Binding ClearPreviewLinesCommand}" />
+                        <interaction:InvokeCommandAction Command="{Binding AIControllerVM.ClearPreviewLinesCommand}" />
                     </interaction:EventTrigger>
                 </interaction:Interaction.Triggers>
             </control:GameBoardPanel>
@@ -90,8 +93,6 @@
         <GridSplitter Grid.Column="2"
                       Width="5"
                       HorizontalAlignment="Stretch" />
-        <ContentControl Grid.Column="3">
-            <vm:LogsViewModel />
-        </ContentControl>
+        <ContentControl Grid.Column="3" base:VMInfo.DataType="{x:Type vm:LogsViewModel}" />
     </Grid>
 </Window>

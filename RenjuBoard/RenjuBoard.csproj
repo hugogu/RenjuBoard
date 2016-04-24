@@ -111,6 +111,7 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="RenjuBoardBootstrapper.cs" />
+    <Compile Include="ViewModels\BoardTimingViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

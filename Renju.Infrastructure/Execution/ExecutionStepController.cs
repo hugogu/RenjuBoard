@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using Microsoft.Practices.Unity;
 
 namespace Renju.Infrastructure.Execution
 {
@@ -12,12 +13,18 @@ namespace Renju.Infrastructure.Execution
         private int _executionID;
         private int _allowedSteps;
 
-        public ExecutionStepController(IReportExecutionStatus executor)
+        public ExecutionStepController([Dependency("ai")]IReportExecutionStatus executor)
         {
             _executor = executor;
             executor.Started += OnExecutorStarted;
             executor.Finished += OnExecutorFinished;
             executor.StepFinished += OnExecutorFinishedStep;
+            AutoCallOnDisposing(() =>
+            {
+                executor.Started -= OnExecutorStarted;
+                executor.Finished -= OnExecutorFinished;
+                executor.StepFinished -= OnExecutorFinishedStep;
+            });
             AutoDispose(_event);
         }
 

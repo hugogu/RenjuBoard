@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Renju.Infrastructure;
 
@@ -19,6 +20,7 @@ namespace RenjuBoard.ViewModels
         private readonly ICommand _cancelCommand;
         private readonly ICommand _saveCommand;
 
+        [InjectionConstructor]
         public OptionsViewModel()
         {
             _cancelCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = false);

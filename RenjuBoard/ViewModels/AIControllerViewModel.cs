@@ -1,44 +1,50 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using Prism.Commands;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Execution;
+using Renju.Infrastructure.Model;
 
 namespace RenjuBoard.ViewModels
 {
-    public class AIControllerViewModel : DisposableModelBase
+    public class AIControllerViewModel : ModelBase
     {
-        private readonly DelegateCommand _pauseAICommand;
-        private readonly DelegateCommand _continueAICommand;
-        private readonly DelegateCommand _nextAIStepCommand;
+        private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly IStepController _resolverController;
 
-        public AIControllerViewModel(IStepController aiStepController)
+        public AIControllerViewModel(IStepController aiStepController, OptionsViewModel optionsVM, IGameBoard<IReadOnlyBoardPoint> gameBoard)
         {
             Debug.Assert(aiStepController != null);
+            Debug.Assert(aiStepController.CurrentStep == 0);
             _resolverController = aiStepController;
-            _pauseAICommand = new DelegateCommand(() => _resolverController.Pause(), () => !_resolverController.IsPaused);
-            _continueAICommand = new DelegateCommand(() => _resolverController.Resume(), () => _resolverController.IsPaused);
-            _nextAIStepCommand = new DelegateCommand(() => _resolverController.StepForward(1), () => _resolverController.IsPaused);
-            _resolverController.PropertyChanged += OnResolverControllerPropertyChanged;
-            AutoDispose(_resolverController as IDisposable);
+            PauseAICommand = new DelegateCommand(() => aiStepController.Pause(), () => !aiStepController.IsPaused);
+            ContinueAICommand = new DelegateCommand(() => aiStepController.Resume(), () => aiStepController.IsPaused);
+            NextAIStepComand = new DelegateCommand(() => aiStepController.StepForward(1), () => aiStepController.IsPaused);
+            ClearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
+            PreviewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(point =>
+            {
+                _previewLines.Clear();
+                _previewLines.AddRange(point.GetRowsOnBoard(gameBoard, true));
+            }, p => optionsVM.ShowPreviewLine);
+            aiStepController.PropertyChanged += OnResolverControllerPropertyChanged;
         }
 
-        public ICommand PauseAICommand
-        {
-            get { return _pauseAICommand; }
-        }
+        public DelegateCommand PauseAICommand { get; private set; }
 
-        public ICommand NextAIStepComand
-        {
-            get { return _nextAIStepCommand; }
-        }
+        public DelegateCommand NextAIStepComand { get; private set; }
 
-        public ICommand ContinueAICommand
+        public DelegateCommand ContinueAICommand { get; private set; }
+
+        public ICommand PreviewLinesCommand { get; private set; }
+
+        public ICommand ClearPreviewLinesCommand { get; private set; }
+
+        public IEnumerable<PieceLine> PreviewLines
         {
-            get { return _continueAICommand; }
+            get { return _previewLines; }
         }
 
         public bool PauseOnStart
@@ -51,11 +57,11 @@ namespace RenjuBoard.ViewModels
         {
             RunInDispatcher(() =>
             {
-                if (e.PropertyName == "IsPaused")
+                if (e.PropertyName == Reflections.GetMemberName(() => _resolverController.IsPaused))
                 {
-                    _pauseAICommand.RaiseCanExecuteChanged();
-                    _continueAICommand.RaiseCanExecuteChanged();
-                    _nextAIStepCommand.RaiseCanExecuteChanged();
+                    PauseAICommand.RaiseCanExecuteChanged();
+                    ContinueAICommand.RaiseCanExecuteChanged();
+                    NextAIStepComand.RaiseCanExecuteChanged();
                 }
             });
         }
