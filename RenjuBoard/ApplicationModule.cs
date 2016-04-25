@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -30,20 +31,23 @@ namespace RenjuBoard
         public void Initialize()
         {
             Application.Current.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            RegistApplicationDependencies(Container);
             EventAggregator.GetEvent<StartNewGameEvent>().Subscribe(OnNewGameEvent, ThreadOption.UIThread, true);
         }
 
         private void OnNewGameEvent(NewGameOptions options)
         {
-            App.Current.MainWindow.DataContext = CreateChildContainerForGame(options).Resolve<MainWindowViewModel>();
+            RenewChildContainerForGame(options);
+            Debug.Assert(_currentGameContainer != null);
+            App.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
         }
 
-        private IUnityContainer CreateChildContainerForGame(NewGameOptions options)
+        private void RenewChildContainerForGame(NewGameOptions options)
         {
             if (_currentGameContainer != null)
                 _currentGameContainer.Dispose();
             _currentGameContainer = Container.CreateChildContainer();
-            RegistApplicationDependencies(_currentGameContainer);
+            RegistGameSessionDependencies(_currentGameContainer);
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_currentGameContainer));
             if (options == NewGameOptions.Default)
                 options = _currentGameContainer.Resolve<NewGameOptions>();
@@ -51,11 +55,9 @@ namespace RenjuBoard
             _currentGameContainer.RegisterInstance(BoardPoint.CreateIndexBasedFactory(options.BoardSize));
             var ai = _currentGameContainer.Resolve<IDropResolver>();
             _currentGameContainer.RegisterInstance<IReportExecutionStatus>("ai", ai);
-
-            return _currentGameContainer;
         }
 
-        private void RegistApplicationDependencies(IUnityContainer container)
+        private void RegistGameSessionDependencies(IUnityContainer container)
         {
             container.RegisterType<IStepController, ExecutionStepController>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
@@ -68,6 +70,11 @@ namespace RenjuBoard
                                     WithMappings.FromAllInterfaces,
                                     WithName.TypeName,
                                     WithLifetime.PerResolve);
+        }
+
+        private void RegistApplicationDependencies(IUnityContainer container)
+        {
+            container.RegisterType<GameOptions>(new ContainerControlledLifetimeManager());
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

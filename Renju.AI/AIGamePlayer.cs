@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,11 +17,18 @@ namespace Renju.AI
         private IGameBoard<IReadOnlyBoardPoint> _board;
         private readonly IDropResolver _dropResolver;
 
-        public AIGamePlayer(IDropResolver dropResolver)
+        public AIGamePlayer(IDropResolver dropResolver, GameOptions options)
         {
             _dropResolver = dropResolver;
             _dropResolver.CancelTaken = _aiResolvingCancelTokenSource.Token;
             AutoDispose(_aiResolvingCancelTokenSource);
+            AutoDispose(options.ObserveProperty(() => options.AIFirst).Subscribe(_ =>
+            {
+                if (!Board.DroppedPoints.Any())
+                    Side = options.AIFirst ? Side.Black : Side.White;
+                else
+                    Trace.WriteLine("AI behavior changes will be applied to new games.");
+            }));
         }
 
         [Dependency]

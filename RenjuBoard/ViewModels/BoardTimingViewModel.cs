@@ -2,7 +2,6 @@
 using System.Reactive.Linq;
 using Renju.AI;
 using Renju.Infrastructure;
-using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 
@@ -14,7 +13,7 @@ namespace RenjuBoard.ViewModels
         private readonly ExecutionTimer _whiteTimer;
 
         // TODO: Support two AI and zero AI.
-        public BoardTimingViewModel(NewGameOptions options, IGameBoard<IReadOnlyBoardPoint> gameBoard, IDropResolver ai)
+        public BoardTimingViewModel(GameOptions options, IGameBoard<IReadOnlyBoardPoint> gameBoard, IDropResolver ai)
         {
             if (options == null)
                 throw new ArgumentNullException("options");

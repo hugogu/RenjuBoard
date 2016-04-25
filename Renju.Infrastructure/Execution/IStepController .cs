@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Infrastructure.Execution
 {
@@ -6,7 +7,7 @@ namespace Renju.Infrastructure.Execution
     {
         int CurrentStep { get; }
         bool IsPaused { get; }
-        bool PauseOnStart { get; set; }
+        GameOptions Options { set; }
         void Pause();
         void Resume();
         void StepForward(int steps);

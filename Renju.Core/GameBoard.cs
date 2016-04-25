@@ -9,16 +9,22 @@ using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {
-    public class GameBoard : VirtualGameBoard<BoardPoint>, IGameBoard<BoardPoint>
+    public class GameBoard : VirtualGameBoard<BoardPoint>, IGameBoard<BoardPoint>, IDisposable
     {
+        private readonly IDisposable _optionsObserver;
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
         private Side? _expectedNextTurn = Side.Black;
 
-        public GameBoard(NewGameOptions options)
-            : base(options.BoardSize,  BoardPoint.CreateIndexBasedFactory(options.BoardSize))
+        public GameOptions Options { get; private set; }
+
+        public GameBoard(NewGameOptions newGameOptions, GameOptions options)
+            : base(newGameOptions.BoardSize, BoardPoint.CreateIndexBasedFactory(newGameOptions.BoardSize))
         {
-            Debug.Assert(options.RuleEngine != null);
-            RuleEngine = options.RuleEngine;
+            Debug.Assert(newGameOptions.RuleEngine != null);
+            Options = options;
+            RuleEngine = newGameOptions.RuleEngine;
+            _optionsObserver = options.ObserveProperty(() => options.ShowLinesOnBoard)
+                                      .Subscribe(_ => OnPropertyChanged(() => Lines));
         }
 
         public override int DropsCount
@@ -29,6 +35,11 @@ namespace Renju.Core
         public override IEnumerable<BoardPoint> DroppedPoints
         {
             get { return _droppedPoints; }
+        }
+
+        public override IEnumerable<PieceLine> Lines
+        {
+            get { return Options.ShowLinesOnBoard ? base.Lines : new PieceLine[0]; }
         }
 
         public Side? ExpectedNextTurn
@@ -54,9 +65,9 @@ namespace Renju.Core
                 return DropResult.InvalidDrop;
         }
 
-        protected internal override void UpdateLines(IEnumerable<PieceLine> lines)
+        public void Dispose()
         {
-            RunInDispatcher(() => base.UpdateLines(lines));
+            _optionsObserver.Dispose();
         }
 
         public void Take(BoardPosition position)
@@ -76,6 +87,11 @@ namespace Renju.Core
             }
             else
                 throw new InvalidOperationException(String.Format("{0} wasn't the last drop.", position));
+        }
+
+        protected internal override void UpdateLines(IEnumerable<PieceLine> lines)
+        {
+            RunInDispatcher(() => base.UpdateLines(lines));
         }
 
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)

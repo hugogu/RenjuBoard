@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.Practices.Unity;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Infrastructure.Execution
 {
@@ -32,7 +33,8 @@ namespace Renju.Infrastructure.Execution
 
         public bool IsPaused { get { return !_event.WaitOne(0); } }
 
-        public bool PauseOnStart { get; set; }
+        [Dependency]
+        public GameOptions Options { get; set; }
 
         public void Resume()
         {
@@ -90,7 +92,7 @@ namespace Renju.Infrastructure.Execution
         {
             CurrentStep = 0;
             _executionID = Thread.CurrentThread.ManagedThreadId;
-            if (PauseOnStart)
+            if (Options.SteppingAI)
             {
                 _isInSteppingMode = true;
                 ResetEvent();

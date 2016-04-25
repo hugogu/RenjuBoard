@@ -28,7 +28,7 @@ namespace Renju.Infrastructure
 
             if (disposing)
             {
-                Trace.TraceInformation("Disposing " + GetType().Name);
+                Trace.WriteLine("Disposing " + GetType().Name);
                 _disposables.Dispose();
             }
 

@@ -57,7 +57,7 @@
                 <control:ImageButton Content="Options"
                                      Source="Images/UserProfile.png"
                                      Command="{Binding OptionsVM.ShowOptionsCommand}" />
-                <CheckBox Content="AI first" IsChecked="{Binding AIControllerVM.AIFirst}" />
+                <CheckBox Content="AI first" IsChecked="{Binding OptionsVM.Options.AIFirst}" />
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Column="1">
@@ -73,15 +73,15 @@
                     <Image Source="Images/Next.png" />
                 </Button>
                 <Separator />
-                <ToggleButton IsChecked="{Binding PauseOnStart}">
+                <ToggleButton IsChecked="{Binding Options.SteppingAI}">
                     <Image Source="Images/RunPause.png" />
                 </ToggleButton>
             </ToolBar>
             <control:GameBoardPanel ItemsSource="{Binding GameBoard.Points}"
-                                    Lines="{Binding Lines}"
+                                    Lines="{Binding GameBoard.Lines}"
                                     PreviewLines="{Binding AIControllerVM.PreviewLines}"
                                     ResolvingPoints="{Binding AIControllerVM.ResolvingPoints}"
-                                    ShowCalibrationLabels="{Binding OptionsVM.ShowCalibrationLabels}"
+                                    ShowCalibrationLabels="{Binding OptionsVM.Options.ShowCalibrationLabels}"
                                     Size="{Binding GameBoard.Size}">
                 <interaction:Interaction.Triggers>
                     <interaction:EventTrigger EventName="MouseLeave">

@@ -5,8 +5,6 @@ namespace Renju.Infrastructure.Events
 {
     public class NewGameOptions
     {
-        public bool AIFirst { get; set; }
-
         public int BoardSize { get; set; } = 15;
 
         [Dependency]

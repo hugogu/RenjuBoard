@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Renju.Core;
+using Renju.Infrastructure;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 
@@ -12,11 +13,15 @@ namespace Renju.AI.Resolving
     public class WinRateGameResolver : ReportExecutionObject, IDropResolver
     {
         private readonly IDropSelector _selector;
+        private readonly GameOptions _options;
         private int iteratedBoardCount;
 
-        public WinRateGameResolver(IDropSelector selector)
+        public WinRateGameResolver(IDropSelector selector, GameOptions options)
         {
             _selector = selector;
+            _options = options;
+            AutoDispose(options.ObserveProperty(() => options.AIStepTimeSpan).Subscribe(_ => MaxStepTime = options.AIStepTimeSpan));
+            AutoDispose(options.ObserveProperty(() => options.AITotalTimeSpan).Subscribe(_ => MaxTotalTime = options.AITotalTimeSpan));
         }
 
         public int Depth { get; set; } = 5;

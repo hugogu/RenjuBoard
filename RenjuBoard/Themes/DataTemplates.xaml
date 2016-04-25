@@ -62,7 +62,7 @@
                                                      CommandParameter="{Binding}"/>
                 </interaction:EventTrigger>
                 <interaction:EventTrigger EventName="MouseEnter">
-                    <interaction:InvokeCommandAction Command="{Binding DataContext.PreviewLinesCommand, RelativeSource={RelativeSource AncestorType={x:Type control:GameBoardPanel}}}"
+                    <interaction:InvokeCommandAction Command="{Binding DataContext.AIControllerVM.PreviewLinesCommand, RelativeSource={RelativeSource AncestorType={x:Type control:GameBoardPanel}}}"
                                                      CommandParameter="{Binding}"/>
                 </interaction:EventTrigger>
             </interaction:Interaction.Triggers>
@@ -123,7 +123,7 @@
                         DockPanel.Dock="Right"
                         Command="{Binding SaveCommand}" />
             </DockPanel>
-            <TabControl>
+            <TabControl DataContext="{Binding Options}">
                 <TabItem Header="UI">
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
