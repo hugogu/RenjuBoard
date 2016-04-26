@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -32,13 +32,13 @@ namespace RenjuBoard
         {
             Application.Current.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
             RegistApplicationDependencies(Container);
+            RenewChildContainerForGame(NewGameOptions.Default);
             EventAggregator.GetEvent<StartNewGameEvent>().Subscribe(OnNewGameEvent, ThreadOption.UIThread, true);
         }
 
         private void OnNewGameEvent(NewGameOptions options)
         {
             RenewChildContainerForGame(options);
-            Debug.Assert(_currentGameContainer != null);
             App.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
         }
 
@@ -57,7 +57,7 @@ namespace RenjuBoard
             _currentGameContainer.RegisterInstance<IReportExecutionStatus>("ai", ai);
         }
 
-        private void RegistGameSessionDependencies(IUnityContainer container)
+        private static void RegistGameSessionDependencies(IUnityContainer container)
         {
             container.RegisterType<IStepController, ExecutionStepController>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
@@ -72,12 +72,13 @@ namespace RenjuBoard
                                     WithLifetime.PerResolve);
         }
 
-        private void RegistApplicationDependencies(IUnityContainer container)
+        private static void RegistApplicationDependencies(IUnityContainer container)
         {
+            container.RegisterType(typeof(IEnumerable<>), new InjectionFactory((c, type, name) => c.ResolveAll(type.GetGenericArguments().Single())));
             container.RegisterType<GameOptions>(new ContainerControlledLifetimeManager());
         }
 
-        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             var error = String.Format("An unhnalded exception was thrown, do you want to keep RenJu running? \r\n\r\n {0}", e.Exception.Message);
             if (MessageBox.Show(error, "Rejun Exception", MessageBoxButton.YesNo) == MessageBoxResult.Yes)

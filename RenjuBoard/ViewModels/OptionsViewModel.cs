@@ -32,7 +32,7 @@ namespace RenjuBoard.ViewModels
             {
                 Owner = Application.Current.MainWindow,
                 Title = "Renju Options",
-                Content = optionsCopy,
+                DataContext = optionsCopy,
                 MinHeight = 200,
                 MinWidth = 300,
                 ResizeMode = ResizeMode.NoResize,

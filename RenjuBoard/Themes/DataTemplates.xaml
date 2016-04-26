@@ -5,7 +5,9 @@
                     xmlns:control="clr-namespace:Renju.Controls;assembly=Renju.Controls"
                     xmlns:converter="clr-namespace:Renju.Controls.Converters;assembly=Renju.Controls"
                     xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
-                    xmlns:model="clr-namespace:Renju.Infrastructure.Model;assembly=Renju.Infrastructure">
+                    xmlns:model="clr-namespace:Renju.Infrastructure.Model;assembly=Renju.Infrastructure"
+                    xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure"
+                    xmlns:main="clr-namespace:RenjuBoard">
     <converter:WithOffsetConverter x:Key="WithOffsetConverter" />
     <converter:NumberToMarginConverter x:Key="NumberToMarginConverter" />
 
@@ -180,5 +182,94 @@
                 </TabItem>
             </TabControl>
         </DockPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type main:MainWindowViewModel}">
+        <DataTemplate.Resources>
+            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Margin" Value="0,5,0,0" />
+            </Style>
+        </DataTemplate.Resources>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="380" />
+            </Grid.ColumnDefinitions>
+            <DockPanel>
+                <StackPanel DataContext="{Binding TimingVM}"
+                            DockPanel.Dock="Bottom"
+                            Margin="5">
+                    <TextBlock Text="Black" FontWeight="Black" />
+                    <TextBlock>
+                    Used time: <Run Text="{Binding BlackTime, Mode=OneWay, StringFormat=\{0:hh\\:mm\\:ss\}}" />
+                    </TextBlock>
+                    <Separator />
+                    <TextBlock Text="White" FontWeight="Black" />
+                    <TextBlock>
+                    Used time: <Run Text="{Binding WhiteTime, Mode=OneWay, StringFormat={}{0:hh}:{0:mm}:{0:ss}}"/>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Margin="5">
+                    <control:ImageButton Content="New Game"
+                                         Command="{Binding NewGameCommand}"
+                                         Source="../Images/NewGame.png" />
+                    <control:ImageButton Content="Undo"
+                                         Source="../Images/Undo.png"
+                                         Command="{Binding BoardRecorder.UndoCommand}" />
+                    <control:ImageButton Content="Redo"
+                                         Source="../Images/Redo.png"
+                                         Command="{Binding BoardRecorder.RedoCommand}" />
+                    <Separator Margin="0,5,0,0" />
+                    <control:ImageButton Content="Save..."
+                                         Source="../Images/Save.png"
+                                         Command="{Binding SaveLoadVM.SaveCommand}" />
+                    <control:ImageButton Content="Load..."
+                                         Source="../Images/Open.png"
+                                         Command="{Binding SaveLoadVM.LoadCommand}" />
+                    <Separator Margin="0,5,0,0" />
+                    <control:ImageButton Content="Options"
+                                         Source="../Images/UserProfile.png"
+                                         Command="{Binding OptionsVM.ShowOptionsCommand}" />
+                    <CheckBox Content="AI first" IsChecked="{Binding OptionsVM.Options.AIFirst}" />
+                </StackPanel>
+            </DockPanel>
+            <DockPanel Grid.Column="1">
+                <ToolBar DockPanel.Dock="Top"
+                         DataContext="{Binding AIControllerVM}">
+                    <Button Command="{Binding PauseAICommand}">
+                        <Image Source="../Images/Pause.png" />
+                    </Button>
+                    <Button Command="{Binding ContinueAICommand}">
+                        <Image Source="../Images/Run.png" />
+                    </Button>
+                    <Button Command="{Binding NextAIStepComand}">
+                        <Image Source="../Images/Next.png" />
+                    </Button>
+                    <Separator />
+                    <ToggleButton IsChecked="{Binding Options.SteppingAI}">
+                        <Image Source="../Images/RunPause.png" />
+                    </ToggleButton>
+                </ToolBar>
+                <control:GameBoardPanel ItemsSource="{Binding GameBoard.Points}"
+                                        Lines="{Binding GameBoard.Lines}"
+                                        PreviewLines="{Binding AIControllerVM.PreviewLines}"
+                                        ResolvingPoints="{Binding AIControllerVM.ResolvingPoints}"
+                                        ShowCalibrationLabels="{Binding OptionsVM.Options.ShowCalibrationLabels}"
+                                        Size="{Binding GameBoard.Size}">
+                    <interaction:Interaction.Triggers>
+                        <interaction:EventTrigger EventName="MouseLeave">
+                            <interaction:InvokeCommandAction Command="{Binding AIControllerVM.ClearPreviewLinesCommand}" />
+                        </interaction:EventTrigger>
+                    </interaction:Interaction.Triggers>
+                </control:GameBoardPanel>
+            </DockPanel>
+            <GridSplitter Grid.Column="2"
+                          Width="5"
+                          HorizontalAlignment="Stretch" />
+            <ContentControl Grid.Column="3"
+                            Content="{Binding}"
+                            base:VMInfo.DataType="{x:Type vm:LogsViewModel}" />
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>

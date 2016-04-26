@@ -22,4 +22,10 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style TargetType="{x:Type Window}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Content" Value="{Binding}" />
+    </Style>
 </ResourceDictionary>

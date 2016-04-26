@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 
@@ -34,14 +33,10 @@ namespace Renju.Infrastructure.ViewModel
             {
                 instance = Activator.CreateInstance(type);
             }
-            if (obj is ContentControl)
-            {
-                (obj as ContentControl).Content = instance;
-            }
-            else if (obj is FrameworkElement)
-            {
+            if (obj is FrameworkElement)
                 (obj as FrameworkElement).DataContext = instance;
-            }
+            else
+                throw new InvalidOperationException("Can't set VMInfo.DataType on object of type " + type.FullName);
         }
     }
 }
