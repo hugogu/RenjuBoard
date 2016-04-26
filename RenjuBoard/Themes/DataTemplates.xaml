@@ -107,7 +107,8 @@
                      IsReadOnly="True"
                      IsReadOnlyCaretVisible="True"
                      BorderThickness="0"
-                     TextWrapping="Wrap" />
+                     TextWrapping="Wrap"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
         </DockPanel>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:OptionsViewModel}">

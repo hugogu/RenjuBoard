@@ -79,6 +79,8 @@ namespace Renju.Core
 
         public event EventHandler<PieceDropEventArgs> PieceDropped;
 
+        protected override void OnConstructingNewObject() { /* Noop */ }
+
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
             RaiseEvent(PieceDropped, e);

@@ -65,7 +65,10 @@ namespace RenjuBoard
             container.RegisterType<IDropSelector, WeightedDropSelector>(new ContainerControlledLifetimeManager());
             container.RegisterType<IDropResolver, WinRateGameResolver>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGamePlayer, AIGamePlayer>(new ContainerControlledLifetimeManager());
-            container.RegisterType<OptionsViewModel>(new ContainerControlledLifetimeManager());
+            container.RegisterTypes(AllClasses.FromLoadedAssemblies().Where(t => t.Name.EndsWith("ViewModel")),
+                                    WithMappings.FromMatchingInterface,
+                                    WithName.Default,
+                                    WithLifetime.ContainerControlled);
             container.RegisterTypes(AllClasses.FromLoadedAssemblies().Where(t => typeof(IGameRule).IsAssignableFrom(t)),
                                     WithMappings.FromAllInterfaces,
                                     WithName.TypeName,
@@ -76,6 +79,7 @@ namespace RenjuBoard
         {
             container.RegisterType(typeof(IEnumerable<>), new InjectionFactory((c, type, name) => c.ResolveAll(type.GetGenericArguments().Single())));
             container.RegisterType<GameOptions>(new ContainerControlledLifetimeManager());
+            container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
         }
 
         private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

@@ -12,15 +12,13 @@ namespace RenjuBoard.ViewModels
     {
         private string _logText;
         private string _searchKey;
-        private readonly ICommand _clearLogCommand;
-        private readonly ICommand _searchCommand;
 
         public LogsViewModel()
         {
             Trace.Listeners.Add(new LogsViewModelAdeptor(this));
             Trace.WriteLine(typeof(LogsViewModel).Name + " initialized.");
-            _clearLogCommand = new DelegateCommand(() => LogText = String.Empty);
-            _searchCommand = new DelegateCommand<TextBox>(OnSearchCommand);
+            ClearLogsCommand = new DelegateCommand(() => LogText = String.Empty);
+            SearchCommand = new DelegateCommand<TextBox>(OnSearchCommand);
         }
 
         private class LogsViewModelAdeptor : TraceListener
@@ -55,15 +53,9 @@ namespace RenjuBoard.ViewModels
             set { SetProperty(ref _searchKey, value); }
         }
 
-        public ICommand ClearLogsCommand
-        {
-            get { return _clearLogCommand; }
-        }
+        public ICommand ClearLogsCommand { get; private set; }
 
-        public ICommand SearchCommand
-        {
-            get { return _searchCommand; }
-        }
+        public ICommand SearchCommand { get; private set; }
 
         private void OnSearchCommand(TextBox logBox)
         {
@@ -88,7 +80,7 @@ namespace RenjuBoard.ViewModels
 
         private void PrependMessage(string message)
         {
-            RunInDispatcher(() => LogText = message + LogText);
+            RunInDispatcher(() => LogText = String.Format("[{0}] {1}", DateTime.Now, message + LogText));
         }
     }
 }

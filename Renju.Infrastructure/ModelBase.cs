@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
@@ -9,6 +10,19 @@ namespace Renju.Infrastructure
     [Serializable]
     public class ModelBase : BindableBase
     {
+        public ModelBase()
+        {
+            OnConstructingNewObject();
+        }
+
+        /// <summary>
+        /// Logging purpose only.
+        /// </summary>
+        protected virtual void OnConstructingNewObject()
+        {
+            Trace.WriteLine("Initializing " + GetType().Name);
+        }
+
         protected internal virtual void RaisePropertyChangedAsync(string propertyName)
         {
             RunInDispatcher(new Action(() => OnPropertyChanged(propertyName)), DispatcherPriority.Background);

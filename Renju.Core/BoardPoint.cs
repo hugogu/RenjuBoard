@@ -61,5 +61,7 @@ namespace Renju.Core
             Index = null;
             Status = null;
         }
+
+        protected override void OnConstructingNewObject() { /* Noop */ }
     }
 }
