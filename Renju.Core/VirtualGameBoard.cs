@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.Practices.Unity.Utility;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 
@@ -15,9 +16,7 @@ namespace Renju.Core
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
         {
-            if (createPoint == null)
-                throw new ArgumentNullException("createPoint");
-
+            Guard.ArgumentNotNull(createPoint, "createPoint");
             if (size <= 0)
                 throw new ArgumentOutOfRangeException("size", "size must be postive.");
 
@@ -74,8 +73,7 @@ namespace Renju.Core
 
         protected virtual TPoint GetPoint(BoardPosition position)
         {
-            if (position == null)
-                throw new ArgumentNullException("position");
+            Guard.ArgumentNotNull(position, "position");
 
             return _points[position.Y * Size + position.X];
         }

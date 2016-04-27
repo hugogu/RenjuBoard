@@ -11,9 +11,11 @@ using Renju.AI;
 using Renju.AI.Resolving;
 using Renju.AI.Weights;
 using Renju.Core;
+using Renju.Infrastructure;
 using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
+using RenjuBoard.Properties;
 using RenjuBoard.ViewModels;
 
 namespace RenjuBoard
@@ -78,7 +80,9 @@ namespace RenjuBoard
         private static void RegistApplicationDependencies(IUnityContainer container)
         {
             container.RegisterType(typeof(IEnumerable<>), new InjectionFactory((c, type, name) => c.ResolveAll(type.GetGenericArguments().Single())));
-            container.RegisterType<GameOptions>(new ContainerControlledLifetimeManager());
+            container.RegisterType<GameOptions>(new ContainerControlledLifetimeManager(), new InjectionFactory(c =>
+                c.BuildUp(new GameOptions().CopyFromObject(Settings.Default))
+            ));
             container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
         }
 

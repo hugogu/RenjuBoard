@@ -15,15 +15,6 @@ namespace RenjuBoard.ViewModels
         // TODO: Support two AI and zero AI.
         public BoardTimingViewModel(GameOptions options, IGameBoard<IReadOnlyBoardPoint> gameBoard, IDropResolver ai)
         {
-            if (options == null)
-                throw new ArgumentNullException("options");
-
-            if (gameBoard == null)
-                throw new ArgumentNullException("gameBoard");
-
-            if (ai == null)
-                throw new ArgumentNullException("ai");
-
             var humanTimer = new SideExecutionReporter(gameBoard, options.AIFirst ? Side.White : Side.Black);
             _blackTimer = options.AIFirst ? ai.ExecutionTimer : humanTimer.ExecutionTimer;
             _whiteTimer = options.AIFirst ? humanTimer.ExecutionTimer : ai.ExecutionTimer;

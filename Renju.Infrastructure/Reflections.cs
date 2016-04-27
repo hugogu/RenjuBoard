@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Renju.Infrastructure
 {
@@ -20,19 +22,56 @@ namespace Renju.Infrastructure
             return memberExpression.Member.Name;
         }
 
-        public static void CopyFrom<T>(this T target, T source)
+        public static T CopyFrom<T>(this T target, T source)
         {
-            if (target == null)
-                throw new ArgumentNullException("target");
-
-            if (source == null)
-                throw new ArgumentNullException("source");
+            Guard.ArgumentNotNull(target, "target");
+            Guard.ArgumentNotNull(source, "source");
 
             foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                               .Where(p => p.CanWrite && p.CanRead))
             {
                 property.SetValue(target, property.GetValue(source));
             }
+
+            return target;
+        }
+
+        public static T CopyFromObject<T>(this T target, object source)
+        {
+            Guard.ArgumentNotNull(target, "target");
+            Guard.ArgumentNotNull(source, "source");
+
+            foreach (var copyFrom in from targetProperty in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                     where targetProperty.CanWrite
+                                     let sourceProperty = source.GetType().GetProperty(targetProperty.Name, BindingFlags.Instance | BindingFlags.Public)
+                                     where sourceProperty != null && sourceProperty.CanRead
+                                     select CreatePropertySetter<T>(sourceProperty, targetProperty))
+            {
+                copyFrom(target, source);
+            }
+
+            return target;
+        }
+
+        private static Action<T, object> CreatePropertySetter<T>(PropertyInfo sourceProperty, PropertyInfo targetProperty)
+        {
+            return (t, s) =>
+            {
+                try
+                {
+                    var sourceValue = sourceProperty.GetValue(s);
+                    var targetValue = targetProperty.GetValue(t);
+                    if (!Equals(sourceValue, targetValue))
+                    {
+                        Trace.WriteLine(String.Format("Change Property {0} from {1} to {2}", targetProperty.Name, targetValue, sourceValue));
+                        targetProperty.SetValue(t, sourceValue);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Trace.WriteLine(String.Format("Failed to set property {0} because " + ex.Message, targetProperty.Name));
+                }
+            };
         }
     }
 }

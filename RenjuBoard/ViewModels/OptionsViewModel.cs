@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Prism.Commands;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
+using RenjuBoard.Properties;
 
 namespace RenjuBoard.ViewModels
 {
@@ -13,7 +14,7 @@ namespace RenjuBoard.ViewModels
         {
             Options = options;
             CancelCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = false);
-            SaveCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = true);
+            SaveCommand = new DelegateCommand(OnSaveCommand);
             ShowOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
         }
 
@@ -37,6 +38,8 @@ namespace RenjuBoard.ViewModels
                 MinWidth = 300,
                 ResizeMode = ResizeMode.NoResize,
                 SizeToContent = SizeToContent.WidthAndHeight,
+                ShowInTaskbar = false,
+                Topmost = true,
                 WindowStyle = WindowStyle.SingleBorderWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
@@ -44,6 +47,14 @@ namespace RenjuBoard.ViewModels
             {
                 Options.CopyFrom(optionsCopy.Options);
             }
+        }
+
+        private void OnSaveCommand()
+        {
+            Settings.Default.CopyFromObject(Options);
+            Settings.Default.Save();
+            var optionWindow = Application.Current.Windows.Cast<Window>().Last();
+            optionWindow.DialogResult = true;
         }
     }
 }

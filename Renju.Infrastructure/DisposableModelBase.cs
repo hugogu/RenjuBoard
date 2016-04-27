@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Renju.Infrastructure
 {
@@ -37,15 +38,13 @@ namespace Renju.Infrastructure
 
         protected void AutoCallOnDisposing(Action action)
         {
-            if (action == null)
-                throw new ArgumentNullException("action");
+            Guard.ArgumentNotNull(action, "atcion");
             _disposables.Add(Disposable.Create(action));
         }
 
         protected void AutoDispose(IDisposable disposable)
         {
-            if (disposable == null)
-                throw new ArgumentNullException("disposable");
+            Guard.ArgumentNotNull(disposable, "disposable");
             CheckDisposableReference(disposable);
             _disposables.Add(disposable);
         }
