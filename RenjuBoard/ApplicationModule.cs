@@ -67,6 +67,7 @@ namespace RenjuBoard
             container.RegisterType<IDropSelector, WeightedDropSelector>(new ContainerControlledLifetimeManager());
             container.RegisterType<IDropResolver, WinRateGameResolver>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGamePlayer, AIGamePlayer>(new ContainerControlledLifetimeManager());
+            container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
             container.RegisterTypes(AllClasses.FromLoadedAssemblies().Where(t => t.Name.EndsWith("ViewModel")),
                                     WithMappings.FromMatchingInterface,
                                     WithName.Default,

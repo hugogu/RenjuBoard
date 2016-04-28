@@ -179,6 +179,10 @@
                                          Text="{Binding AIStepTimeLimit}" />
                             </Grid>
                         </GroupBox>
+                        <CheckBox Content="AI First"
+                                  IsChecked="{Binding AIFirst}" />
+                        <CheckBox Content="Stepping AI"
+                                  IsChecked="{Binding SteppingAI}" />
                     </StackPanel>
                 </TabItem>
             </TabControl>
@@ -232,7 +236,6 @@
                     <control:ImageButton Content="Options"
                                          Source="../Images/UserProfile.png"
                                          Command="{Binding OptionsVM.ShowOptionsCommand}" />
-                    <CheckBox Content="AI first" IsChecked="{Binding OptionsVM.Options.AIFirst}" />
                 </StackPanel>
             </DockPanel>
             <DockPanel Grid.Column="1">
