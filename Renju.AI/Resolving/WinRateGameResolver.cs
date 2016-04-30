@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Microsoft.Practices.Unity;
 using Renju.Core;
-using Renju.Infrastructure;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 
@@ -13,26 +13,21 @@ namespace Renju.AI.Resolving
     public class WinRateGameResolver : ReportExecutionObject, IDropResolver
     {
         private readonly IDropSelector _selector;
-        private readonly GameOptions _options;
         private int iteratedBoardCount;
 
-        public WinRateGameResolver(IDropSelector selector, GameOptions options)
+        public WinRateGameResolver(IDropSelector selector)
         {
             _selector = selector;
-            _options = options;
-            AutoDispose(options.ObserveProperty(() => options.AIStepTimeSpan).Subscribe(_ => MaxStepTime = options.AIStepTimeSpan));
-            AutoDispose(options.ObserveProperty(() => options.AITotalTimeSpan).Subscribe(_ => MaxTotalTime = options.AITotalTimeSpan));
         }
+
+        [Dependency]
+        public GameOptions Options { get; set; }
 
         public int Depth { get; set; } = 5;
 
         public int Width { get; set; } = 4;
 
         public CancellationToken CancelTaken { get; set; }
-
-        public TimeSpan MaxStepTime { get; set; } = TimeSpan.FromSeconds(20);
-
-        public TimeSpan MaxTotalTime { get; set; } = TimeSpan.FromSeconds(500);
 
         public event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
@@ -67,9 +62,11 @@ namespace Renju.AI.Resolving
             if (CancelTaken.IsCancellationRequested)
                 return 0;
 
-            if (ExecutionTimer.CurrentExecutionTime > MaxStepTime || ExecutionTimer.TotalExecutionTime > MaxTotalTime)
+            if (Options.IsAITimeLimited &&
+                (ExecutionTimer.CurrentExecutionTime > Options.AIStepTimeSpan ||
+                 ExecutionTimer.TotalExecutionTime > Options.AITotalTimeSpan))
             {
-                Trace.TraceWarning(String.Format("Exeeded max step time of {0} or max time of {1}", MaxStepTime, MaxTotalTime));
+                Trace.TraceWarning(String.Format("Exeeded max step time of {0} or max time of {1}", Options.AIStepTimeSpan, Options.AITotalTimeSpan));
                 return 0;
             }
 

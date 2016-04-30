@@ -12,10 +12,6 @@ namespace Renju.AI
 
         int Width { get; set; }
 
-        TimeSpan MaxStepTime { get; set; }
-
-        TimeSpan MaxTotalTime { get; set; }
-
         CancellationToken CancelTaken { get; set; }
 
         event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;

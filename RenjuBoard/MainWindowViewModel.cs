@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
@@ -36,6 +37,8 @@ namespace RenjuBoard
 
         [Dependency]
         public OptionsViewModel OptionsVM { get; internal set; }
+
+        public IEnumerable<PieceLine> Lines { get { return OptionsVM.Options.ShowLinesOnBoard ? GameBoard.Lines : new PieceLine[0]; } }
 
         public ICommand DropPointCommand { get; private set; }
 
