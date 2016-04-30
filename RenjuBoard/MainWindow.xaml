@@ -78,7 +78,7 @@
                 </ToggleButton>
             </ToolBar>
             <control:GameBoardPanel ItemsSource="{Binding GameBoard.Points}"
-                                    Lines="{Binding GameBoard.Lines}"
+                                    Lines="{Binding Lines}"
                                     PreviewLines="{Binding AIControllerVM.PreviewLines}"
                                     ResolvingPoints="{Binding AIControllerVM.ResolvingPoints}"
                                     ShowCalibrationLabels="{Binding OptionsVM.Options.ShowCalibrationLabels}"

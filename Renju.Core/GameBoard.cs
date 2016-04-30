@@ -37,11 +37,6 @@ namespace Renju.Core
             get { return _droppedPoints; }
         }
 
-        public override IEnumerable<PieceLine> Lines
-        {
-            get { return Options.ShowLinesOnBoard ? base.Lines : new PieceLine[0]; }
-        }
-
         public Side? ExpectedNextTurn
         {
             get { return _expectedNextTurn; }
