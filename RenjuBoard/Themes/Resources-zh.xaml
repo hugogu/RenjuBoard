@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:local="clr-namespace:RenjuBoard.Themes">
+    <!-- Main Window -->
+    <system:String x:Key="GameWindowTitle">Renju Board</system:String>
+    <system:String x:Key="NewGameButtonContent">新游戏</system:String>
+    <system:String x:Key="UndoButtonContent">撤销</system:String>
+    <system:String x:Key="RedoButtonContent">重做</system:String>
+    <system:String x:Key="SaveButtonContent">保存...</system:String>
+    <system:String x:Key="LoadButtonContent">加载...</system:String>
+    <system:String x:Key="OptionsButtonContent">选项</system:String>
+    <system:String x:Key="UsedTimeLabelContent">已用时:</system:String>
+</ResourceDictionary>

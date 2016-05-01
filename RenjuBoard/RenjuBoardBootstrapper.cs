@@ -22,7 +22,7 @@ namespace RenjuBoard
 
         protected override DependencyObject CreateShell()
         {
-            return new Window() { Height = 500, Width = 960, Title = "Renju Board" };
+            return new Window() { Height = 500, Width = 960, Title = Application.Current.FindResource("GameWindowTitle") as string };
         }
 
         protected override void InitializeModules()

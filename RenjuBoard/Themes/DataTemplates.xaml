@@ -205,35 +205,41 @@
                 <StackPanel DataContext="{Binding TimingVM}"
                             DockPanel.Dock="Bottom"
                             Margin="5">
-                    <TextBlock Text="Black" FontWeight="Black" />
+                    <TextBlock Text="●"
+                               FontFamily="MS Gothic"
+                               FontWeight="Black" />
                     <TextBlock>
-                    Used time: <Run Text="{Binding BlackTime, Mode=OneWay, StringFormat=\{0:hh\\:mm\\:ss\}}" />
+                        <Run Text="{DynamicResource UsedTimeLabelContent}"/>
+                        <Run Text="{Binding BlackTime, Mode=OneWay, StringFormat=\{0:hh\\:mm\\:ss\}}" />
                     </TextBlock>
                     <Separator />
-                    <TextBlock Text="White" FontWeight="Black" />
+                    <TextBlock Text="○"
+                               FontFamily="MS Gothic"
+                               FontWeight="Black" />
                     <TextBlock>
-                    Used time: <Run Text="{Binding WhiteTime, Mode=OneWay, StringFormat={}{0:hh}:{0:mm}:{0:ss}}"/>
+                        <Run Text="{DynamicResource UsedTimeLabelContent}"/>
+                        <Run Text="{Binding WhiteTime, Mode=OneWay, StringFormat={}{0:hh}:{0:mm}:{0:ss}}"/>
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Margin="5">
-                    <control:ImageButton Content="New Game"
+                    <control:ImageButton Content="{DynamicResource NewGameButtonContent}"
                                          Command="{Binding NewGameCommand}"
                                          Source="../Images/NewGame.png" />
-                    <control:ImageButton Content="Undo"
+                    <control:ImageButton Content="{DynamicResource UndoButtonContent}"
                                          Source="../Images/Undo.png"
                                          Command="{Binding BoardRecorder.UndoCommand}" />
-                    <control:ImageButton Content="Redo"
+                    <control:ImageButton Content="{DynamicResource RedoButtonContent}"
                                          Source="../Images/Redo.png"
                                          Command="{Binding BoardRecorder.RedoCommand}" />
                     <Separator Margin="0,5,0,0" />
-                    <control:ImageButton Content="Save..."
+                    <control:ImageButton Content="{DynamicResource SaveButtonContent}"
                                          Source="../Images/Save.png"
                                          Command="{Binding SaveLoadVM.SaveCommand}" />
-                    <control:ImageButton Content="Load..."
+                    <control:ImageButton Content="{DynamicResource LoadButtonContent}"
                                          Source="../Images/Open.png"
                                          Command="{Binding SaveLoadVM.LoadCommand}" />
                     <Separator Margin="0,5,0,0" />
-                    <control:ImageButton Content="Options"
+                    <control:ImageButton Content="{DynamicResource OptionsButtonContent}"
                                          Source="../Images/UserProfile.png"
                                          Command="{Binding OptionsVM.ShowOptionsCommand}" />
                 </StackPanel>
