@@ -16,6 +16,8 @@ namespace Renju.Core
             Guard.ArgumentNotNull(rules, "rules");
             Debug.Assert(rules.Any());
             _rules = rules;
+            foreach(var rule in rules)
+                Trace.WriteLine("Loaded rule " + rule.Name);
         }
 
         public IEnumerable<IGameRule> ApplicableRules

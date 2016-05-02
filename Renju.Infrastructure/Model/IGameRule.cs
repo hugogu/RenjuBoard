@@ -4,6 +4,8 @@
     {
         string Name { get; }
 
+        bool IsOptional { get; }
+
         bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);
 
         bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop);

@@ -88,7 +88,9 @@
     <Compile Include="GameBoardUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\BlackForbiddenRules.cs" />
+    <Compile Include="Rules\DropValidationRule.cs" />
     <Compile Include="Rules\FiveWinRule.cs" />
+    <Compile Include="Rules\OpeningRules.cs" />
     <Compile Include="Rules\WinRule.cs" />
     <Compile Include="VirtualBoardPoint.cs" />
     <Compile Include="VirtualGameBoard.cs" />

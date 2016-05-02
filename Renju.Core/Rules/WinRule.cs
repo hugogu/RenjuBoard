@@ -6,6 +6,8 @@ namespace Renju.Core.Rules
     {
         public abstract string Name { get; }
 
+        public bool IsOptional { get { return false; } }
+
         public bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             return null;

@@ -4,14 +4,14 @@ using Renju.Infrastructure.Model;
 
 namespace Renju.Core.Rules
 {
-    public class BlackForbiddenRules : IGameRule
+    public class BlackForbiddenRules : DropValidationRule
     {
-        public string Name
+        public override string Name
         {
             get { return "Black Forbidden"; }
         }
 
-        public bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
+        public override bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
             if (drop.Side == Side.White)
                 return true;
@@ -30,16 +30,6 @@ namespace Renju.Core.Rules
                 return false;
 
             return true;
-        }
-
-        public Side? NextSide(IReadBoardState<IReadOnlyBoardPoint> board)
-        {
-            return null;
-        }
-
-        public bool? Win(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
-        {
-            return null;
         }
     }
 }
