@@ -84,11 +84,6 @@ namespace Renju.Core
                 throw new InvalidOperationException(String.Format("{0} wasn't the last drop.", position));
         }
 
-        protected internal override void UpdateLines(IEnumerable<PieceLine> lines)
-        {
-            RunInDispatcher(() => base.UpdateLines(lines));
-        }
-
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)
         {
             var result = RuleEngine.ProcessDrop(this, drop);
