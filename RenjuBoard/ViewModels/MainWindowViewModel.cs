@@ -10,7 +10,7 @@ using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Model;
 using RenjuBoard.ViewModels;
 
-namespace RenjuBoard
+namespace RenjuBoard.ViewModels
 {
     public class MainWindowViewModel
     {

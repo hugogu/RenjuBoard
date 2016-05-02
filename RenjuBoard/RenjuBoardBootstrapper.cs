@@ -6,6 +6,7 @@ using Microsoft.Practices.Unity;
 using Prism.Modularity;
 using Prism.Unity;
 using Renju.Infrastructure.ViewModel;
+using RenjuBoard.ViewModels;
 
 namespace RenjuBoard
 {

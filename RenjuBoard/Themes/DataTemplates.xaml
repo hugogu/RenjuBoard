@@ -6,8 +6,7 @@
                     xmlns:converter="clr-namespace:Renju.Controls.Converters;assembly=Renju.Controls"
                     xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
                     xmlns:model="clr-namespace:Renju.Infrastructure.Model;assembly=Renju.Infrastructure"
-                    xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure"
-                    xmlns:main="clr-namespace:RenjuBoard">
+                    xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure">
     <converter:WithOffsetConverter x:Key="WithOffsetConverter" />
     <converter:NumberToMarginConverter x:Key="NumberToMarginConverter" />
 
@@ -188,7 +187,7 @@
             </TabControl>
         </DockPanel>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type main:MainWindowViewModel}">
+    <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
         <DataTemplate.Resources>
             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                 <Setter Property="Margin" Value="0,5,0,0" />
