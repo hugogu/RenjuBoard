@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 
@@ -11,40 +10,28 @@ namespace Renju.AI
 {
     public class AIGamePlayer : DisposableModelBase, IGamePlayer
     {
-        private Task _runningTask;
-        private CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
-        private Side _side = Side.White;
-        private IGameBoard<IReadOnlyBoardPoint> _board;
+        private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
+        private readonly IGameBoard<IReadOnlyBoardPoint> _board;
         private readonly IDropResolver _dropResolver;
+        private Side _side = Side.White;
 
-        public AIGamePlayer(IDropResolver dropResolver, GameOptions options)
+        public AIGamePlayer(IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> board, GameOptions options)
         {
+            _board = board;
             _dropResolver = dropResolver;
             _dropResolver.CancelTaken = _aiResolvingCancelTokenSource.Token;
             AutoDispose(_aiResolvingCancelTokenSource);
             AutoDispose(options.ObserveProperty(() => options.AIFirst).Subscribe(_ =>
             {
-                if (!Board.DroppedPoints.Any())
+                if (!board.DroppedPoints.Any())
                     Side = options.AIFirst ? Side.Black : Side.White;
                 else
                     Trace.WriteLine("AI behavior changes will be applied to new games.");
             }));
-        }
-
-        [Dependency]
-        public IGameBoard<IReadOnlyBoardPoint> Board
-        {
-            get { return _board; }
-            set
-            {
-                if (_board != null)
-                    throw new InvalidOperationException();
-                if (value == null)
-                    throw new ArgumentNullException("value");
-                _board = value;
-                _board.PieceDropped += OnBoardPieceDropped;
-                OnPlaygroundChanged();
-            }
+            AutoDispose(Observable.FromEventPattern<PieceDropEventArgs>(handler => board.PieceDropped += handler, handler => board.PieceDropped -= handler)
+                        .Select(e => e.EventArgs)
+                        .Where(e => e.OperatorType == OperatorType.Human && board.ExpectedNextTurn == _side)
+                        .Subscribe(OnPieceDropped));
         }
 
         public Side Side
@@ -61,11 +48,7 @@ namespace Renju.AI
         {
             if (disposing)
             {
-                if (_runningTask != null)
-                {
-                    _aiResolvingCancelTokenSource.Cancel();
-                    _runningTask.Wait();
-                }
+                _aiResolvingCancelTokenSource.Cancel();
             }
             base.Dispose(disposing);
         }
@@ -78,20 +61,12 @@ namespace Renju.AI
             }
         }
 
-        private void OnBoardPieceDropped(object sender, PieceDropEventArgs e)
+        private async void OnPieceDropped(PieceDropEventArgs args)
         {
-            if (Board.ExpectedNextTurn == Side && e.OperatorType == OperatorType.Human)
-            {
-                _runningTask = Task.Factory.StartNew(() =>
-                {
-                    var drops = _dropResolver.Resolve(Board, Side).First();
-                    if (_aiResolvingCancelTokenSource.IsCancellationRequested)
-                        return;
-                    Board.Drop(drops.Position, OperatorType.AI);
-                    _runningTask = null;
-                }, _aiResolvingCancelTokenSource.Token);
-                AutoDispose(_runningTask);
-            }
+            var drop = await _dropResolver.ResolveAsync(_board, Side);
+            if (_aiResolvingCancelTokenSource.IsCancellationRequested)
+                return;
+            _board.Drop(drop.Position, OperatorType.AI);
         }
     }
 }

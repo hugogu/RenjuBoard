@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 
@@ -17,5 +18,7 @@ namespace Renju.AI
         event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
         IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side);
+
+        Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 using Renju.Core;
 using Renju.Infrastructure.Execution;
@@ -52,6 +53,11 @@ namespace Renju.AI.Resolving
                 RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(null));
                 RaiseFinishedEvent();
             }
+        }
+
+        public async Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side)
+        {
+            return await Task.Run(() => Resolve(board, side).First());
         }
 
         private double GetWinRateOf(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, Side side, int depth)
