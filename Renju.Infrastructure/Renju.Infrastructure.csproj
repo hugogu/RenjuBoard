@@ -114,6 +114,7 @@
     <Compile Include="Model\PieceDropTypeConverter.cs" />
     <Compile Include="Model\PieceLine.cs" />
     <Compile Include="Model\Side.cs" />
+    <Compile Include="Model\WinRateWithPath.cs" />
     <Compile Include="NumberUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reactives.cs" />

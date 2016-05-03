@@ -136,7 +136,7 @@ namespace Renju.Infrastructure
                 if (!start.IsDropped(board))
                     yield return board[start];
             }
-            else if (line.Length == line.DroppedCount + 1)
+            else if (line.Length >= line.DroppedCount + 1)
             {
                 foreach (var point in line.Points)
                     if (!point.Position.IsDropped(board))
@@ -189,6 +189,8 @@ namespace Renju.Infrastructure
 
         internal static bool IsClosedFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
+            Debug.Assert(line.Length > 3);
+            Debug.Assert(line.DroppedCount >= 4);
             if (line.Length == 4)
             {
                 var opponentSide = Sides.Opposite(line.Side);
@@ -196,10 +198,14 @@ namespace Renju.Infrastructure
                 return extendedline.StartPosition.IsDroppedBySideOrOutOfBoard(opponentSide, board) &&
                        extendedline.EndPosition.IsDroppedBySideOrOutOfBoard(opponentSide, board);
             }
-            else if (line.Length >= 5)
+            if (line.Length == 5)
+            {
                 return false;
+            }
             else
-                throw new ArgumentException("Line length must be greater than 3.");
+            {
+                return !line.HasOpenThree(board);
+            }
         }
 
         internal static bool IsClosedThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
@@ -249,6 +255,51 @@ namespace Renju.Infrastructure
         {
             return (position.X - line.StartPosition.X) * (position.Y - line.EndPosition.Y) ==
                    (position.X - line.EndPosition.X) * (position.Y - line.StartPosition.Y);
+        }
+
+        public static Func<IReadOnlyBoardPoint, bool> Dropped = p => p.Status.HasValue;
+        public static Func<IReadOnlyBoardPoint, bool> Empty = p => p.Status == null;
+        public static Func<IReadOnlyBoardPoint, bool>[] DDD = new[] { Dropped, Dropped, Dropped };
+        public static Func<IReadOnlyBoardPoint, bool>[] DDED = new[] { Dropped, Dropped, Empty, Dropped };
+        public static Func<IReadOnlyBoardPoint, bool>[] DEDD = new[] { Dropped, Empty, Dropped, Dropped };
+
+        public static bool FindSubLineMatch(this PieceLine line, Func<IReadOnlyBoardPoint, bool>[] pattern, out PieceLine result)
+        {
+            Debug.Assert(line.Length >= 3);
+            for (var i = 0; i < line.Length; i++)
+            {
+                for (var c = 0; c < pattern.Length && i + c < line.Length; c++)
+                {
+                    if (!pattern[c](line[i + c]))
+                        break;
+                    else if (c == pattern.Length - 1)
+                    {
+                        result = new PieceLine(line.Board, line[i].Position, line[i + c].Position);
+                        return true;
+                    }
+                }
+            }
+            result = null;
+            return false;
+        }
+
+        public static bool TryFindThreeInLine(this PieceLine line, out PieceLine result)
+        {
+            if (line.FindSubLineMatch(DDD, out result) ||
+                line.FindSubLineMatch(DDED, out result) ||
+                line.FindSubLineMatch(DEDD, out result))
+                return true;
+            return false;
+        }
+
+        public static bool HasOpenThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            PieceLine three;
+            if (line.TryFindThreeInLine(out three))
+            {
+                return !three.IsClosed(board);
+            }
+            return false;
         }
 
         public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
@@ -320,52 +371,27 @@ namespace Renju.Infrastructure
             yield return new BoardPosition(-1, 1);
         }
 
+        public static Side SideOfLastDrop(this IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            Debug.Assert(board.DroppedPoints.Any());
+
+            return board.DroppedPoints.Last().Status.Value;
+        }
+
         public static int GetWeightOnBoard(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            if (line.DroppedCount >= 4)
-            {
-                if (line.Length == 5)
-                    return 1000;
+            if (line.IsClosed(board))
                 return 0;
-            }
-            else if (line.DroppedCount == 3)
+
+            var opponentSide = board.SideOfLastDrop();
+            if (opponentSide == line.Side)
             {
-                if (line.IsClosed(board))
-                {
-                    if (line.Length <= 5)
-                        return 40;
-                    else
-                        return 0;
-                }
-                else
-                {
-                    if (line.Length == 4)
-                        return 249;
-                    if (line.Length == 5)
-                        return 200;
-                    return 0;
-                }
+                return line.DroppedCount * 4 - line.Length;
             }
-            else if (line.DroppedCount == 2)
+            else
             {
-                if (line.Length == 3)
-                {
-                    return line.IsClosed(board) ? 5 : 55;
-                }
-                if (line.Length == 4)
-                {
-                    return line.IsClosed(board) ? 4 : 50;
-                }
-                if (line.Length == 5)
-                {
-                    return line.IsClosed(board) ? 1 : 10;
-                }
+                return line.DroppedCount * 4 - line.Length + 1;
             }
-            else if (line.DroppedCount == 1)
-            {
-                return 6 - line.Length;
-            }
-            return 0;
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, ref Side? pickedSide)

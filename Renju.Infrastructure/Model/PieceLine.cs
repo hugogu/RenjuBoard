@@ -73,6 +73,16 @@ namespace Renju.Infrastructure.Model
             get { return Points.Count(p => p.Status.HasValue); }
         }
 
+        public IReadOnlyBoardPoint this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= Length)
+                    throw new ArgumentOutOfRangeException("index");
+                return Board[StartPosition + Direction * index];
+            }
+        }
+
         public static PieceLine operator +(PieceLine a, PieceLine b)
         {
             if (a == null || b == null)
@@ -137,7 +147,7 @@ namespace Renju.Infrastructure.Model
         public PieceLine TrimStart()
         {
             var startPosition = StartPosition;
-            while(!startPosition.IsDropped(Board))
+            while (!startPosition.IsDropped(Board))
             {
                 startPosition += Direction;
                 if (Equals(startPosition, EndPosition))
