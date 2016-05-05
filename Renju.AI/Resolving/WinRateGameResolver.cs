@@ -44,8 +44,12 @@ namespace Renju.AI.Resolving
                                               orderby winRateWithPath.WinRate descending, weight descending
                                               select new { Point = point, WinRate = winRateWithPath })
                 {
-                    if (Math.Abs(pointWithRate.WinRate.WinRate) == 1)
-                        yield return pointWithRate.WinRate.FindFirstDropOfSide(Sides.Opposite(side));
+                    if (pointWithRate.WinRate.WinRate == -1)
+                    {
+                        var blockOpponentWinPoint = pointWithRate.WinRate.FindFirstDropOfSide(Sides.Opposite(side));
+                        if (blockOpponentWinPoint != null)
+                            yield return blockOpponentWinPoint;
+                    }
                     Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, ExecutionTimer.CurrentExecutionTime.TotalMilliseconds);
                     yield return pointWithRate.Point;
                 }
@@ -80,16 +84,17 @@ namespace Renju.AI.Resolving
 
             iteratedBoardCount++;
             var virtualBoard = board.With(point);
-            var oppositeSide = Sides.Opposite(point.Status.Value);
-            var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
-            RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(virtualBoard));
-            RaiseStepFinishedEvent();
             var winSide = board.RuleEngine.IsWin(virtualBoard, new PieceDrop(point.Position, point.Status.Value));
             if (winSide.HasValue)
             {
                 Debug.WriteLine("Found a win path: " + String.Join("->", virtualBoard.DroppedPoints.Reverse()));
-                return new WinRateWithPath(point.Status.Value == side ? 1.0 : -1.0, virtualBoard.DroppedPoints.Reverse().Where(p => p is VirtualBoardPoint));
+                return new WinRateWithPath(point.Status.Value == side ? 1.0 : -1.0, virtualBoard.DroppedPoints.Reverse());
             }
+            var oppositeSide = Sides.Opposite(point.Status.Value);
+            var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
+            Debug.Assert(drops.Count > 0);
+            RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(virtualBoard));
+            RaiseStepFinishedEvent();
             var winRate = (from drop in drops
                            let virtualDrop = drop.As(oppositeSide, virtualBoard)
                            select GetWinRateOf(virtualBoard, virtualDrop, side, depth + 1).WinRate).Sum() / drops.Count;
@@ -97,7 +102,7 @@ namespace Renju.AI.Resolving
             if (depth == 1)
                 Debug.WriteLine("{0}:{1},{2} Iteration: {3}", point, winRate, point.Weight, iteratedBoardCount);
 
-            return new WinRateWithPath(winRate, virtualBoard.DroppedPoints.Reverse().Where(p => p is VirtualBoardPoint));
+            return new WinRateWithPath(winRate, virtualBoard.DroppedPoints.Reverse());
         }
 
         protected virtual IEnumerable<IReadOnlyBoardPoint> SelectDropsWithinWidth(IReadBoardState<IReadOnlyBoardPoint> board, Side side)

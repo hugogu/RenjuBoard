@@ -27,26 +27,27 @@ namespace Renju.AI.Weights
                                    () => board.GetOpenThrees(Sides.Opposite(side)).ToList()).ToList();
             if (prioritizedDrops.Count > 0)
             {
-                foreach (var drop in prioritizedDrops)
+                foreach (var drop in OrderCandidatesPointsByWeight(prioritizedDrops, board, side))
                     yield return drop;
                 yield break;
             }
 
-            var myThrees = board.GetThrees(side).Where(t => t.IsClosed(board));
-            foreach (var myThree in myThrees)
+            foreach (var weightedPoint in OrderCandidatesPointsByWeight(board.Points, board, side))
             {
-                foreach (var fourPoint in myThree.GetBlockPoints(board))
-                    yield return fourPoint;
+                yield return weightedPoint;
             }
+        }
 
-            foreach (var weightedPoint in (from point in board.Points
-                                           where point.Status == null && point.RequiresReevaluateWeight
-                                           let drop = new PieceDrop(point.Position, side)
-                                           where board.RuleEngine.CanDropOn(board, drop)
-                                           let lines = point.GetRowsOnBoard(board, true)
-                                           let weightedPoint = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
-                                           orderby weightedPoint.Weight descending, RandomSeed()
-                                           group weightedPoint by weightedPoint.Weight >= 1000).Where(g => g.Any()).First())
+        private IEnumerable<IReadOnlyBoardPoint> OrderCandidatesPointsByWeight(IEnumerable<IReadOnlyBoardPoint> pointsCandidates, IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        {
+            foreach (var weightedPoint in from point in pointsCandidates
+                                          where point.Status == null && point.RequiresReevaluateWeight
+                                          let drop = new PieceDrop(point.Position, side)
+                                          where board.RuleEngine.CanDropOn(board, drop)
+                                          let lines = point.GetRowsOnBoard(board, true)
+                                          let pointWithWeight = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
+                                          orderby pointWithWeight.Weight descending, RandomSeed()
+                                          select pointWithWeight)
             {
                 weightedPoint.Point.RequiresReevaluateWeight = false;
                 weightedPoint.Point.Weight = weightedPoint.Weight;

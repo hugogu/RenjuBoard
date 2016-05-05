@@ -61,7 +61,8 @@ namespace Renju.Infrastructure.Model
                 var position = StartPosition;
                 while (!Equals(position, EndPosition))
                 {
-                    yield return Board[position];
+                    if (position.IsOnBoard(Board))
+                        yield return Board[position];
                     position += Direction;
                 }
                 yield return Board[EndPosition];
@@ -111,11 +112,7 @@ namespace Renju.Infrastructure.Model
 
         public static PieceLine operator +(PieceLine line, int offset)
         {
-            var newEndPosition = line.EndPosition + line.Direction * offset;
-            if (newEndPosition.IsOnBoard(line.Board))
-                return new PieceLine(line.Board, line.StartPosition, newEndPosition, line.Direction);
-            else
-                return line;
+            return new PieceLine(line.Board, line.StartPosition, line.EndPosition + line.Direction * offset, line.Direction);
         }
 
         public static PieceLine operator -(PieceLine line, int offset)
@@ -125,11 +122,7 @@ namespace Renju.Infrastructure.Model
 
         public static PieceLine operator +(int offset, PieceLine line)
         {
-            var newStartPosition = line.StartPosition - line.Direction * offset;
-            if (newStartPosition.IsOnBoard(line.Board))
-                return new PieceLine(line.Board, newStartPosition, line.EndPosition, line.Direction);
-            else
-                return line;
+            return new PieceLine(line.Board, line.StartPosition - line.Direction * offset, line.EndPosition, line.Direction);
         }
 
         public static PieceLine operator -(int offset, PieceLine line)

@@ -110,7 +110,7 @@ namespace Renju.Infrastructure
             Debug.Assert(line.StartPosition.IsDropped(board));
             Debug.Assert(line.EndPosition.IsDropped(board));
 
-            if (line.DroppedCount == 4)
+            if (line.DroppedCount >= 4)
             {
                 return line.GetBlockPointsForFour(board);
             }
@@ -127,13 +127,13 @@ namespace Renju.Infrastructure
             if (line.Length == line.DroppedCount)
             {
                 var end = (line + 1).EndPosition;
-                if (!end.IsDropped(board))
+                if (end.IsOnBoard(board) && !end.IsDropped(board))
                 {
                     yield return board[end];
                     yield break;
                 }
                 var start = (1 + line).StartPosition;
-                if (!start.IsDropped(board))
+                if (start.IsOnBoard(board) && !start.IsDropped(board))
                     yield return board[start];
             }
             else if (line.Length >= line.DroppedCount + 1)
@@ -153,7 +153,7 @@ namespace Renju.Infrastructure
 
         public static IEnumerable<PieceLine> GetFours(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
-            return board.Lines.Where(l => l.DroppedCount == 4 && l.Side == side && !l.IsClosed(board)).ToList();
+            return board.Lines.Where(l => l.DroppedCount >= 4 && l.Side == side && !l.IsClosed(board)).ToList();
         }
 
         public static IEnumerable<PieceLine> GetThrees(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
@@ -229,12 +229,12 @@ namespace Renju.Infrastructure
 
         public static bool IsEmptyAndWithinBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            return !position.IsDropped(board) && position.IsOnBoard(board);
+            return position.IsOnBoard(board) && !position.IsDropped(board);
         }
 
         public static bool IsDroppedBySideOrOutOfBoard(this BoardPosition position, Side side, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            return (position.IsDropped(board) && board[position].Status == side) || !position.IsOnBoard(board);
+            return !position.IsOnBoard(board) || (position.IsDropped(board) && board[position].Status == side);
         }
 
         public static bool IsInLine(this BoardPosition position, PieceLine line)
@@ -381,7 +381,7 @@ namespace Renju.Infrastructure
         public static int GetWeightOnBoard(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             if (line.IsClosed(board))
-                return 0;
+                return line.DroppedCount * 2 - line.Length;
 
             var opponentSide = board.SideOfLastDrop();
             if (opponentSide == line.Side)
