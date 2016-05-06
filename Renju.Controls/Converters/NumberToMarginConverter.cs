@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
@@ -9,6 +10,9 @@ namespace Renju.Controls.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            if (values.Any(v => v == DependencyProperty.UnsetValue))
+                return new Thickness();
+
             var left = System.Convert.ToDouble(values[0]);
             var top = values.Length > 1 ? System.Convert.ToDouble(values[1]) : 0;
             var right = values.Length > 2 ? System.Convert.ToDouble(values[2]) : 0;

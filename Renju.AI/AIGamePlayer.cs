@@ -31,6 +31,7 @@ namespace Renju.AI
             AutoDispose(Observable.FromEventPattern<PieceDropEventArgs>(handler => board.PieceDropped += handler, handler => board.PieceDropped -= handler)
                         .Select(e => e.EventArgs)
                         .Where(e => e.OperatorType == OperatorType.Human && board.ExpectedNextTurn == _side)
+                        .TakeWhile(e => board.ExpectedNextTurn.HasValue)
                         .Subscribe(OnPieceDropped));
         }
 
