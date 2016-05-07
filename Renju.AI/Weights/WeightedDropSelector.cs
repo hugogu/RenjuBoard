@@ -8,13 +8,6 @@ namespace Renju.AI.Weights
 {
     public class WeightedDropSelector : IDropSelector
     {
-        private readonly Random _random;
-
-        public WeightedDropSelector()
-        {
-            _random = new Random();
-        }
-
         public bool RandomEqualSelections { get; set; } = true;
 
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
@@ -37,7 +30,7 @@ namespace Renju.AI.Weights
                                           where board.RuleEngine.CanDropOn(board, drop)
                                           let lines = point.GetRowsOnBoard(board, true)
                                           let pointWithWeight = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
-                                          orderby pointWithWeight.Weight descending, RandomSeed()
+                                          orderby pointWithWeight.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
                                           select pointWithWeight)
             {
                 weightedPoint.Point.RequiresReevaluateWeight = false;
@@ -53,11 +46,6 @@ namespace Renju.AI.Weights
                     return points;
 
             return new IReadOnlyBoardPoint[0];
-        }
-
-        private int RandomSeed()
-        {
-            return RandomEqualSelections ? _random.Next() : 0;
         }
     }
 }
