@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
+using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {

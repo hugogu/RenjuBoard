@@ -98,9 +98,12 @@
     <Compile Include="Execution\SideExecutionReporter.cs" />
     <Compile Include="InfrastructureModule.cs" />
     <Compile Include="ModelBase.cs" />
-    <Compile Include="ModelExtensions.cs" />
     <Compile Include="Model\BoardPosition.cs" />
     <Compile Include="Model\DropResult.cs" />
+    <Compile Include="Model\Extensions\BoardExtensions.cs" />
+    <Compile Include="Model\Extensions\BoardPositionExtensions.cs" />
+    <Compile Include="Model\Extensions\PieceLineExtensions.cs" />
+    <Compile Include="Model\Extensions\PointExtensions.cs" />
     <Compile Include="Model\GameOptions.cs" />
     <Compile Include="Model\IGameBoard.cs" />
     <Compile Include="Model\IGamePlayer.cs" />

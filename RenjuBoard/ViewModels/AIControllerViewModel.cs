@@ -11,6 +11,7 @@ using Renju.Core;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
+using Renju.Infrastructure.Model.Extensions;
 
 namespace RenjuBoard.ViewModels
 {
@@ -32,7 +33,7 @@ namespace RenjuBoard.ViewModels
             PreviewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(point =>
             {
                 _previewLines.Clear();
-                _previewLines.AddRange(point.GetRowsOnBoard(gameBoard, true));
+                _previewLines.AddRange(gameBoard.GetRowsFromPoint(point, true));
             }, p => Options.ShowPreviewLine);
             AutoDispose(aiStepController.ObserveProperty(() => aiStepController.IsPaused).ObserveOnDispatcher().Subscribe((_ =>
             {

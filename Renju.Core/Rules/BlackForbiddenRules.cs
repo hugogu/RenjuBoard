@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
+using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core.Rules
 {
@@ -16,7 +16,7 @@ namespace Renju.Core.Rules
             if (drop.Side == Side.White)
                 return true;
 
-            var longLines = (from line in board[drop].GetRowsOnBoard(board, true)
+            var longLines = (from line in board.GetRowsFromPoint(board[drop], true)
                              where line.Side == drop.Side && line.DroppedCount >= 2
                              select line).ToList();
 

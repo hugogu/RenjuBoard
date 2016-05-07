@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
+using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {

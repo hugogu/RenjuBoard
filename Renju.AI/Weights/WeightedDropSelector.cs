@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
+using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.AI.Weights
 {
@@ -44,7 +44,7 @@ namespace Renju.AI.Weights
                                           where point.Status == null && point.RequiresReevaluateWeight
                                           let drop = new PieceDrop(point.Position, side)
                                           where board.RuleEngine.CanDropOn(board, drop)
-                                          let lines = point.GetRowsOnBoard(board, true)
+                                          let lines = board.GetRowsFromPoint(point, true)
                                           let pointWithWeight = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
                                           orderby pointWithWeight.Weight descending, RandomSeed()
                                           select pointWithWeight)
