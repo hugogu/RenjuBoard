@@ -1,0 +1,87 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:RenjuBoard.ViewModels">
+    <DataTemplate DataType="{x:Type vm:OptionsViewModel}">
+        <DockPanel Margin="12">
+            <DockPanel DockPanel.Dock="Bottom"
+                       LastChildFill="False"
+                       Margin="0,12,0,0">
+                <Button Content="Cancel"
+                        IsCancel="True"
+                        DockPanel.Dock="Right"
+                        Command="{Binding CancelCommand}" />
+                <Button Content="Save"
+                        IsDefault="True"
+                        Margin="0,0,5,0"
+                        DockPanel.Dock="Right"
+                        Command="{Binding SaveCommand}" />
+            </DockPanel>
+            <TabControl>
+                <TabItem Header="UI"
+                         DataContext="{Binding Options}">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <CheckBox Content="Show preview line"
+                                  IsChecked="{Binding ShowPreviewLine}" />
+                        <CheckBox Content="Show board lines"
+                                  Grid.Row="1"
+                                  IsChecked="{Binding ShowLinesOnBoard}" />
+                        <CheckBox Content="Show AI resolving steps"
+                                  Grid.Row="2"
+                                  IsChecked="{Binding ShowAISteps}" />
+                        <CheckBox Content="Show calibration labels"
+                                  Grid.Row="3"
+                                  IsChecked="{Binding ShowCalibrationLabels}" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="AI"
+                         DataContext="{Binding Options}">
+                    <StackPanel Margin="5">
+                        <GroupBox Padding="0,5,5,5">
+                            <GroupBox.Header>
+                                <CheckBox Content="Limit AI time"
+                                          IsChecked="{Binding IsAITimeLimited}" />
+                            </GroupBox.Header>
+                            <Grid IsEnabled="{Binding IsAITimeLimited}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="5" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Content="AI time limit (ms): " />
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding AITimeLimit}" />
+                                <Label Grid.Row="2"
+                                       Content="AI step time limit (ms): " />
+                                <TextBox Grid.Column="1"
+                                         Grid.Row="2"
+                                         Text="{Binding AIStepTimeLimit}" />
+                            </Grid>
+                        </GroupBox>
+                        <CheckBox Content="AI First"
+                                  IsChecked="{Binding AIFirst}" />
+                        <CheckBox Content="Stepping AI"
+                                  IsChecked="{Binding SteppingAI}" />
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Rules">
+                    <ItemsControl Margin="5"
+                                  ItemsSource="{Binding Rules}" />
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </DataTemplate>
+</ResourceDictionary>

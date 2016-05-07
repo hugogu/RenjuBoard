@@ -13,11 +13,12 @@ namespace RenjuBoard
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            LoadThemeFilesOfLang(Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName);
+            LoadResourceFile(key => key.Contains("-" + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName));
+            LoadResourceFile(key => key.StartsWith("views"));
             new RenjuBoardBootstrapper().Run();
         }
 
-        private void LoadThemeFilesOfLang(string langId)
+        private void LoadResourceFile(Func<string, bool> withKeyThat)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
@@ -25,10 +26,10 @@ namespace RenjuBoard
             {
                 foreach (var baml in from DictionaryEntry entry in resourceReader
                                      let key = entry.Key as string
-                                     where key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && key.Contains("-" + langId)
+                                     where key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && withKeyThat(key)
                                      select new { Key = key, Uri = new Uri("/" + assembly.GetName().Name + ";component/" + key.Replace(".baml", ".xaml"), UriKind.Relative) })
                 {
-                    Trace.WriteLine("Loading language resource " + baml.Uri);
+                    Trace.WriteLine("Loading resource " + baml.Uri);
                     Resources.MergedDictionaries.Add(LoadComponent(baml.Uri) as ResourceDictionary);
                 }
             }

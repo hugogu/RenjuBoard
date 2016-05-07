@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:RenjuBoard.ViewModels">
+    <DataTemplate x:Key="LogItemDataTemplate">
+        <TextBlock Text="{Binding}"
+                   TextWrapping="Wrap" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:LogsViewModel}">
+        <DockPanel Grid.Column="3">
+            <ToolBar DockPanel.Dock="Top">
+                <Button Command="{Binding ClearLogsCommand}">
+                    <Image Source="../Images/Clean.png" Stretch="None" />
+                </Button>
+                <TextBox Width="100"
+                         Margin="5,0"
+                         Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="F3"
+                                    Command="{Binding SearchCommand}"
+                                    CommandParameter="{Binding ElementName=logBox}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Command="{Binding SearchCommand}"
+                        CommandParameter="{Binding ElementName=logBox}">
+                    <Image Source="../Images/Search.png" Stretch="None" />
+                </Button>
+            </ToolBar>
+            <TextBox x:Name="logBox"
+                     Text="{Binding LogText}"
+                     IsReadOnly="True"
+                     IsReadOnlyCaretVisible="True"
+                     BorderThickness="0"
+                     TextWrapping="Wrap"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </DockPanel>
+    </DataTemplate>
+</ResourceDictionary>
