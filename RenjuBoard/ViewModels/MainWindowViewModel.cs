@@ -8,7 +8,6 @@ using Prism.Events;
 using Renju.Core;
 using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Model;
-using RenjuBoard.ViewModels;
 
 namespace RenjuBoard.ViewModels
 {

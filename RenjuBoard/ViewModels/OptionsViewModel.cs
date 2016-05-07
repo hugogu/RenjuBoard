@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
@@ -18,6 +20,9 @@ namespace RenjuBoard.ViewModels
             ShowOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
         }
 
+        [Dependency]
+        public IEnumerable<IGameRule> Rules { get; set; }
+
         public GameOptions Options { get; private set; }
 
         public ICommand ShowOptionsCommand { get; private set; }
@@ -28,7 +33,7 @@ namespace RenjuBoard.ViewModels
 
         private void OnShowOptionsCommand()
         {
-            var optionsCopy = new OptionsViewModel(new GameOptions(Options));
+            var optionsCopy = new OptionsViewModel(new GameOptions(Options)) { Rules = this.Rules };
             var optionsWindow = new Window()
             {
                 Owner = Application.Current.MainWindow,

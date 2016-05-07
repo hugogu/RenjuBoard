@@ -5,6 +5,7 @@
                     xmlns:control="clr-namespace:Renju.Controls;assembly=Renju.Controls"
                     xmlns:converter="clr-namespace:Renju.Controls.Converters;assembly=Renju.Controls"
                     xmlns:renju="clr-namespace:Renju.Core;assembly=Renju.Core"
+                    xmlns:rule="clr-namespace:Renju.Core.Rules;assembly=Renju.Core"
                     xmlns:model="clr-namespace:Renju.Infrastructure.Model;assembly=Renju.Infrastructure"
                     xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure">
     <converter:WithOffsetConverter x:Key="WithOffsetConverter" />
@@ -51,6 +52,18 @@
                 <Setter TargetName="drop" Property="Background" Value="#77FFFFFF" />
             </DataTrigger>
         </DataTemplate.Triggers>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rule:DropValidationRule}">
+        <CheckBox IsEnabled="{Binding IsOptional}"
+                  IsChecked="{Binding IsEnabled}"
+                  Content="{Binding Name}"
+                  Margin="0,5,0,0" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rule:WinRule}">
+        <CheckBox IsEnabled="{Binding IsOptional}"
+                  IsChecked="{Binding IsEnabled}"
+                  Content="{Binding Name}"
+                  Margin="0,5,0,0" />
     </DataTemplate>
     <DataTemplate DataType="{x:Type renju:BoardPoint}">
         <control:BoardPiece x:Name="drop"
@@ -125,8 +138,9 @@
                         DockPanel.Dock="Right"
                         Command="{Binding SaveCommand}" />
             </DockPanel>
-            <TabControl DataContext="{Binding Options}">
-                <TabItem Header="UI">
+            <TabControl>
+                <TabItem Header="UI"
+                         DataContext="{Binding Options}">
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -151,7 +165,8 @@
                                   IsChecked="{Binding ShowCalibrationLabels}" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="AI">
+                <TabItem Header="AI"
+                         DataContext="{Binding Options}">
                     <StackPanel Margin="5">
                         <GroupBox Padding="0,5,5,5">
                             <GroupBox.Header>
@@ -183,6 +198,10 @@
                         <CheckBox Content="Stepping AI"
                                   IsChecked="{Binding SteppingAI}" />
                     </StackPanel>
+                </TabItem>
+                <TabItem Header="Rules">
+                    <ItemsControl Margin="5"
+                                  ItemsSource="{Binding Rules}" />
                 </TabItem>
             </TabControl>
         </DockPanel>

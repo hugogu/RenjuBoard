@@ -1,12 +1,21 @@
-﻿using Renju.Infrastructure.Model;
+﻿using Renju.Infrastructure;
+using Renju.Infrastructure.Model;
 
 namespace Renju.Core.Rules
 {
-    public abstract class DropValidationRule : IGameRule
+    public abstract class DropValidationRule : ModelBase, IGameRule
     {
+        private bool _isEnabled = true;
+
         public abstract string Name { get; }
 
         public virtual bool IsOptional { get { return true; } }
+
+        public virtual bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set { SetProperty(ref _isEnabled, value); }
+        }
 
         public virtual bool? CanDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
