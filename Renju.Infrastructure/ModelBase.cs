@@ -1,19 +1,23 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
-using Prism.Mvvm;
 
 namespace Renju.Infrastructure
 {
     [Serializable]
-    public class ModelBase : BindableBase
+    public class ModelBase : INotifyPropertyChanged
     {
         public ModelBase()
         {
             OnConstructingNewObject();
         }
+
+        [field: NonSerialized]
+        public virtual event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Logging purpose only.
@@ -45,6 +49,20 @@ namespace Renju.Infrastructure
                     RaisePropertyChangedAsync(propertyName);
                 else
                     OnPropertyChanged(propertyName);
+            }
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> propertyGetter)
+        {
+            OnPropertyChanged(propertyGetter.GetMemberName());
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var temp = PropertyChanged;
+            if (temp != null)
+            {
+                temp(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Renju.Infrastructure.AI;
 using Renju.Infrastructure.Model;
 using Renju.Infrastructure.Model.Extensions;
 

@@ -6,9 +6,11 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Prism.Commands;
-using Renju.AI;
+using Prism.Events;
 using Renju.Core;
 using Renju.Infrastructure;
+using Renju.Infrastructure.AI;
+using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 using Renju.Infrastructure.Model.Extensions;
@@ -20,12 +22,12 @@ namespace RenjuBoard.ViewModels
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
 
-        public AIControllerViewModel(IStepController aiStepController, IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> gameBoard)
+        public AIControllerViewModel(IStepController aiStepController, IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
         {
             Debug.Assert(aiStepController != null);
             Debug.Assert(aiStepController.CurrentStep == 0);
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
-            dropResolver.ResolvingBoard += OnResolvingBoard;
+            eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
             PauseAICommand = new DelegateCommand(() => aiStepController.Pause(), () => !aiStepController.IsPaused);
             ContinueAICommand = new DelegateCommand(() => aiStepController.Resume(), () => aiStepController.IsPaused);
             NextAIStepComand = new DelegateCommand(() => aiStepController.StepForward(1), () => aiStepController.IsPaused);
@@ -69,11 +71,11 @@ namespace RenjuBoard.ViewModels
             get { return _resolvingBoard.Points; }
         }
 
-        private void OnResolvingBoard(object sender, ResolvingBoardEventArgs e)
+        private void OnResolvingBoard(IReadBoardState<IReadOnlyBoardPoint> board)
         {
             foreach (var showingPoint in _resolvingBoard.Points)
             {
-                var virtualPoint = e.Board == null ? null : e.Board[showingPoint.Position];
+                var virtualPoint = board == null ? null : board[showingPoint.Position];
                 if (virtualPoint is VirtualBoardPoint && Options.ShowAISteps)
                 {
                     showingPoint.Index = virtualPoint.Index;

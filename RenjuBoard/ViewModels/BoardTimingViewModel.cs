@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
-using Renju.AI;
 using Renju.Infrastructure;
+using Renju.Infrastructure.AI;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 

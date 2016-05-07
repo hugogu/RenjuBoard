@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Threading;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Prism.Events;
@@ -12,6 +9,7 @@ using Renju.AI.Resolving;
 using Renju.AI.Weights;
 using Renju.Core;
 using Renju.Infrastructure;
+using Renju.Infrastructure.AI;
 using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
@@ -32,7 +30,7 @@ namespace RenjuBoard
 
         public void Initialize()
         {
-            Application.Current.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            
             RegistApplicationDependencies(Container);
             RenewChildContainerForGame(NewGameOptions.Default);
             EventAggregator.GetEvent<StartNewGameEvent>().Subscribe(OnNewGameEvent, ThreadOption.UIThread, true);
@@ -85,15 +83,6 @@ namespace RenjuBoard
                 c.BuildUp(new GameOptions().CopyFromObject(Settings.Default))
             ));
             container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
-        }
-
-        private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            var error = String.Format("An unhnalded exception was thrown, do you want to keep RenJu running? \r\n\r\n {0}", e.Exception.Message);
-            if (MessageBox.Show(error, "Rejun Exception", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                e.Handled = true;
-            }
         }
     }
 }

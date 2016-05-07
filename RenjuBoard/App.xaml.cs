@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace RenjuBoard
 {
@@ -13,6 +14,7 @@ namespace RenjuBoard
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            Dispatcher.UnhandledException += OnDispatcherUnhandledException;
             LoadResourceFile(key => key.Contains("-" + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName));
             LoadResourceFile(key => key.StartsWith("views"));
             new RenjuBoardBootstrapper().Run();
@@ -32,6 +34,15 @@ namespace RenjuBoard
                     Trace.WriteLine("Loading resource " + baml.Uri);
                     Resources.MergedDictionaries.Add(LoadComponent(baml.Uri) as ResourceDictionary);
                 }
+            }
+        }
+
+        private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            var error = String.Format("An unhnalded exception was thrown, do you want to keep RenJu running? \r\n\r\n {0}", e.Exception.Message);
+            if (MessageBox.Show(error, "Rejun Exception", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                e.Handled = true;
             }
         }
     }

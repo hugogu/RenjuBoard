@@ -5,7 +5,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
+using Prism.Events;
 using Renju.Core;
+using Renju.Infrastructure.AI;
+using Renju.Infrastructure.Events;
 using Renju.Infrastructure.Execution;
 using Renju.Infrastructure.Model;
 
@@ -24,13 +27,14 @@ namespace Renju.AI.Resolving
         [Dependency]
         public GameOptions Options { get; set; }
 
+        [Dependency]
+        public IEventAggregator EventAggregator { get; set; }
+
         public int Depth { get; set; } = 5;
 
         public int Width { get; set; } = 4;
 
         public CancellationToken CancelTaken { get; set; }
-
-        public event EventHandler<ResolvingBoardEventArgs> ResolvingBoard;
 
         public IEnumerable<IReadOnlyBoardPoint> Resolve(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
@@ -56,7 +60,7 @@ namespace Renju.AI.Resolving
             }
             finally
             {
-                RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(null));
+                PublishResolvingBoardEvent(null);
                 RaiseFinishedEvent();
             }
         }
@@ -64,6 +68,14 @@ namespace Renju.AI.Resolving
         public async Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
             return await Task.Run(() => Resolve(board, side).First());
+        }
+
+        protected internal virtual void PublishResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            if (EventAggregator == null)
+                return;
+
+            EventAggregator.GetEvent<ResolvingBoardEvent>().Publish(board);
         }
 
         private WinRateWithPath GetWinRateOf(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, Side side, int depth)
@@ -93,7 +105,7 @@ namespace Renju.AI.Resolving
             var oppositeSide = Sides.Opposite(point.Status.Value);
             var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
             Debug.Assert(drops.Count > 0);
-            RaiseEvent(ResolvingBoard, new ResolvingBoardEventArgs(virtualBoard));
+            PublishResolvingBoardEvent(virtualBoard);
             RaiseStepFinishedEvent();
             var winRate = (from drop in drops
                            let virtualDrop = drop.As(oppositeSide, virtualBoard)

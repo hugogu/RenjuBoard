@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Renju.Infrastructure.Model;
 
-namespace Renju.AI
+namespace Renju.Infrastructure.AI
 {
     public interface IDropSelector
     {
