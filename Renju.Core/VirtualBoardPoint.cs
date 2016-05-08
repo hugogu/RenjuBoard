@@ -5,6 +5,7 @@ using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {
+    [Serializable]
     [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
     public class VirtualBoardPoint : IReadOnlyBoardPoint
     {

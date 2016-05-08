@@ -40,9 +40,8 @@
         <control:BoardPiece x:Name="drop"
                             Background="Transparent"
                             SequenceNumber="{Binding Index}"
-                            Weight="{Binding Weight}">
-        </control:BoardPiece>
-        <DataTemplate.Triggers>
+                            Weight="{Binding Weight}" />
+            <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.Black}">
                 <Setter TargetName="drop" Property="Background" Value="#77000000" />
             </DataTrigger>
@@ -62,6 +61,20 @@
                   IsChecked="{Binding IsEnabled}"
                   Content="{Binding Name}"
                   Margin="0,5,0,0" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type renju:VirtualBoardPoint}">
+        <control:BoardPiece x:Name="drop"
+                            Background="Transparent"
+                            SequenceNumber="{Binding Index}"
+                            Weight="{Binding Weight}" />
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.Black}">
+                <Setter TargetName="drop" Property="Background" Value="#77000000" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static model:Side.White}">
+                <Setter TargetName="drop" Property="Background" Value="#77FFFFFF" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
     <DataTemplate DataType="{x:Type renju:BoardPoint}">
         <control:BoardPiece x:Name="drop"

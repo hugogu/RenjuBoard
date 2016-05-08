@@ -7,6 +7,7 @@ using Renju.Infrastructure.Model;
 
 namespace Renju.Core
 {
+    [Serializable]
     public class DefaultGameRuleEngine : IGameRuleEngine
     {
         private readonly IEnumerable<IGameRule> _rules;

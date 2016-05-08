@@ -2,7 +2,7 @@
 ## Introduction ##
 As the name implies, *Renju Board* is a desktop application to play Renju. Like all other renju applications, it provides a basic AI to play against. But it is not only a game application for entertainment, its primary goal is to build up a platform so that people can write a Renju AI easily and allows AI vs AI tournament.
 
-![](https://github.com/hugogu/RenjuBoard/blob/master/docs/images/MainWindow.png)
+![](/docs/images/MainWindow.png)
 
 ## What's new comparing with competitors ##
 
@@ -14,6 +14,10 @@ There already are a few such platforms out there, such as
 But they are implemented 16 years ago in low level windows APIs which is not easy to extend and error-prone whereas this new *Renju Board* is written in C# with the most convenient windows UI framework. Providing a well-defined data structure and interfaces have been one of the key goals from the first day it was born, and the other key goals and features are:
 
 - Debugging AI resolving steps visually.
+- Built-in support for Visual Studio Debugger Visualizer
+
+![](/docs/images/DebuggingBoard.png)
+
 - Providing a well-defined API and utilities to write a new AI easily.
 - Support Piskvork protocol and native libs written under Piskvork.
 

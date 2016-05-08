@@ -82,6 +82,7 @@
     <Compile Include="BoardPoint.cs" />
     <Compile Include="BoardRecorder.cs" />
     <Compile Include="CoreModule.cs" />
+    <Compile Include="Debugging\RenjuBoardVisualizer.cs" />
     <Compile Include="DefaultGameRuleEngine.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameBoardDecoration.cs" />
@@ -96,6 +97,10 @@
     <Compile Include="VirtualGameBoard.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Renju.Controls\Renju.Controls.csproj">
+      <Project>{6adc2ffa-d00f-4f33-a6df-366768f2f479}</Project>
+      <Name>Renju.Controls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Renju.Infrastructure\Renju.Infrastructure.csproj">
       <Project>{3be7ea02-29e3-4586-b644-a22421e3ad2e}</Project>
       <Name>Renju.Infrastructure</Name>

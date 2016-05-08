@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Renju.Infrastructure.Model;
 using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core.Rules
 {
+    [Serializable]
     public class FiveWinRule : WinRule
     {
         public override string Name

@@ -126,6 +126,7 @@
     <Compile Include="Reactives.cs" />
     <Compile Include="Execution\ReportExecutionObject.cs" />
     <Compile Include="Reflections.cs" />
+    <Compile Include="ResourceUtils.cs" />
     <Compile Include="ViewModel\VMInfo.cs" />
   </ItemGroup>
   <ItemGroup>

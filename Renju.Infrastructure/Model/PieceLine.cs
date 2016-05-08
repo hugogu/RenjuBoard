@@ -7,6 +7,8 @@ using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Infrastructure.Model
 {
+    [Serializable]
+    [DebuggerVisualizer("Renju.Core.Debugging.RenjuBoardVisualizer, Renju.Core")]
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class PieceLine
     {

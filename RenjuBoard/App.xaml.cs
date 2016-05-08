@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Renju.Infrastructure;
 
 namespace RenjuBoard
 {
@@ -15,6 +14,7 @@ namespace RenjuBoard
         protected override void OnStartup(StartupEventArgs e)
         {
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnTaskSchedulerException;
             LoadResourceFile(key => key.Contains("-" + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName));
             LoadResourceFile(key => key.StartsWith("views"));
             new RenjuBoardBootstrapper().Run();
@@ -22,19 +22,16 @@ namespace RenjuBoard
 
         private void LoadResourceFile(Func<string, bool> withKeyThat)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
-            using (var resourceReader = new ResourceReader(stream))
+            foreach(var resourceDictionary in Assembly.GetExecutingAssembly().TryFindResourceDictionaries(withKeyThat))
             {
-                foreach (var baml in from DictionaryEntry entry in resourceReader
-                                     let key = entry.Key as string
-                                     where key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && withKeyThat(key)
-                                     select new { Key = key, Uri = new Uri("/" + assembly.GetName().Name + ";component/" + key.Replace(".baml", ".xaml"), UriKind.Relative) })
-                {
-                    Trace.WriteLine("Loading resource " + baml.Uri);
-                    Resources.MergedDictionaries.Add(LoadComponent(baml.Uri) as ResourceDictionary);
-                }
+                Trace.WriteLine("Loading resource " + resourceDictionary.Source);
+                Resources.MergedDictionaries.Add(resourceDictionary);
             }
+        }
+
+        private void OnTaskSchedulerException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            Trace.WriteLine(e.Exception.Message);
         }
 
         private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

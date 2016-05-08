@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Renju.Core.Debugging;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {
+    [Serializable]
+    [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
     public class GameBoardDecoration : ModelBase, IReadBoardState<IReadOnlyBoardPoint>
     {
         private readonly IReadBoardState<IReadOnlyBoardPoint> _decoratedBoard;

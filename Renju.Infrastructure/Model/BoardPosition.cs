@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace Renju.Infrastructure.Model
 {
+    [Serializable]
     [DebuggerDisplay("[X={X}, Y={Y}]")]
     public class BoardPosition : IEquatable<BoardPosition>
     {

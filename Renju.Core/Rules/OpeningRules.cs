@@ -1,8 +1,10 @@
-﻿using Renju.Infrastructure;
+﻿using System;
+using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 
 namespace Renju.Core.Rules
 {
+    [Serializable]
     public class OpeningRules : DropValidationRule
     {
         public override string Name

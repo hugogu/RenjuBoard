@@ -3,6 +3,7 @@ using Renju.Infrastructure.Model;
 
 namespace Renju.Core.Rules
 {
+    [Serializable]
     public abstract class WinRule : IGameRule
     {
         public abstract string Name { get; }

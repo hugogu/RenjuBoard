@@ -7,6 +7,12 @@
     <Style TargetType="{x:Type local:GameBoardPanel}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Black" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:GameBoardPanel}">
@@ -24,6 +30,7 @@
                             </Grid.ColumnDefinitions>
                             <ItemsControl Grid.Row="1"
                                           Margin="0,3"
+                                          IsTabStop="False"
                                           TextBlock.TextAlignment="Center"
                                           Visibility="{Binding ShowCalibrationLabels, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           ItemsSource="{Binding XLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
@@ -35,6 +42,7 @@
                             </ItemsControl>
                             <ItemsControl Grid.Column="1"
                                           Margin="3,0"
+                                          IsTabStop="False"
                                           Visibility="{Binding ShowCalibrationLabels, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           ItemsSource="{Binding YLables, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemTemplate>
@@ -49,14 +57,16 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
                             <ItemsPresenter />
-                            <ItemsControl ItemsSource="{Binding PreviewLines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
+                            <ItemsControl IsTabStop="False"
+                                          ItemsSource="{Binding PreviewLines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Grid />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <ItemsControl ItemsSource="{Binding ResolvingPoints, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
+                            <ItemsControl IsTabStop="False"
+                                          ItemsSource="{Binding ResolvingPoints, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}"
                                           ItemTemplate="{DynamicResource ResolvingPointTemplate}"
                                           IsHitTestVisible="False" >
                                 <ItemsControl.ItemsPanel>
@@ -66,7 +76,8 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <ItemsControl ItemsSource="{Binding Lines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
+                            <ItemsControl IsTabStop="False"
+                                          ItemsSource="{Binding Lines, RelativeSource={RelativeSource AncestorType={x:Type local:GameBoardPanel}}}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Grid />
@@ -101,6 +112,7 @@
         <Setter Property="TextBlock.FontSize" Value="16pt" />
         <Setter Property="TextBlock.FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="White" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:BoardPiece}">

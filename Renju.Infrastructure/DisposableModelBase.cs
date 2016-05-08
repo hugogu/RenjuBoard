@@ -9,6 +9,7 @@ namespace Renju.Infrastructure
     public class DisposableModelBase : ModelBase, IDisposable
     {
         private bool _disposed;
+        [NonSerialized]
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public void Dispose()

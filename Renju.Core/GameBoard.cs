@@ -10,8 +10,10 @@ using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {
+    [Serializable]
     public class GameBoard : VirtualGameBoard<BoardPoint>, IGameBoard<BoardPoint>, IDisposable
     {
+        [NonSerialized]
         private readonly IDisposable _optionsObserver;
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
         private Side? _expectedNextTurn = Side.Black;

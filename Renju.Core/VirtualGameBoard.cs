@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.Unity.Utility;
+using Renju.Core.Debugging;
 using Renju.Infrastructure;
 using Renju.Infrastructure.Model;
 using Renju.Infrastructure.Model.Extensions;
 
 namespace Renju.Core
 {
+    [Serializable]
+    [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
     public class VirtualGameBoard<TPoint> : ModelBase, IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
@@ -59,6 +63,7 @@ namespace Renju.Core
 
         public int Size { get; protected set; }
 
+        [field: NonSerialized]
         public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
 
         protected internal virtual void UpdateLines(IEnumerable<PieceLine> lines)
