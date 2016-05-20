@@ -15,30 +15,30 @@ namespace Renju.AI.Weights
         public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
             var prioritizedDrops = FindDropsFromPrioritizedTargets(board,
-                                   () => board.GetFours(side).SelectMany(l => l.GetBlockPoints(board)),
-                                   () => board.GetFours(Sides.Opposite(side)).SelectMany(l => l.GetBlockPoints(board)),
-                                   () => board.GetOpenThrees(side).SelectMany(l => l.GetBlockPoints(board)),
-                                   () => board.GetOpenThrees(Sides.Opposite(side)).SelectMany(l => l.GetBlockPoints(board)),
-                                   () => board.Points);
+                                   () => board.GetLines(c => c >= 4, side, true).SelectMany(l => l.GetBlockPoints(board)),
+                                   () => board.GetLines(c => c >= 4, Sides.Opposite(side), true).SelectMany(l => l.GetBlockPoints(board)),
+                                   () => board.GetLines(c => c == 3, side, true).SelectMany(l => l.GetBlockPoints(board)),
+                                   () => board.GetLines(c => c == 3, Sides.Opposite(side), true).SelectMany(l => l.GetBlockPoints(board)),
+                                   () => board.GetLines(c => c == 2).SelectMany(l => l.GetContinousPoints(board)).Concat(
+                                         board.GetLines(c => c == 3).Where(l => l.IsClosed(board)).SelectMany(l => l.GetBlockPoints(board))),
+                                   () => board.IterateNearbyPointsOf(board.DroppedPoints.Last(), 2)
+                                              .Where(p => p.Status == null)
+                                              .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length));
 
             return OrderCandidatesPointsByWeight(prioritizedDrops, board, side);
         }
 
         private IEnumerable<IReadOnlyBoardPoint> OrderCandidatesPointsByWeight(IEnumerable<IReadOnlyBoardPoint> pointsCandidates, IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
-            foreach (var weightedPoint in from point in pointsCandidates
-                                          where point.Status == null && point.RequiresReevaluateWeight
-                                          let drop = new PieceDrop(point.Position, side)
-                                          where board.RuleEngine.CanDropOn(board, drop)
-                                          let lines = board.GetRowsFromPoint(point, true)
-                                          let pointWithWeight = new { Point = point, Weight = lines.Sum(_ => _.Weight) }
-                                          orderby pointWithWeight.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
-                                          select pointWithWeight)
+            foreach (var pointToWeight in pointsCandidates.Where(p => p.Status == null && p.RequiresReevaluateWeight))
             {
-                weightedPoint.Point.RequiresReevaluateWeight = false;
-                weightedPoint.Point.Weight = weightedPoint.Weight;
-                yield return weightedPoint.Point;
+                pointToWeight.RequiresReevaluateWeight = false;
+                pointToWeight.Weight = board.GetRowsFromPoint(pointToWeight, true).Sum(_ => _.Weight);
             }
+            return from point in pointsCandidates
+                   where point.Status == null && board.RuleEngine.CanDropOn(board, new PieceDrop(point.Position, side))
+                   orderby point.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
+                   select point;
         }
 
         private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
@@ -47,7 +47,7 @@ namespace Renju.AI.Weights
                 if (points.Count > 0)
                     return points;
 
-            return new IReadOnlyBoardPoint[0];
+            throw new InvalidOperationException("Can't find any point to drop. One side must have won the game.");
         }
     }
 }

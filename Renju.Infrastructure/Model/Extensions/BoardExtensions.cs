@@ -30,11 +30,11 @@ namespace Renju.Infrastructure.Model.Extensions
                                            .Select(row => String.Join("_", row.Select(p => p.Status.GetLiternalPresentation()))));
         }
 
-        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, bool onLineOnly = true)
+        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, int distance = 4, bool onLineOnly = true)
         {
-            for (var x = Math.Max(0, point.Position.X - 4); x < Math.Min(board.Size, point.Position.X + 5); x++)
+            for (var x = Math.Max(0, point.Position.X - distance); x <= Math.Min(board.Size - 1, point.Position.X + distance); x++)
             {
-                for (var y = Math.Max(0, point.Position.Y - 4); y < Math.Min(board.Size, point.Position.Y + 5); y++)
+                for (var y = Math.Max(0, point.Position.Y - distance); y <= Math.Min(board.Size - 1, point.Position.Y + distance); y++)
                 {
                     if (x != point.Position.X || y != point.Position.Y)
                     {
@@ -155,19 +155,11 @@ namespace Renju.Infrastructure.Model.Extensions
                 yield return newLine;
         }
 
-        public static IEnumerable<PieceLine> GetFours(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        public static IEnumerable<PieceLine> GetLines(this IReadBoardState<IReadOnlyBoardPoint> board, Func<int, bool> dropsCount, Side? side = null, bool openOnly = false)
         {
-            return board.Lines.Where(l => l.DroppedCount >= 4 && l.Side == side && !l.IsClosed(board)).ToList();
-        }
-
-        public static IEnumerable<PieceLine> GetThrees(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
-        {
-            return board.Lines.Where(l => l.DroppedCount == 3 && l.Side == side).ToList();
-        }
-
-        public static IEnumerable<PieceLine> GetOpenThrees(this IReadBoardState<IReadOnlyBoardPoint> board, Side side)
-        {
-            return board.GetThrees(side).Where(l => !l.IsClosed(board)).ToList();
+            return board.Lines.Where(l => dropsCount(l.DroppedCount) &&
+                                   (openOnly && !l.IsClosed(board)) &&
+                                   (side.HasValue && side == l.Side));
         }
 
         private static bool CanMoveAlone(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, ref Side? pickedSide)

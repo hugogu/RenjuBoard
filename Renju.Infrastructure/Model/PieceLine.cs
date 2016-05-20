@@ -13,12 +13,14 @@ namespace Renju.Infrastructure.Model
     public class PieceLine
     {
         public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
-            : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)))
-        {
-            ValidatePoint();
-        }
+            : this(board, start, end, true)
+        { }
 
-        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction)
+        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate) 
+            : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)), validate)
+        { }
+
+        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
         {
             if (start.X != end.X &&
                 start.Y != end.Y &&
@@ -33,6 +35,9 @@ namespace Renju.Infrastructure.Model
             EndPosition = end;
             Direction = direction;
             Side = Points.Select(p => p.Status).Where(s => s.HasValue).First().Value;
+
+            if (validate)
+                ValidatePoint();
         }
 
         public BoardPosition StartPosition { get; private set; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Renju.Infrastructure.Model.Extensions
 {
@@ -67,6 +68,15 @@ namespace Renju.Infrastructure.Model.Extensions
             return new IReadOnlyBoardPoint[0];
         }
 
+        public static IEnumerable<IReadOnlyBoardPoint> GetContinousPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
+        {
+            Debug.Assert(line.DroppedCount == 2);
+            Debug.Assert(line.EndPosition.IsDropped(board));
+            Debug.Assert(line.StartPosition.IsDropped(board));
+
+            return (2 + line + 2).Points.Where(p => !p.Position.IsDropped(board));
+        }
+
         public static Func<IReadOnlyBoardPoint, bool> Dropped = p => p.Status.HasValue;
         public static Func<IReadOnlyBoardPoint, bool> Empty = p => p.Status == null;
         public static Func<IReadOnlyBoardPoint, bool>[] DDD = new[] { Dropped, Dropped, Dropped };
@@ -95,11 +105,9 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static bool TryFindThreeInLine(this PieceLine line, out PieceLine result)
         {
-            if (line.FindSubLineMatch(DDD, out result) ||
-                line.FindSubLineMatch(DDED, out result) ||
-                line.FindSubLineMatch(DEDD, out result))
-                return true;
-            return false;
+            return line.FindSubLineMatch(DDD, out result) ||
+                   line.FindSubLineMatch(DDED, out result) ||
+                   line.FindSubLineMatch(DEDD, out result);
         }
 
         public static bool HasOpenThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
@@ -137,9 +145,7 @@ namespace Renju.Infrastructure.Model.Extensions
 
         internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            foreach (var point in (1 + line + 1).Points)
-                if (!point.Position.IsDropped(board))
-                    yield return point;
+            return (1 + line + 1).Points.Where(p => !p.Position.IsDropped(board));
         }
 
         internal static bool IsClosedFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)

@@ -66,28 +66,12 @@ namespace Renju.Core
 
         protected virtual IGameRule GetRuleWin(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
-            foreach (var rule in _rules)
-            {
-                var win = rule.Win(board, drop);
-                if (win.HasValue && win.Value)
-                {
-                    return rule;
-                }
-            }
-            return null;
+            return _rules.FirstOrDefault(rule => rule.Win(board, drop) == true);
         }
 
         protected virtual IGameRule GetRuleStopDropOn(IReadBoardState<IReadOnlyBoardPoint> board, PieceDrop drop)
         {
-            foreach (var rule in _rules)
-            {
-                var canDrop = rule.CanDropOn(board, drop);
-                if (canDrop.HasValue && canDrop == false)
-                {
-                    return rule;
-                }
-            }
-            return null;
+            return _rules.FirstOrDefault(rule => rule.CanDropOn(board, drop) == false);
         }
     }
 }

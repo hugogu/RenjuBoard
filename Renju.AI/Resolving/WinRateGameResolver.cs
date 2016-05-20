@@ -48,12 +48,7 @@ namespace Renju.AI.Resolving
                                               orderby winRateWithPath.WinRate descending, weight descending
                                               select new { Point = point, WinRate = winRateWithPath })
                 {
-                    if (pointWithRate.WinRate.WinRate == -1)
-                    {
-                        var blockOpponentWinPoint = pointWithRate.WinRate.FindFirstDropOfSide(Sides.Opposite(side));
-                        if (blockOpponentWinPoint != null)
-                            yield return blockOpponentWinPoint;
-                    }
+                    Debug.Assert(pointWithRate.Point.Status == null);
                     Debug.WriteLine("Evaluated {0} boards in {1} ms.", iteratedBoardCount, ExecutionTimer.CurrentExecutionTime.TotalMilliseconds);
                     yield return pointWithRate.Point;
                 }

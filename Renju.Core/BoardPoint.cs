@@ -13,7 +13,7 @@ namespace Renju.Core
         private int? _index;
         private Side? _status = null;
         private int _weight;
-        private bool _requireReevaluateWeight = true;
+        private bool _requireReevaluateWeight = false;
 
         public BoardPoint(BoardPosition position)
         {
