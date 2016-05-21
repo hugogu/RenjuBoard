@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
-namespace Renju.Infrastructure.Model.Extensions
+﻿namespace Renju.Infrastructure.Model.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+
     public static class BoardExtensions
     {
         public static void InvalidateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
@@ -17,7 +17,7 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static Side SideOfLastDrop(this IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(board.DroppedPoints.Any());
+            Debug.Assert(board.DroppedPoints.Any(), "board should have some drops by now.");
 
             return board.DroppedPoints.Last().Status.Value;
         }
@@ -25,9 +25,10 @@ namespace Renju.Infrastructure.Model.Extensions
         public static string GetLiternalPresentation<TPoint>(this IReadBoardState<TPoint> board)
             where TPoint : IReadOnlyBoardPoint
         {
-            return String.Join(Environment.NewLine,
-                               board.Points.GroupBy(point => point.Position.Y)
-                                           .Select(row => String.Join("_", row.Select(p => p.Status.GetLiternalPresentation()))));
+            return String.Join(
+                Environment.NewLine,
+                board.Points.GroupBy(point => point.Position.Y)
+                            .Select(row => String.Join("_", row.Select(p => p.Status.GetLiternalPresentation()))));
         }
 
         public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, int distance = 4, bool onLineOnly = true)
@@ -69,6 +70,7 @@ namespace Renju.Infrastructure.Model.Extensions
             {
                 endPosition += direction;
             }
+
             endPosition -= direction;
 
             return Equals(position, endPosition) ? null : new PieceLine(board, position, endPosition);
@@ -96,19 +98,21 @@ namespace Renju.Infrastructure.Model.Extensions
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
-                    Debug.Assert(combinedLine.StartPosition.IsDropped(board));
-                    Debug.Assert(combinedLine.EndPosition.IsDropped(board));
+                    Debug.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
+                    Debug.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
                     yield return combinedLine;
                     continue;
                 }
+
                 if (line != null)
                 {
-                    Debug.Assert(line.EndPosition.IsDropped(board));
+                    Debug.Assert(line.EndPosition.IsDropped(board), "line must be dropped on start position.");
                     yield return line;
                 }
+
                 if (oppositeLine != null)
                 {
-                    Debug.Assert(oppositeLine.EndPosition.IsDropped(board));
+                    Debug.Assert(oppositeLine.EndPosition.IsDropped(board), "opposite Line must be dropped on start position.");
                     yield return oppositeLine;
                 }
             }
@@ -116,7 +120,7 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithoutPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
-            Debug.Assert(point.Status == null);
+            Debug.Assert(point.Status == null, "point mustn't been dropped.");
 
             foreach (var line in board.Lines)
             {
@@ -129,6 +133,7 @@ namespace Renju.Infrastructure.Model.Extensions
                 else
                     yield return line;
             }
+
             foreach (var jointLine in board.GetRowsFromPoint(point, true))
                 if (jointLine.StartPosition.IsDropped(board) && jointLine.EndPosition.IsDropped(board))
                     yield return jointLine;
@@ -136,7 +141,7 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
-            Debug.Assert(point.Status.HasValue);
+            Debug.Assert(point.Status.HasValue, "point must be dropped,");
 
             foreach (var line in board.Lines)
             {
@@ -151,6 +156,7 @@ namespace Renju.Infrastructure.Model.Extensions
                 else
                     yield return line;
             }
+
             foreach (var newLine in board.GetRowsFromPoint(point, true))
                 yield return newLine;
         }

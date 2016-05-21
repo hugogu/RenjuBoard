@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.Unity.Utility;
-using Renju.Core.Debugging;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Linq;
+    using Microsoft.Practices.Unity.Utility;
+    using Debugging;
+    using Infrastructure;
+    using Infrastructure.Model;
+    using Infrastructure.Model.Extensions;
+
     [Serializable]
     [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
     public class VirtualGameBoard<TPoint> : ModelBase, IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
-        protected readonly ObservableCollection<PieceLine> _lines = new ObservableCollection<PieceLine>();
+        private readonly ObservableCollection<PieceLine> _lines = new ObservableCollection<PieceLine>();
         private readonly List<TPoint> _points;
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
@@ -29,10 +29,8 @@ namespace Renju.Core
             _points = new List<TPoint>(Enumerable.Range(0, size * size).Select(createPoint));
         }
 
-        public TPoint this[BoardPosition position]
-        {
-            get { return GetPoint(position); }
-        }
+        [field: NonSerialized]
+        public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
 
         public virtual IEnumerable<TPoint> DroppedPoints
         {
@@ -63,13 +61,15 @@ namespace Renju.Core
 
         public int Size { get; protected set; }
 
-        [field: NonSerialized]
-        public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
+        public TPoint this[BoardPosition position]
+        {
+            get { return GetPoint(position); }
+        }
 
         protected internal virtual void UpdateLines(IEnumerable<PieceLine> lines)
         {
-            _lines.Clear();
-            _lines.AddRange(lines);
+            this._lines.Clear();
+            this._lines.AddRange(lines);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)

@@ -1,7 +1,7 @@
-﻿using Renju.Infrastructure.Model;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using Infrastructure.Model;
+
     public static class GameBoardUtils
     {
         public static IReadBoardState<IReadOnlyBoardPoint> With(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)

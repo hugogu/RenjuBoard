@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.Unity.Utility;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using Microsoft.Practices.Unity.Utility;
+    using Infrastructure.Model;
+
     [Serializable]
     public class DefaultGameRuleEngine : IGameRuleEngine
     {
@@ -15,9 +15,9 @@ namespace Renju.Core
         public DefaultGameRuleEngine(IEnumerable<IGameRule> rules)
         {
             Guard.ArgumentNotNull(rules, "rules");
-            Debug.Assert(rules.Any());
+            Debug.Assert(rules.Any(), "Rules can't be empty.");
             _rules = rules;
-            foreach(var rule in rules)
+            foreach (var rule in rules)
                 Trace.WriteLine("Loaded rule " + rule.Name);
         }
 

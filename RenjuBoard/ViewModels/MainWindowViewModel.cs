@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Practices.Unity;
-using Prism.Commands;
-using Prism.Events;
-using Renju.Core;
-using Renju.Infrastructure.Events;
-using Renju.Infrastructure.Model;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows;
+    using System.Windows.Input;
+    using Microsoft.Practices.Unity;
+    using Prism.Commands;
+    using Prism.Events;
+    using Renju.Core;
+    using Renju.Infrastructure.Events;
+    using Renju.Infrastructure.Model;
+
     public class MainWindowViewModel
     {
         public MainWindowViewModel(IEventAggregator eventAggregator)
@@ -37,7 +37,10 @@ namespace RenjuBoard.ViewModels
         [Dependency]
         public OptionsViewModel OptionsVM { get; internal set; }
 
-        public IEnumerable<PieceLine> Lines { get { return OptionsVM.Options.ShowLinesOnBoard ? GameBoard.Lines : new PieceLine[0]; } }
+        public IEnumerable<PieceLine> Lines
+        {
+            get { return OptionsVM.Options.ShowLinesOnBoard ? GameBoard.Lines : new PieceLine[0]; }
+        }
 
         public ICommand DropPointCommand { get; private set; }
 

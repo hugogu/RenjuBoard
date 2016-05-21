@@ -1,13 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System;
+    using System.Diagnostics;
+
     [Serializable]
     [DebuggerDisplay("[X={X}, Y={Y}]")]
     public class BoardPosition : IEquatable<BoardPosition>
     {
-        public BoardPosition() { }
+        public BoardPosition()
+        {
+        }
 
         public BoardPosition(int x, int y)
         {

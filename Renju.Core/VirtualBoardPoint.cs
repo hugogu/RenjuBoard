@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using Renju.Infrastructure.Model;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Diagnostics;
+    using Infrastructure.Model;
+    using Infrastructure.Model.Extensions;
+
     [Serializable]
     [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
     public class VirtualBoardPoint : IReadOnlyBoardPoint

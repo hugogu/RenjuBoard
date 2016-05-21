@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Windows;
-
-namespace Renju.Infrastructure
+﻿namespace Renju.Infrastructure
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
+
     public static class ResourceUtils
     {
         public static IEnumerable<ResourceDictionary> TryFindResourceDictionaries(this Assembly assembly, Func<string, bool> keyMatch)

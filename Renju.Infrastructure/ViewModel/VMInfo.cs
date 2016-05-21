@@ -1,12 +1,15 @@
-﻿using System;
-using System.Windows;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-
-namespace Renju.Infrastructure.ViewModel
+﻿namespace Renju.Infrastructure.ViewModel
 {
+    using System;
+    using System.Windows;
+    using Microsoft.Practices.ServiceLocation;
+    using Microsoft.Practices.Unity;
+
     public class VMInfo : DependencyObject
     {
+        public static readonly DependencyProperty DataTypeProperty =
+            DependencyProperty.RegisterAttached("DataType", typeof(Type), typeof(VMInfo), new FrameworkPropertyMetadata(null, OnVMDataTypePropertyChanged));
+
         public static Type GetDataType(DependencyObject obj)
         {
             return obj.GetValue(DataTypeProperty) as Type;
@@ -16,9 +19,6 @@ namespace Renju.Infrastructure.ViewModel
         {
             obj.SetValue(DataTypeProperty, value);
         }
-
-        public static readonly DependencyProperty DataTypeProperty =
-            DependencyProperty.RegisterAttached("DataType", typeof(Type), typeof(VMInfo), new FrameworkPropertyMetadata(null, OnVMDataTypePropertyChanged));
 
         private static void OnVMDataTypePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -33,6 +33,7 @@ namespace Renju.Infrastructure.ViewModel
             {
                 instance = Activator.CreateInstance(type);
             }
+
             if (obj is FrameworkElement)
                 (obj as FrameworkElement).DataContext = instance;
             else

@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System;
+    using System.ComponentModel;
+    using System.Globalization;
+
     public class PieceDropTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -23,6 +23,7 @@ namespace Renju.Infrastructure.Model
                     throw new ArgumentException("String form of PeiceDrop must have 3 segments.");
                 return new PieceDrop(Convert.ToInt32(values[0]), Convert.ToInt32(values[1]), (Side)Enum.Parse(typeof(Side), values[2]));
             }
+
             throw new InvalidOperationException(String.Format("Can't convert {0} to PieceDrop.", value.GetType()));
         }
 

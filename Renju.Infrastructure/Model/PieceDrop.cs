@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+
     [Serializable]
     [DebuggerDisplay("{Side}: X={X}, Y={Y}")]
     [TypeConverter(typeof(PieceDropTypeConverter))]
@@ -16,10 +16,15 @@ namespace Renju.Infrastructure.Model
             Side = side;
         }
 
-        public PieceDrop(BoardPosition position, Side side) : this(position.X, position.Y, side) { }
+        public PieceDrop(BoardPosition position, Side side)
+            : this(position.X, position.Y, side)
+        {
+        }
 
         public int X { get; private set; }
+
         public int Y { get; private set; }
+
         public Side Side { get; private set; }
 
         public override string ToString()

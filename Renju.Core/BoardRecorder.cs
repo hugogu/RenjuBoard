@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using Prism.Commands;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using Prism.Commands;
+    using Infrastructure;
+    using Infrastructure.Model;
+
     public class BoardRecorder : ModelBase
     {
         private readonly IGameBoard<IReadOnlyBoardPoint> _board;

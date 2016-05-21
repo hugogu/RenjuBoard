@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using Microsoft.Practices.Unity.Utility;
-
-namespace Renju.Infrastructure
+﻿namespace Renju.Infrastructure
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reflection;
+    using Microsoft.Practices.Unity.Utility;
+
     public static class Reflections
     {
         public static string GetMemberName<T>(this Expression<Func<T>> expression)
@@ -16,6 +16,7 @@ namespace Renju.Infrastructure
             {
                 memberExpression = (expression.Body as UnaryExpression).Operand as MemberExpression;
             }
+
             if (memberExpression == null)
                 throw new ArgumentException("expression is not a valid member expression", "expression");
 
@@ -67,7 +68,7 @@ namespace Renju.Infrastructure
                         targetProperty.SetValue(t, sourceValue);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Trace.WriteLine(String.Format("Failed to set property {0} because " + ex.Message, targetProperty.Name));
                 }

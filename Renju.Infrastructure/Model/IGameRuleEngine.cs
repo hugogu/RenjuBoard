@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System.Collections.Generic;
+
     public interface IGameRuleEngine
     {
         IEnumerable<IGameRule> ApplicableRules { get; }

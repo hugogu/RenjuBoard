@@ -1,12 +1,12 @@
-﻿using System;
-using System.Reactive.Linq;
-using Renju.Infrastructure;
-using Renju.Infrastructure.AI;
-using Renju.Infrastructure.Execution;
-using Renju.Infrastructure.Model;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System;
+    using System.Reactive.Linq;
+    using Renju.Infrastructure;
+    using Renju.Infrastructure.AI;
+    using Renju.Infrastructure.Execution;
+    using Renju.Infrastructure.Model;
+
     public class BoardTimingViewModel : DisposableModelBase
     {
         private readonly ExecutionTimer _blackTimer;

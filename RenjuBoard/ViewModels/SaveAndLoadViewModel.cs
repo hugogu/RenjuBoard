@@ -1,17 +1,17 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Practices.Unity;
-using Microsoft.Win32;
-using Prism.Commands;
-using Renju.Core;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Microsoft.Practices.Unity;
+    using Microsoft.Win32;
+    using Prism.Commands;
+    using Renju.Core;
+    using Renju.Infrastructure;
+    using Renju.Infrastructure.Model;
+
     public class SaveAndLoadViewModel : ModelBase
     {
         public SaveAndLoadViewModel()
@@ -72,11 +72,9 @@ namespace RenjuBoard.ViewModels
             openFileDialog.CheckFileExists = true;
             openFileDialog.Filter = "Renju Game (*.renju) |*.renju| All Files |*.*";
             openFileDialog.Title = "Select a file for Renju Game";
-            if (openFileDialog.ShowDialog(Application.Current.MainWindow) == true)
-            {
-                return openFileDialog.FileName;
-            }
-            return null;
+
+            return openFileDialog.ShowDialog(Application.Current.MainWindow) == true ?
+                   openFileDialog.FileName : null;
         }
 
         private string AskForSavingLocation()
@@ -86,11 +84,9 @@ namespace RenjuBoard.ViewModels
             saveFileDialog.ValidateNames = true;
             saveFileDialog.Filter = "Renju Game (*.renju) |*.renju| All Files |*.*";
             saveFileDialog.Title = "Select a file for Renju Game";
-            if (saveFileDialog.ShowDialog(Application.Current.MainWindow) == true)
-            {
-                return saveFileDialog.FileName;
-            }
-            return null;
+
+            return saveFileDialog.ShowDialog(Application.Current.MainWindow) == true ?
+                   saveFileDialog.FileName : null;
         }
     }
 }

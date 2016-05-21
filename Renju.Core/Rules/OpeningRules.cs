@@ -1,9 +1,9 @@
-﻿using System;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core.Rules
+﻿namespace Renju.Core.Rules
 {
+    using System;
+    using Infrastructure;
+    using Infrastructure.Model;
+
     [Serializable]
     public class OpeningRules : DropValidationRule
     {

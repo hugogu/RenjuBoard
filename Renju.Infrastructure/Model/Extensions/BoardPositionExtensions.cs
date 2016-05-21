@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Renju.Infrastructure.Model.Extensions
+﻿namespace Renju.Infrastructure.Model.Extensions
 {
+    using System;
+
     public static class BoardPositionExtensions
     {
         public static bool IsOnLineWith(this BoardPosition position, BoardPosition anotherPosition)

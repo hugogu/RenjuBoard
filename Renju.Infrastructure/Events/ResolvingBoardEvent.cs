@@ -1,8 +1,8 @@
-﻿using Prism.Events;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Infrastructure.Events
+﻿namespace Renju.Infrastructure.Events
 {
+    using Prism.Events;
+    using Model;
+
     public class ResolvingBoardEvent : PubSubEvent<IReadBoardState<IReadOnlyBoardPoint>>
     {
     }

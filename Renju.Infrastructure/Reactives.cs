@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reactive.Linq;
-
-namespace Renju.Infrastructure
+﻿namespace Renju.Infrastructure
 {
+    using System;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reactive.Linq;
+
     public static class Reactives
     {
         public static IObservable<PropertyChangedEventArgs> ObserveAnyProperties(this INotifyPropertyChanged obj)
@@ -19,7 +19,7 @@ namespace Renju.Infrastructure
         {
             return obj.ObserveAnyProperties()
                       .Where(args => propertyGetters.Select(g => g.GetMemberName())
-                                                    .Any(propertyName =>  String.Compare(args.PropertyName, propertyName) == 0));
+                                                    .Any(propertyName => String.Compare(args.PropertyName, propertyName) == 0));
         }
     }
 }

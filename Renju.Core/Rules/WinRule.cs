@@ -1,14 +1,17 @@
-﻿using System;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core.Rules
+﻿namespace Renju.Core.Rules
 {
+    using System;
+    using Infrastructure.Model;
+
     [Serializable]
     public abstract class WinRule : IGameRule
     {
         public abstract string Name { get; }
 
-        public bool IsOptional { get { return false; } }
+        public bool IsOptional
+        {
+            get { return false; }
+        }
 
         public bool IsEnabled
         {

@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using Infrastructure;
+    using Infrastructure.Model;
+
     [Serializable]
     [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
     public class BoardPoint : ModelBase, IReadOnlyBoardPoint
@@ -18,11 +18,6 @@ namespace Renju.Core
         public BoardPoint(BoardPosition position)
         {
             Position = position;
-        }
-
-        public static Func<int, BoardPoint> CreateIndexBasedFactory(int size)
-        {
-            return index => new BoardPoint(new BoardPosition(index % size, index / size));
         }
 
         [ReadOnly(true)]
@@ -52,9 +47,14 @@ namespace Renju.Core
             set { SetProperty(ref _requireReevaluateWeight, value); }
         }
 
+        public static Func<int, BoardPoint> CreateIndexBasedFactory(int size)
+        {
+            return index => new BoardPoint(new BoardPosition(index % size, index / size));
+        }
+
         public override string ToString()
         {
-            return string.Format("{0}{1}", Position, Status == null ? "" : (Status.Value == Side.Black ? "●" : "○"));
+            return string.Format("{0}{1}", Position, Status == null ? String.Empty : (Status.Value == Side.Black ? "●" : "○"));
         }
 
         public void ResetToEmpty()
@@ -63,6 +63,9 @@ namespace Renju.Core
             Status = null;
         }
 
-        protected override void OnConstructingNewObject() { /* Noop */ }
+        protected override void OnConstructingNewObject()
+        {
+            /* Noop */
+        }
     }
 }

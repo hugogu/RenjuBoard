@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Renju.Core.Debugging;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using Debugging;
+    using Infrastructure;
+    using Infrastructure.Model;
+    using Infrastructure.Model.Extensions;
+
     [Serializable]
     [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
     public class GameBoardDecoration : ModelBase, IReadBoardState<IReadOnlyBoardPoint>
@@ -37,15 +37,8 @@ namespace Renju.Core
             this.InvalidateNearbyPointsOf(decorationPoint);
         }
 
-        public IReadOnlyBoardPoint this[BoardPosition position]
-        {
-            get { return Equals(_decorationPoint.Position, position) ? _decorationPoint : _decoratedBoard[position]; }
-        }
-
-        public IReadOnlyBoardPoint this[int x, int y]
-        {
-            get { return this[new BoardPosition(x, y)]; }
-        }
+        [field: NonSerialized]
+        public event EventHandler<PieceDropEventArgs> PieceDropped;
 
         public int DropsCount
         {
@@ -82,9 +75,20 @@ namespace Renju.Core
             get { return this.GetLiternalPresentation(); }
         }
 
-        public event EventHandler<PieceDropEventArgs> PieceDropped;
+        public IReadOnlyBoardPoint this[BoardPosition position]
+        {
+            get { return Equals(_decorationPoint.Position, position) ? _decorationPoint : _decoratedBoard[position]; }
+        }
 
-        protected override void OnConstructingNewObject() { /* Noop */ }
+        public IReadOnlyBoardPoint this[int x, int y]
+        {
+            get { return this[new BoardPosition(x, y)]; }
+        }
+
+        protected override void OnConstructingNewObject()
+        {
+            /* Noop */
+        }
 
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
         {

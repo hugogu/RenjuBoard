@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Renju.Infrastructure.Execution
+﻿namespace Renju.Infrastructure.Execution
 {
+    using System;
+
     public class ReportExecutionObject : DisposableModelBase, IReportExecutionStatus
     {
         public ReportExecutionObject()
@@ -10,13 +10,15 @@ namespace Renju.Infrastructure.Execution
             AutoDispose(ExecutionTimer);
         }
 
+        public event EventHandler Finished;
+
+        public event EventHandler Started;
+
+        public event EventHandler StepFinished;
+
         public virtual ExecutionState State { get; protected set; }
 
         public virtual ExecutionTimer ExecutionTimer { get; private set; }
-
-        public event EventHandler Finished;
-        public event EventHandler Started;
-        public event EventHandler StepFinished;
 
         protected virtual void RaiseFinishedEvent()
         {

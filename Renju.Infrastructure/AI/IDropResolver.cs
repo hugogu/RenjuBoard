@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Renju.Infrastructure.Execution;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Infrastructure.AI
+﻿namespace Renju.Infrastructure.AI
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Execution;
+    using Model;
+
     public interface IDropResolver : IReportExecutionStatus
     {
         int Depth { get; set; }

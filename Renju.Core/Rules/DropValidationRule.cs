@@ -1,9 +1,9 @@
-﻿using System;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core.Rules
+﻿namespace Renju.Core.Rules
 {
+    using System;
+    using Infrastructure;
+    using Infrastructure.Model;
+
     [Serializable]
     public abstract class DropValidationRule : ModelBase, IGameRule
     {
@@ -11,7 +11,10 @@ namespace Renju.Core.Rules
 
         public abstract string Name { get; }
 
-        public virtual bool IsOptional { get { return true; } }
+        public virtual bool IsOptional
+        {
+            get { return true; }
+        }
 
         public virtual bool IsEnabled
         {

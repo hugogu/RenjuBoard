@@ -1,8 +1,8 @@
-﻿using System;
-using System.Reactive.Linq;
-
-namespace Renju.Infrastructure.Execution
+﻿namespace Renju.Infrastructure.Execution
 {
+    using System;
+    using System.Reactive.Linq;
+
     public class ExecutionTimer : DisposableModelBase
     {
         private TimeSpan _executedTime = TimeSpan.FromSeconds(0);

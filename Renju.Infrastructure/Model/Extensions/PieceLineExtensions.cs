@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
-namespace Renju.Infrastructure.Model.Extensions
+﻿namespace Renju.Infrastructure.Model.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+
     public static class PieceLineExtensions
     {
+        private static Func<IReadOnlyBoardPoint, bool> _dropped = p => p.Status.HasValue;
+        private static Func<IReadOnlyBoardPoint, bool> _empty = p => p.Status == null;
+        private static Func<IReadOnlyBoardPoint, bool>[] ddd = new[] { _dropped, _dropped, _dropped };
+        private static Func<IReadOnlyBoardPoint, bool>[] dded = new[] { _dropped, _dropped, _empty, _dropped };
+        private static Func<IReadOnlyBoardPoint, bool>[] dedd = new[] { _dropped, _empty, _dropped, _dropped };
+
         public static int GetWeightOnBoard(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             if (line.IsClosed(board))
@@ -34,6 +40,7 @@ namespace Renju.Infrastructure.Model.Extensions
                 if (trimedLine != null)
                     yield return trimedLine;
             }
+
             var endLine = new PieceLine(board, position, line.EndPosition, line.Direction);
             if (endLine.Length > 2)
             {
@@ -53,9 +60,9 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static IEnumerable<IReadOnlyBoardPoint> GetBlockPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(line.DroppedCount >= 3);
-            Debug.Assert(line.StartPosition.IsDropped(board));
-            Debug.Assert(line.EndPosition.IsDropped(board));
+            Debug.Assert(line.DroppedCount >= 3, "line must have at least 3 drops.");
+            Debug.Assert(line.StartPosition.IsDropped(board), "line start position must be dropped.");
+            Debug.Assert(line.EndPosition.IsDropped(board), "line end position must be dropped.");
 
             if (line.DroppedCount >= 4)
             {
@@ -65,27 +72,22 @@ namespace Renju.Infrastructure.Model.Extensions
             {
                 return line.GetBlockPointsForThree(board);
             }
+
             return new IReadOnlyBoardPoint[0];
         }
 
         public static IEnumerable<IReadOnlyBoardPoint> GetContinousPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(line.DroppedCount == 2);
-            Debug.Assert(line.EndPosition.IsDropped(board));
-            Debug.Assert(line.StartPosition.IsDropped(board));
+            Debug.Assert(line.DroppedCount == 2, "line must have 2 drops.");
+            Debug.Assert(line.EndPosition.IsDropped(board), "line end must be dropped.");
+            Debug.Assert(line.StartPosition.IsDropped(board), "line start must be dropped.");
 
             return (2 + line + 2).Points.Where(p => !p.Position.IsDropped(board));
         }
 
-        public static Func<IReadOnlyBoardPoint, bool> Dropped = p => p.Status.HasValue;
-        public static Func<IReadOnlyBoardPoint, bool> Empty = p => p.Status == null;
-        public static Func<IReadOnlyBoardPoint, bool>[] DDD = new[] { Dropped, Dropped, Dropped };
-        public static Func<IReadOnlyBoardPoint, bool>[] DDED = new[] { Dropped, Dropped, Empty, Dropped };
-        public static Func<IReadOnlyBoardPoint, bool>[] DEDD = new[] { Dropped, Empty, Dropped, Dropped };
-
         public static bool FindSubLineMatch(this PieceLine line, Func<IReadOnlyBoardPoint, bool>[] pattern, out PieceLine result)
         {
-            Debug.Assert(line.Length >= 3);
+            Debug.Assert(line.Length >= 3, "line must be longer than 2.");
             for (var i = 0; i < line.Length; i++)
             {
                 for (var c = 0; c < pattern.Length && i + c < line.Length; c++)
@@ -99,30 +101,28 @@ namespace Renju.Infrastructure.Model.Extensions
                     }
                 }
             }
+
             result = null;
             return false;
         }
 
         public static bool TryFindThreeInLine(this PieceLine line, out PieceLine result)
         {
-            return line.FindSubLineMatch(DDD, out result) ||
-                   line.FindSubLineMatch(DDED, out result) ||
-                   line.FindSubLineMatch(DEDD, out result);
+            return line.FindSubLineMatch(ddd, out result) ||
+                   line.FindSubLineMatch(dded, out result) ||
+                   line.FindSubLineMatch(dedd, out result);
         }
 
         public static bool HasOpenThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             PieceLine three;
-            if (line.TryFindThreeInLine(out three))
-            {
-                return !three.IsClosed(board);
-            }
-            return false;
+
+            return line.TryFindThreeInLine(out three) ? !three.IsClosed(board) : false;
         }
 
         internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(line.DroppedCount >= 4);
+            Debug.Assert(line.DroppedCount >= 4, "line must contains at least 4 drops");
             if (line.Length == line.DroppedCount)
             {
                 var end = (line + 1).EndPosition;
@@ -131,6 +131,7 @@ namespace Renju.Infrastructure.Model.Extensions
                     yield return board[end];
                     yield break;
                 }
+
                 var start = (1 + line).StartPosition;
                 if (start.IsOnBoard(board) && !start.IsDropped(board))
                     yield return board[start];
@@ -150,8 +151,8 @@ namespace Renju.Infrastructure.Model.Extensions
 
         internal static bool IsClosedFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(line.Length > 3);
-            Debug.Assert(line.DroppedCount >= 4);
+            Debug.Assert(line.Length > 3, "line must be longer than 3");
+            Debug.Assert(line.DroppedCount >= 4, "line must contains at least 4 drops.");
             if (line.Length == 4)
             {
                 var opponentSide = Sides.Opposite(line.Side);
@@ -159,6 +160,7 @@ namespace Renju.Infrastructure.Model.Extensions
                 return extendedline.StartPosition.IsDroppedBySideOrOutOfBoard(opponentSide, board) &&
                        extendedline.EndPosition.IsDroppedBySideOrOutOfBoard(opponentSide, board);
             }
+
             if (line.Length == 5)
             {
                 return false;

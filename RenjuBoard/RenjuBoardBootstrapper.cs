@@ -1,15 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using Microsoft.Practices.Unity;
-using Prism.Modularity;
-using Prism.Unity;
-using Renju.Infrastructure.ViewModel;
-using RenjuBoard.ViewModels;
-
-namespace RenjuBoard
+﻿namespace RenjuBoard
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Windows;
+    using Microsoft.Practices.Unity;
+    using Prism.Modularity;
+    using Prism.Unity;
+    using Renju.Infrastructure.ViewModel;
+    using ViewModels;
+
     public class RenjuBoardBootstrapper : UnityBootstrapper
     {
         protected override void ConfigureModuleCatalog()

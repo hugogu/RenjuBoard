@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Reactive.Linq;
-using System.Windows.Input;
-using Microsoft.Practices.Unity;
-using Prism.Commands;
-using Prism.Events;
-using Renju.Core;
-using Renju.Infrastructure;
-using Renju.Infrastructure.AI;
-using Renju.Infrastructure.Events;
-using Renju.Infrastructure.Execution;
-using Renju.Infrastructure.Model;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Reactive.Linq;
+    using System.Windows.Input;
+    using Microsoft.Practices.Unity;
+    using Microsoft.Practices.Unity.Utility;
+    using Prism.Commands;
+    using Prism.Events;
+    using Renju.Core;
+    using Renju.Infrastructure;
+    using Renju.Infrastructure.AI;
+    using Renju.Infrastructure.Events;
+    using Renju.Infrastructure.Execution;
+    using Renju.Infrastructure.Model;
+    using Renju.Infrastructure.Model.Extensions;
+
     public class AIControllerViewModel : DisposableModelBase
     {
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
@@ -24,25 +25,23 @@ namespace RenjuBoard.ViewModels
 
         public AIControllerViewModel(IStepController aiStepController, IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
         {
-            Debug.Assert(aiStepController != null);
-            Debug.Assert(aiStepController.CurrentStep == 0);
+            Guard.ArgumentNotNull(aiStepController, "aiStepController");
+            Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
             eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
             PauseAICommand = new DelegateCommand(() => aiStepController.Pause(), () => !aiStepController.IsPaused);
             ContinueAICommand = new DelegateCommand(() => aiStepController.Resume(), () => aiStepController.IsPaused);
             NextAIStepComand = new DelegateCommand(() => aiStepController.StepForward(1), () => aiStepController.IsPaused);
             ClearPreviewLinesCommand = new DelegateCommand(() => _previewLines.Clear());
-            PreviewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(point =>
-            {
-                _previewLines.Clear();
-                _previewLines.AddRange(gameBoard.GetRowsFromPoint(point, true));
-            }, p => Options.ShowPreviewLine);
-            AutoDispose(aiStepController.ObserveProperty(() => aiStepController.IsPaused).ObserveOnDispatcher().Subscribe((_ =>
+            PreviewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(
+                point => ShowPreviewLines(gameBoard, point),
+                p => Options.ShowPreviewLine);
+            AutoDispose(aiStepController.ObserveProperty(() => aiStepController.IsPaused).ObserveOnDispatcher().Subscribe(_ =>
             {
                 PauseAICommand.RaiseCanExecuteChanged();
                 ContinueAICommand.RaiseCanExecuteChanged();
                 NextAIStepComand.RaiseCanExecuteChanged();
-            })));
+            }));
         }
 
         [Dependency]
@@ -69,6 +68,12 @@ namespace RenjuBoard.ViewModels
         public IEnumerable<IReadOnlyBoardPoint> ResolvingPoints
         {
             get { return _resolvingBoard.Points; }
+        }
+
+        private void ShowPreviewLines(IReadBoardState<IReadOnlyBoardPoint> gameBoard, IReadOnlyBoardPoint point)
+        {
+            _previewLines.Clear();
+            _previewLines.AddRange(gameBoard.GetRowsFromPoint(point, true));
         }
 
         private void OnResolvingBoard(IReadBoardState<IReadOnlyBoardPoint> board)

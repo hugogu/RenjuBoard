@@ -1,10 +1,10 @@
-﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.Windows.Data;
-
-namespace Renju.Controls.Converters
+﻿namespace Renju.Controls.Converters
 {
+    using System;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Windows.Data;
+
     [ValueConversion(typeof(object), typeof(double))]
     public class WithOffsetConverter : IValueConverter
     {

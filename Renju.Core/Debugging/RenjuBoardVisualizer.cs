@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Forms.Integration;
-using System.Windows.Media;
-using Microsoft.VisualStudio.DebuggerVisualizers;
-using Renju.Controls;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Core.Debugging
+﻿namespace Renju.Core.Debugging
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Forms;
+    using System.Windows.Forms.Integration;
+    using System.Windows.Media;
+    using Microsoft.VisualStudio.DebuggerVisualizers;
+    using Controls;
+    using Infrastructure;
+    using Infrastructure.Model;
+
     public class RenjuBoardVisualizer : DialogDebuggerVisualizer
     {
-        private static readonly IEnumerable<ResourceDictionary> boardResources;
+        private static readonly IEnumerable<ResourceDictionary> BoardResources;
 
         static RenjuBoardVisualizer()
         {
             var mainAssembly = Assembly.Load("RenjuBoard");
-            boardResources = mainAssembly.TryFindResourceDictionaries(key => key.StartsWith("themes/"));
-            Debug.Assert(boardResources.Any());
+            BoardResources = mainAssembly.TryFindResourceDictionaries(key => key.StartsWith("themes/"));
+            Debug.Assert(BoardResources.Any(), "Resources can't be empty.");
         }
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
@@ -70,7 +70,7 @@ namespace Renju.Core.Debugging
 
         private void ShowsGamePanel(IDialogVisualizerService windowService, GameBoardPanel gamePanel)
         {
-            foreach (var resource in boardResources)
+            foreach (var resource in BoardResources)
                 gamePanel.Resources.MergedDictionaries.Add(resource);
 
             using (var form = new Form { Width = 400, Height = 400, Text = "Renju Board Debugger Visualizer" })

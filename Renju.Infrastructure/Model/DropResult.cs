@@ -4,6 +4,12 @@
     {
         public static DropResult InvalidDrop { get; private set; } = new DropResult { HasAnySideWon = false };
 
+        public bool HasAnySideWon { get; private set; }
+
+        public Side? WonSide { get; private set; }
+
+        public Side? ExpectedNextSide { get; private set; }
+
         public static DropResult Win(Side side)
         {
             return new DropResult
@@ -22,11 +28,5 @@
                 ExpectedNextSide = nextSide,
             };
         }
-
-        public bool HasAnySideWon { get; private set; }
-
-        public Side? WonSide { get; private set; }
-
-        public Side? ExpectedNextSide { get; private set; }
     }
 }

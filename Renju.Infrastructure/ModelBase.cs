@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Threading;
-
-namespace Renju.Infrastructure
+﻿namespace Renju.Infrastructure
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+    using System.Windows;
+    using System.Windows.Threading;
+
     [Serializable]
     public class ModelBase : INotifyPropertyChanged
     {
@@ -19,25 +19,9 @@ namespace Renju.Infrastructure
         [field: NonSerialized]
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Logging purpose only.
-        /// </summary>
-        protected virtual void OnConstructingNewObject()
-        {
-            Trace.WriteLine("Initializing " + GetType().Name);
-        }
-
         protected internal virtual void RaisePropertyChangedAsync(string propertyName)
         {
             RunInDispatcher(new Action(() => OnPropertyChanged(propertyName)), DispatcherPriority.Background);
-        }
-
-        protected virtual void RunInDispatcher(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            if (Application.Current == null)
-                return;
-
-            Application.Current.Dispatcher.BeginInvoke(action, priority);
         }
 
         protected internal virtual void SetProperty<T>(ref T field, T newValue, bool asyncNotify = false, [CallerMemberName] string propertyName = null)
@@ -50,6 +34,22 @@ namespace Renju.Infrastructure
                 else
                     OnPropertyChanged(propertyName);
             }
+        }
+
+        /// <summary>
+        /// Logging purpose only.
+        /// </summary>
+        protected virtual void OnConstructingNewObject()
+        {
+            Trace.WriteLine("Initializing " + GetType().Name);
+        }
+
+        protected virtual void RunInDispatcher(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            if (Application.Current == null)
+                return;
+
+            Application.Current.Dispatcher.BeginInvoke(action, priority);
         }
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> propertyGetter)

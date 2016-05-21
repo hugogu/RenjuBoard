@@ -1,11 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using Microsoft.Practices.Unity;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Infrastructure.Execution
+﻿namespace Renju.Infrastructure.Execution
 {
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using Microsoft.Practices.Unity;
+    using Model;
+
     public class ExecutionStepController : DisposableModelBase, IStepController
     {
         private readonly ManualResetEvent _event = new ManualResetEvent(true);
@@ -31,7 +31,10 @@ namespace Renju.Infrastructure.Execution
 
         public int CurrentStep { get; private set; }
 
-        public bool IsPaused { get { return !_event.WaitOne(0); } }
+        public bool IsPaused
+        {
+            get { return !_event.WaitOne(0); }
+        }
 
         [Dependency]
         public GameOptions Options { get; set; }

@@ -1,18 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-
-namespace Renju.Controls
+﻿namespace Renju.Controls
 {
+    using System;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls.Primitives;
+    using System.Windows.Media;
+
     public class LinedGrid : UniformGrid
     {
-        protected override void OnRender(DrawingContext dc)
-        {
-            base.OnRender(dc);
-            DrawGridLines(dc);
-        }
+        public static readonly DependencyProperty StrokeThicknessProperty =
+            DependencyProperty.Register("StrokeThickness", typeof(double), typeof(LinedGrid), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register("Stroke", typeof(Brush), typeof(LinedGrid), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public Brush Stroke
         {
@@ -20,17 +20,17 @@ namespace Renju.Controls
             set { SetValue(StrokeProperty, value); }
         }
 
-        public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register("Stroke", typeof(Brush), typeof(LinedGrid), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
-
         public double StrokeThickness
         {
             get { return (double)GetValue(StrokeThicknessProperty); }
             set { SetValue(StrokeThicknessProperty, value); }
         }
 
-        public static readonly DependencyProperty StrokeThicknessProperty =
-            DependencyProperty.Register("StrokeThickness", typeof(double), typeof(LinedGrid), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+            DrawGridLines(dc);
+        }
 
         private void DrawGridLines(DrawingContext drawingContext)
         {
@@ -49,6 +49,7 @@ namespace Renju.Controls
                     guidelines.GuidelinesX.Add(rowHeight + StrokeThickness / 2);
                     drawingContext.PushGuidelineSet(guidelines);
                 }
+
                 var x1 = new Point(cellWidth / 2, rowHeight);
                 var x2 = new Point(cellWidth / 2 + lineWidth, rowHeight);
 
@@ -64,6 +65,7 @@ namespace Renju.Controls
                     guidelines.GuidelinesY.Add(columnOffset + StrokeThickness / 2);
                     drawingContext.PushGuidelineSet(guidelines);
                 }
+
                 var y1 = new Point(columnOffset, cellHeight / 2);
                 var y2 = new Point(columnOffset, cellHeight / 2 + lineHeight);
 

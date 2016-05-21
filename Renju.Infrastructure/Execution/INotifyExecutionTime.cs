@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Renju.Infrastructure.Execution
+﻿namespace Renju.Infrastructure.Execution
 {
+    using System;
+
     public interface INotifyExecutionTime
     {
         event EventHandler Started;

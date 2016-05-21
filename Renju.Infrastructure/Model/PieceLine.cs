@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Windows;
+    using Extensions;
+
     [Serializable]
     [DebuggerVisualizer("Renju.Core.Debugging.RenjuBoardVisualizer, Renju.Core")]
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
@@ -14,11 +14,13 @@ namespace Renju.Infrastructure.Model
     {
         public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
             : this(board, start, end, true)
-        { }
+        {
+        }
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate) 
             : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)), validate)
-        { }
+        {
+        }
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
         {
@@ -55,7 +57,10 @@ namespace Renju.Infrastructure.Model
 
         public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
 
-        public int Weight { get { return this.GetWeightOnBoard(Board); } }
+        public int Weight
+        {
+            get { return this.GetWeightOnBoard(Board); }
+        }
 
         public int Length
         {
@@ -73,6 +78,7 @@ namespace Renju.Infrastructure.Model
                         yield return Board[position];
                     position += Direction;
                 }
+
                 yield return Board[EndPosition];
             }
         }

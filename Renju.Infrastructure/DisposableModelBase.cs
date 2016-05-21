@@ -1,26 +1,26 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Disposables;
-using Microsoft.Practices.Unity.Utility;
-
-namespace Renju.Infrastructure
+﻿namespace Renju.Infrastructure
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reactive.Disposables;
+    using Microsoft.Practices.Unity.Utility;
+
     public class DisposableModelBase : ModelBase, IDisposable
     {
-        private bool _disposed;
         [NonSerialized]
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        private bool _disposed;
+
+        ~DisposableModelBase()
+        {
+            Dispose(false);
+        }
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        ~DisposableModelBase()
-        {
-            Dispose(false);
         }
 
         protected virtual void Dispose(bool disposing)

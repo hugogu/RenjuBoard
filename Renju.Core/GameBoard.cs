@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Events;
-using Renju.Infrastructure.Model;
-using Renju.Infrastructure.Model.Extensions;
-
-namespace Renju.Core
+﻿namespace Renju.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
+    using System.Linq;
+    using Infrastructure;
+    using Infrastructure.Events;
+    using Infrastructure.Model;
+    using Infrastructure.Model.Extensions;
+
     [Serializable]
     public class GameBoard : VirtualGameBoard<BoardPoint>, IGameBoard<BoardPoint>, IDisposable
     {
@@ -18,17 +17,16 @@ namespace Renju.Core
         private readonly List<BoardPoint> _droppedPoints = new List<BoardPoint>();
         private Side? _expectedNextTurn = Side.Black;
 
-        public GameOptions Options { get; private set; }
-
         public GameBoard(NewGameOptions newGameOptions, GameOptions options)
             : base(newGameOptions.BoardSize, BoardPoint.CreateIndexBasedFactory(newGameOptions.BoardSize))
         {
-            Debug.Assert(newGameOptions.RuleEngine != null);
             Options = options;
             RuleEngine = newGameOptions.RuleEngine;
             _optionsObserver = options.ObserveProperty(() => options.ShowLinesOnBoard)
                                       .Subscribe(_ => OnPropertyChanged(() => Lines));
         }
+
+        public GameOptions Options { get; private set; }
 
         public override int DropsCount
         {

@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Practices.Unity;
-using Prism.Commands;
-using Renju.Infrastructure;
-using Renju.Infrastructure.Model;
-using RenjuBoard.Properties;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Microsoft.Practices.Unity;
+    using Prism.Commands;
+    using Renju.Infrastructure;
+    using Renju.Infrastructure.Model;
+    using Properties;
+
     public class OptionsViewModel : ModelBase
     {
         public OptionsViewModel(GameOptions options)

@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class WinRateWithPath
     {
-        public double WinRate { get; private set; }
-
-        public IEnumerable<IReadOnlyBoardPoint> Drops { get; private set; }
-
         public WinRateWithPath(double rate, IEnumerable<IReadOnlyBoardPoint> drops = null)
         {
             WinRate = rate;
             Drops = drops.ToList();
         }
+
+        public double WinRate { get; private set; }
+
+        public IEnumerable<IReadOnlyBoardPoint> Drops { get; private set; }
 
         public static implicit operator WinRateWithPath(double rate)
         {

@@ -1,8 +1,8 @@
-using System.Diagnostics;
-using Microsoft.Practices.Unity.Utility;
-
 namespace Renju.Infrastructure.Model.Extensions
 {
+    using System.Diagnostics;
+    using Microsoft.Practices.Unity.Utility;
+
     public static class PointExtensions
     {
         public static string GetLiternalPresentation(this Side? side)
@@ -15,7 +15,7 @@ namespace Renju.Infrastructure.Model.Extensions
             Guard.ArgumentNotNull(pointFrom, "pointFrom");
             Guard.ArgumentNotNull(pointTo, "pointTo");
             Guard.ArgumentNotNull(board, "board");
-            Debug.Assert(pointFrom != pointTo);
+            Debug.Assert(pointFrom != pointTo, "from and to point must be different.");
 
             return new PieceLine(board, pointFrom.Position, pointTo.Position, false);
         }

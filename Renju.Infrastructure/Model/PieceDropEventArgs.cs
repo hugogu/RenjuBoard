@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Renju.Infrastructure.Model
+﻿namespace Renju.Infrastructure.Model
 {
+    using System;
+
     public class PieceDropEventArgs : EventArgs
     {
         public PieceDropEventArgs(PieceDrop drop, OperatorType operatorType)

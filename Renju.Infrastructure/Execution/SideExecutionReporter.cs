@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using Renju.Infrastructure.Model;
-
-namespace Renju.Infrastructure.Execution
+﻿namespace Renju.Infrastructure.Execution
 {
+    using System.Linq;
+    using Model;
+
     public class SideExecutionReporter : ReportExecutionObject
     {
         private readonly Side _side;

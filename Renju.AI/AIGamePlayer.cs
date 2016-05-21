@@ -1,14 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading;
-using Renju.Infrastructure;
-using Renju.Infrastructure.AI;
-using Renju.Infrastructure.Model;
-
-namespace Renju.AI
+﻿namespace Renju.AI
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reactive.Linq;
+    using System.Threading;
+    using Infrastructure;
+    using Infrastructure.AI;
+    using Infrastructure.Model;
+
     public class AIGamePlayer : DisposableModelBase, IGamePlayer
     {
         private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
@@ -52,6 +52,7 @@ namespace Renju.AI
             {
                 _aiResolvingCancelTokenSource.Cancel();
             }
+
             base.Dispose(disposing);
         }
 

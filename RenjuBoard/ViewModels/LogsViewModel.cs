@@ -1,13 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Prism.Commands;
-using Renju.Infrastructure;
-
-namespace RenjuBoard.ViewModels
+﻿namespace RenjuBoard.ViewModels
 {
+    using System;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using Prism.Commands;
+    using Renju.Infrastructure;
+
     public class LogsViewModel : ModelBase
     {
         private string _logText;
@@ -19,26 +19,6 @@ namespace RenjuBoard.ViewModels
             Trace.WriteLine(typeof(LogsViewModel).Name + " initialized.");
             ClearLogsCommand = new DelegateCommand(() => LogText = String.Empty);
             SearchCommand = new DelegateCommand<TextBox>(OnSearchCommand);
-        }
-
-        private class LogsViewModelAdeptor : TraceListener
-        {
-            private readonly LogsViewModel _logVM;
-
-            public LogsViewModelAdeptor(LogsViewModel viewModel)
-            {
-                _logVM = viewModel;
-            }
-
-            public override void Write(string message)
-            {
-                _logVM.PrependMessage(message);
-            }
-
-            public override void WriteLine(string message)
-            {
-                _logVM.PrependMessage(message + Environment.NewLine);
-            }
         }
 
         public string LogText
@@ -81,6 +61,26 @@ namespace RenjuBoard.ViewModels
         private void PrependMessage(string message)
         {
             RunInDispatcher(() => LogText = String.Format("[{0}] {1}", DateTime.Now, message + LogText));
+        }
+
+        private class LogsViewModelAdeptor : TraceListener
+        {
+            private readonly LogsViewModel _logVM;
+
+            public LogsViewModelAdeptor(LogsViewModel viewModel)
+            {
+                _logVM = viewModel;
+            }
+
+            public override void Write(string message)
+            {
+                _logVM.PrependMessage(message);
+            }
+
+            public override void WriteLine(string message)
+            {
+                _logVM.PrependMessage(message + Environment.NewLine);
+            }
         }
     }
 }
