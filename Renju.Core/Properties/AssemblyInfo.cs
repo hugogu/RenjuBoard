@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Renju.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Core implementation of Renju Board")]
 [assembly: AssemblyProduct("Renju.Core")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

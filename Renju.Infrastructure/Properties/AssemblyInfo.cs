@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Runju.Infrastructure")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Infrastructure classes for Renju Board.")]
 [assembly: AssemblyProduct("Runju.Infrastructure")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

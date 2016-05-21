@@ -11,11 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.AI", "Renju.AI\Renju.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Infrastructure", "Renju.Infrastructure\Renju.Infrastructure.csproj", "{3BE7EA02-29E3-4586-B644-A22421E3AD2E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{653A81D8-9607-480E-9173-BB4F76BC38E7}"
-	ProjectSection(SolutionItems) = preProject
-		Jargons.txt = Jargons.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Controls", "Renju.Controls\Renju.Controls.csproj", "{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}"
 EndProject
 Global
