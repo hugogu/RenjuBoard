@@ -33,12 +33,16 @@
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
+            _decoratedBoard.Taken += OnDecoratedBoardPieceTaken;
             _lines = this.FindAllLinesOnBoardWithNewPoint(_decorationPoint).ToList();
             this.InvalidateNearbyPointsOf(decorationPoint);
         }
 
         [field: NonSerialized]
         public event EventHandler<PieceDropEventArgs> PieceDropped;
+
+        [field: NonSerialized]
+        public event EventHandler<BoardPosition> Taken;
 
         public int DropsCount
         {
@@ -93,6 +97,11 @@
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)
         {
             RaiseEvent(PieceDropped, e);
+        }
+
+        private void OnDecoratedBoardPieceTaken(object sender, BoardPosition e)
+        {
+            RaiseEvent(Taken, e);
         }
     }
 }

@@ -13,7 +13,12 @@
     {
         public static Side Opposite(Side side)
         {
-            return side == Side.White ? Side.Black : Side.White;
+            if (side == Side.Black)
+                return Side.White;
+            if (side == Side.White)
+                return Side.Black;
+
+            throw new ArgumentOutOfRangeException("side");
         }
     }
 }

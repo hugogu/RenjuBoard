@@ -1,4 +1,4 @@
-﻿namespace Renju.AI.Resolving
+﻿namespace Renju.AI
 {
     using System;
     using System.Collections.Generic;
@@ -6,13 +6,13 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Practices.Unity;
-    using Prism.Events;
     using Core;
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Execution;
     using Infrastructure.Model;
+    using Microsoft.Practices.Unity;
+    using Prism.Events;
 
     public class WinRateGameResolver : ReportExecutionObject, IDropResolver
     {

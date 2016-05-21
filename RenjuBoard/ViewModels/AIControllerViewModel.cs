@@ -29,6 +29,7 @@
             Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
             eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
+            eventAggregator.GetEvent<EvaluatedPointEvent>().Subscribe(OnEvaluatingPoint);
             PauseAICommand = new DelegateCommand(() => aiStepController.Pause(), () => !aiStepController.IsPaused);
             ContinueAICommand = new DelegateCommand(() => aiStepController.Resume(), () => aiStepController.IsPaused);
             NextAIStepComand = new DelegateCommand(() => aiStepController.StepForward(1), () => aiStepController.IsPaused);
@@ -74,6 +75,11 @@
         {
             _previewLines.Clear();
             _previewLines.AddRange(gameBoard.GetRowsFromPoint(point, true));
+        }
+
+        private void OnEvaluatingPoint(IReadOnlyBoardPoint evaluatedPoint)
+        {
+            _resolvingBoard[evaluatedPoint.Position].Weight = evaluatedPoint.Weight;
         }
 
         private void OnResolvingBoard(IReadBoardState<IReadOnlyBoardPoint> board)

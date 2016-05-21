@@ -79,6 +79,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AIGamePlayer.cs" />
     <Compile Include="BoardPoint.cs" />
     <Compile Include="BoardRecorder.cs" />
     <Compile Include="CoreModule.cs" />

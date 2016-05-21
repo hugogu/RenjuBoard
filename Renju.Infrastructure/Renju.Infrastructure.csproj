@@ -86,8 +86,18 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AI\AIInfo.cs" />
+    <Compile Include="AI\IBoardOperator.cs" />
+    <Compile Include="AI\IBoardMonitor.cs" />
     <Compile Include="AI\IDropResolver.cs" />
     <Compile Include="AI\IDropSelector.cs" />
+    <Compile Include="AI\Local\LocalGameBoardMonitor.cs" />
+    <Compile Include="AI\Local\LocalGameBoardOperator.cs" />
+    <Compile Include="AI\Piskvork\PiskvorkBoardOperator.cs" />
+    <Compile Include="Events\EvaluatedPointEvent.cs" />
+    <Compile Include="Events\GenericEventArgs.cs" />
+    <Compile Include="IO\IMessanger.cs" />
+    <Compile Include="IO\StreamMessanger.cs" />
     <Compile Include="DisposableModelBase.cs" />
     <Compile Include="Events\NewGameOptions.cs" />
     <Compile Include="Events\ResolvingBoardEvent.cs" />

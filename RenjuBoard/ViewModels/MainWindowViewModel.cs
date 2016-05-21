@@ -8,15 +8,17 @@
     using Prism.Commands;
     using Prism.Events;
     using Renju.Core;
+    using Renju.Infrastructure;
     using Renju.Infrastructure.Events;
     using Renju.Infrastructure.Model;
 
-    public class MainWindowViewModel
+    public class MainWindowViewModel : DisposableModelBase
     {
-        public MainWindowViewModel(IEventAggregator eventAggregator)
+        public MainWindowViewModel(IEventAggregator eventAggregator, GameOptions options)
         {
             DropPointCommand = new DelegateCommand<IReadOnlyBoardPoint>(OnDroppingPiece);
             NewGameCommand = new DelegateCommand(() => eventAggregator.GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default));
+            AutoDispose(options.ObserveProperty(() => options.ShowLinesOnBoard).Subscribe(_ => OnPropertyChanged(() => Lines)));
         }
 
         [Dependency]

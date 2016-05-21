@@ -8,6 +8,8 @@
     {
         event EventHandler<PieceDropEventArgs> PieceDropped;
 
+        event EventHandler<BoardPosition> Taken;
+
         IGameRuleEngine RuleEngine { get; }
 
         int Size { get; }

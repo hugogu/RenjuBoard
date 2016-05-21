@@ -32,6 +32,9 @@
         [field: NonSerialized]
         public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
 
+        [field: NonSerialized]
+        public virtual event EventHandler<BoardPosition> Taken;
+
         public virtual IEnumerable<TPoint> DroppedPoints
         {
             get { throw new NotSupportedException(); }
@@ -68,8 +71,13 @@
 
         protected internal virtual void UpdateLines(IEnumerable<PieceLine> lines)
         {
-            this._lines.Clear();
-            this._lines.AddRange(lines);
+            _lines.Clear();
+            _lines.AddRange(lines);
+        }
+
+        protected virtual void RaisePieceTakenEvent(BoardPosition position)
+        {
+            RaiseEvent(Taken, position);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)

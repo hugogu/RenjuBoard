@@ -5,10 +5,10 @@
     using System.Linq;
     using System.Windows;
     using Microsoft.Practices.Unity;
+    using Prism.Events;
     using Prism.Modularity;
     using Prism.Unity;
-    using Renju.Infrastructure.ViewModel;
-    using ViewModels;
+    using Renju.Infrastructure.Events;
 
     public class RenjuBoardBootstrapper : UnityBootstrapper
     {
@@ -23,14 +23,18 @@
 
         protected override DependencyObject CreateShell()
         {
-            return new Window() { Height = 500, Width = 960, Title = Application.Current.FindResource("GameWindowTitle") as string };
+            return new Window()
+            {
+                Height = 500, Width = 960,
+                Title = Application.Current.FindResource("GameWindowTitle") as string
+            };
         }
 
         protected override void InitializeModules()
         {
             base.InitializeModules();
-            VMInfo.SetDataType(Shell, typeof(MainWindowViewModel));
             App.Current.MainWindow.Show();
+            Container.Resolve<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
         }
     }
 }

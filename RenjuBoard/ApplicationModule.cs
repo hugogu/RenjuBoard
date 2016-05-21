@@ -6,16 +6,15 @@
     using Microsoft.Practices.Unity;
     using Prism.Events;
     using Prism.Modularity;
+    using Properties;
     using Renju.AI;
-    using Renju.AI.Resolving;
-    using Renju.AI.Weights;
     using Renju.Core;
     using Renju.Infrastructure;
     using Renju.Infrastructure.AI;
+    using Renju.Infrastructure.AI.Local;
     using Renju.Infrastructure.Events;
     using Renju.Infrastructure.Execution;
     using Renju.Infrastructure.Model;
-    using Properties;
     using ViewModels;
 
     public class ApplicationModule : IModule
@@ -39,9 +38,12 @@
         {
             container.RegisterType<IStepController, ExecutionStepController>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>("AI", new ContainerControlledLifetimeManager());
             container.RegisterType<IGameRuleEngine, DefaultGameRuleEngine>();
             container.RegisterType<IDropSelector, WeightedDropSelector>(new ContainerControlledLifetimeManager());
             container.RegisterType<IDropResolver, WinRateGameResolver>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IBoardMonitor, LocalGameBoardMonitor>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IBoardOperator, LocalGameBoardOperator>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGamePlayer, AIGamePlayer>(new ContainerControlledLifetimeManager());
             container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
             container.RegisterTypes(

@@ -7,10 +7,6 @@
 
     public interface IDropResolver : IReportExecutionStatus
     {
-        int Depth { get; set; }
-
-        int Width { get; set; }
-
         CancellationToken CancelTaken { get; set; }
 
         Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side);

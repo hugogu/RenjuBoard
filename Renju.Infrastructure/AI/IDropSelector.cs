@@ -5,8 +5,6 @@
 
     public interface IDropSelector
     {
-        bool RandomEqualSelections { get; set; }
-
         IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side);
     }
 }

@@ -79,6 +79,7 @@
                 point.ResetToEmpty();
                 _droppedPoints.RemoveAt(_droppedPoints.Count - 1);
                 UpdateLines(this.FindAllLinesOnBoardWithoutPoint(point).ToList());
+                RaisePieceTakenEvent(position);
                 OnPropertyChanged(() => DropsCount);
             }
             else
