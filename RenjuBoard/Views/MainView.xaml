@@ -95,7 +95,7 @@
                           HorizontalAlignment="Stretch" />
             <ContentControl Grid.Column="3"
                             Content="{Binding}"
-                            base:VMInfo.DataType="{x:Type vm:LogsViewModel}" />
+                            DataContext="{Binding LogViewModel}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

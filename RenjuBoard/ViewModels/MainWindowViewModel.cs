@@ -34,6 +34,9 @@
         public SaveAndLoadViewModel SaveLoadVM { get; internal set; }
 
         [Dependency]
+        public LogsViewModel LogViewModel { get; internal set; }
+
+        [Dependency]
         public IGameBoard<IReadOnlyBoardPoint> GameBoard { get; internal set; }
 
         [Dependency]

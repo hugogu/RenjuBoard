@@ -1,6 +1,5 @@
 ﻿namespace Renju.Core.Debugging
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -9,10 +8,11 @@
     using System.Windows.Forms;
     using System.Windows.Forms.Integration;
     using System.Windows.Media;
-    using Microsoft.VisualStudio.DebuggerVisualizers;
     using Controls;
     using Infrastructure;
     using Infrastructure.Model;
+    using Microsoft.Practices.Unity.Utility;
+    using Microsoft.VisualStudio.DebuggerVisualizers;
 
     public class RenjuBoardVisualizer : DialogDebuggerVisualizer
     {
@@ -27,10 +27,8 @@
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
-            if (windowService == null)
-                throw new ArgumentNullException("windowService");
-            if (objectProvider == null)
-                throw new ArgumentNullException("objectProvider");
+            Guard.ArgumentNotNull(windowService, "windowService");
+            Guard.ArgumentNotNull(objectProvider, "objectProvider");
 
             var data = objectProvider.GetObject();
             var board = data as IReadBoardState<IReadOnlyBoardPoint>;

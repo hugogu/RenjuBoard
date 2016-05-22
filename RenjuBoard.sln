@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenjuBoard", "RenjuBoard\RenjuBoard.csproj", "{66177046-5686-4E57-9C91-BE934627B914}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A162380E-72B1-41A5-BB12-FC4D458C5986} = {A162380E-72B1-41A5-BB12-FC4D458C5986}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Core", "Renju.Core\Renju.Core.csproj", "{9298F008-11CD-4CC2-B2BC-8D06CBA998A4}"
 EndProject
