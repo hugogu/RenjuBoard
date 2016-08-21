@@ -98,8 +98,8 @@
     <Compile Include="AI\Piskvork\PiskvorkBoardOperator.cs" />
     <Compile Include="Events\EvaluatedPointEvent.cs" />
     <Compile Include="Events\GenericEventArgs.cs" />
-    <Compile Include="IO\IMessanger.cs" />
-    <Compile Include="IO\StreamMessanger.cs" />
+    <Compile Include="IO\IMessenger.cs" />
+    <Compile Include="IO\StreamMessenger.cs" />
     <Compile Include="DisposableModelBase.cs" />
     <Compile Include="Events\NewGameOptions.cs" />
     <Compile Include="Events\ResolvingBoardEvent.cs" />

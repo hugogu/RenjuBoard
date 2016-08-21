@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Events;
 
-    public interface IMessanger<REQ, RES>
+    public interface IMessenger<REQ, RES>
     {
         event EventHandler<GenericEventArgs<RES>> MessageReceived;
 

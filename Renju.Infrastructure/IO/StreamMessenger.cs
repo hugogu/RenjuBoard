@@ -8,14 +8,14 @@
     using Events;
     using Microsoft.Practices.Unity.Utility;
 
-    public class StreamMessanger<REQ, RES> : DisposableModelBase, IMessanger<REQ, RES>
+    public class StreamMessenger<REQ, RES> : DisposableModelBase, IMessenger<REQ, RES>
     {
         private static readonly TypeConverter _responseConverter = TypeDescriptor.GetConverter(typeof(RES));
         private static readonly TypeConverter _requestConverter = TypeDescriptor.GetConverter(typeof(REQ));
         private readonly StreamReader _inputReader;
         private readonly StreamWriter _outputWriter;
 
-        public StreamMessanger(Stream inputStream, Stream outputStream)
+        public StreamMessenger(Stream inputStream, Stream outputStream)
         {
             Guard.ArgumentNotNull(inputStream, "inputStream");
             Guard.ArgumentNotNull(outputStream, "outputStream");

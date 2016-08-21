@@ -16,10 +16,10 @@
         public void Initialize()
         {
             Container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
-            Container.RegisterType<IMessanger<string, string>>(
+            Container.RegisterType<IMessenger<string, string>>(
                 "Console",
                 new ContainerControlledLifetimeManager(),
-                new InjectionFactory(c => c.BuildUp(new StreamMessanger<string, string>(Console.OpenStandardInput(), Console.OpenStandardOutput()))));
+                new InjectionFactory(c => c.BuildUp(new StreamMessenger<string, string>(Console.OpenStandardInput(), Console.OpenStandardOutput()))));
         }
 
         private static void RegisterTypes(IUnityContainer container)
