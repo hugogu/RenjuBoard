@@ -9,6 +9,7 @@
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
+    using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
     using Microsoft.Practices.Unity.Utility;
 

@@ -1,4 +1,4 @@
-﻿namespace Renju.Infrastructure.AI
+﻿namespace Renju.Infrastructure.Protocols
 {
     public class AIInfo
     {

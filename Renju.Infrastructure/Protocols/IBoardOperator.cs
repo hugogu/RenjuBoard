@@ -1,4 +1,4 @@
-﻿namespace Renju.Infrastructure.AI
+﻿namespace Renju.Infrastructure.Protocols
 {
     using System;
     using Model;

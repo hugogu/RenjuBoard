@@ -1,12 +1,12 @@
 ﻿namespace Renju.Infrastructure
 {
     using System;
-    using AI;
-    using AI.Local;
     using Execution;
     using IO;
     using Microsoft.Practices.Unity;
     using Prism.Modularity;
+    using Protocols;
+    using Protocols.Local;
 
     public class InfrastructureModule : IModule
     {

@@ -1,4 +1,4 @@
-﻿namespace Renju.Infrastructure.AI.Piskvork
+﻿namespace Renju.Infrastructure.Protocols.Piskvork
 {
     using System;
     using IO;

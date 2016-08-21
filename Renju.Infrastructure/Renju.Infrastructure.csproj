@@ -88,15 +88,15 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AI\AIInfo.cs" />
-    <Compile Include="AI\IBoardOperator.cs" />
-    <Compile Include="AI\IBoardMonitor.cs" />
+    <Compile Include="Protocols\AIInfo.cs" />
+    <Compile Include="Protocols\IBoardOperator.cs" />
+    <Compile Include="Protocols\IBoardMonitor.cs" />
     <Compile Include="AI\IDropResolver.cs" />
     <Compile Include="AI\IDropSelector.cs" />
-    <Compile Include="AI\Local\LocalGameBoardMonitor.cs" />
-    <Compile Include="AI\Local\LocalGameBoardOperator.cs" />
-    <Compile Include="AI\Piskvork\PiskvorkBoardMonitor.cs" />
-    <Compile Include="AI\Piskvork\PiskvorkBoardOperator.cs" />
+    <Compile Include="Protocols\Local\LocalGameBoardMonitor.cs" />
+    <Compile Include="Protocols\Local\LocalGameBoardOperator.cs" />
+    <Compile Include="Protocols\Piskvork\PiskvorkBoardMonitor.cs" />
+    <Compile Include="Protocols\Piskvork\PiskvorkBoardOperator.cs" />
     <Compile Include="Events\EvaluatedPointEvent.cs" />
     <Compile Include="Events\GenericEventArgs.cs" />
     <Compile Include="IO\IMessenger.cs" />

@@ -1,4 +1,4 @@
-﻿namespace Renju.Infrastructure.AI.Local
+﻿namespace Renju.Infrastructure.Protocols.Local
 {
     using System.Diagnostics;
     using Model;
