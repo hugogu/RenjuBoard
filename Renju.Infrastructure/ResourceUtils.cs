@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Resources;
@@ -22,6 +23,15 @@
                 {
                     yield return Application.LoadComponent(baml.Uri) as ResourceDictionary;
                 }
+            }
+        }
+
+        public static void LoadResourceFileThat(this ResourceDictionary applicationResources, Func<string, bool> withKeyThat)
+        {
+            foreach (var resourceDictionary in Assembly.GetCallingAssembly().TryFindResourceDictionaries(withKeyThat))
+            {
+                Trace.WriteLine("Loading resource " + resourceDictionary.Source);
+                applicationResources.MergedDictionaries.Add(resourceDictionary);
             }
         }
     }

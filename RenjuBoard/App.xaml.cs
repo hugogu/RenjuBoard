@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
@@ -15,8 +14,8 @@
         {
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerException;
-            LoadResourceFile(key => key.Contains("-" + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName));
-            LoadResourceFile(key => key.StartsWith("views"));
+            Resources.LoadResourceFileThat(fileName => fileName.Contains("-" + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName));
+            Resources.LoadResourceFileThat(fileName => fileName.StartsWith("views"));
             new RenjuBoardBootstrapper().Run();
         }
 
@@ -26,15 +25,6 @@
             if (MessageBox.Show(error, "Rejun Exception", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 e.Handled = true;
-            }
-        }
-
-        private void LoadResourceFile(Func<string, bool> withKeyThat)
-        {
-            foreach (var resourceDictionary in Assembly.GetExecutingAssembly().TryFindResourceDictionaries(withKeyThat))
-            {
-                Trace.WriteLine("Loading resource " + resourceDictionary.Source);
-                Resources.MergedDictionaries.Add(resourceDictionary);
             }
         }
 
