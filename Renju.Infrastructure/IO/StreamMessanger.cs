@@ -8,7 +8,7 @@
     using Events;
     using Microsoft.Practices.Unity.Utility;
 
-    public class StreamMessanger<T> : ModelBase, IMessanger<T>
+    public class StreamMessanger<T> : DisposableModelBase, IMessanger<T>
     {
         private static readonly TypeConverter MessageConverter = TypeDescriptor.GetConverter(typeof(T));
         private readonly StreamReader _inputReader;
@@ -27,6 +27,9 @@
             _inputReader = new StreamReader(inputStream);
             _outputWriter = new StreamWriter(outputStream);
 
+            AutoDispose(_inputReader);
+            AutoDispose(_outputWriter);
+
             ListenOnInputStream();
         }
 
@@ -39,7 +42,7 @@
             await _outputWriter.WriteLineAsync(messageText);
         }
 
-        protected async virtual void ListenOnInputStream()
+        protected async void ListenOnInputStream()
         {
             var line = await _inputReader.ReadLineAsync();
             RaiseMessageReceivedEvent((T)MessageConverter.ConvertFromString(line));

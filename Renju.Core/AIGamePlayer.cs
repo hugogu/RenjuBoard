@@ -55,6 +55,7 @@
             if (disposing)
             {
                 _aiResolvingCancelTokenSource.Cancel();
+                _aiResolvingCancelTokenSource.Dispose();
             }
 
             base.Dispose(disposing);

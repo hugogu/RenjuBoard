@@ -16,9 +16,9 @@
 
         public event EventHandler StepFinished;
 
-        public virtual ExecutionState State { get; protected set; }
+        public ExecutionState State { get; protected set; }
 
-        public virtual ExecutionTimer ExecutionTimer { get; private set; }
+        public ExecutionTimer ExecutionTimer { get; private set; }
 
         protected virtual void RaiseFinishedEvent()
         {
