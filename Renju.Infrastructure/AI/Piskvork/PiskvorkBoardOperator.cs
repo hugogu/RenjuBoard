@@ -10,9 +10,9 @@
     /// </summary>
     public class PiskvorkBoardOperator : IBoardOperator
     {
-        private readonly IMessanger<string> _messanger;
+        private readonly IMessanger<string, string> _messanger;
 
-        public PiskvorkBoardOperator([Dependency("Console")] IMessanger<string> messanger)
+        public PiskvorkBoardOperator([Dependency("Console")] IMessanger<string, string> messanger)
         {
             _messanger = messanger;
         }

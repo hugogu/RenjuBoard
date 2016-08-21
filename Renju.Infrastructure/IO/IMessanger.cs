@@ -4,10 +4,10 @@
     using System.Threading.Tasks;
     using Events;
 
-    public interface IMessanger<T>
+    public interface IMessanger<REQ, RES>
     {
-        event EventHandler<GenericEventArgs<T>> MessageReceived;
+        event EventHandler<GenericEventArgs<RES>> MessageReceived;
 
-        Task SendAsync(T message);
+        Task SendAsync(REQ message);
     }
 }

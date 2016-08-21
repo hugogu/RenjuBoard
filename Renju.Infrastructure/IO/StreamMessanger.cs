@@ -8,9 +8,10 @@
     using Events;
     using Microsoft.Practices.Unity.Utility;
 
-    public class StreamMessanger<T> : DisposableModelBase, IMessanger<T>
+    public class StreamMessanger<REQ, RES> : DisposableModelBase, IMessanger<REQ, RES>
     {
-        private static readonly TypeConverter MessageConverter = TypeDescriptor.GetConverter(typeof(T));
+        private static readonly TypeConverter _responseConverter = TypeDescriptor.GetConverter(typeof(RES));
+        private static readonly TypeConverter _requestConverter = TypeDescriptor.GetConverter(typeof(REQ));
         private readonly StreamReader _inputReader;
         private readonly StreamWriter _outputWriter;
 
@@ -21,8 +22,11 @@
             Debug.Assert(inputStream.CanRead, "input stream should be readable.");
             Debug.Assert(outputStream.CanWrite, "output stream should be writable.");
 
-            if (!MessageConverter.CanConvertFrom(typeof(string)))
-                throw new ArgumentException("Generic message type must convertable from String.");
+            if (!_responseConverter.CanConvertFrom(typeof(string)))
+                throw new ArgumentException(String.Format("Response message type {0} must be convertable from String.", typeof(RES)));
+
+            if (!_requestConverter.CanConvertTo(typeof(string)))
+                throw new ArgumentException(String.Format("Request message type {0} must be convertable to String.", typeof(REQ)));
 
             _inputReader = new StreamReader(inputStream);
             _outputWriter = new StreamWriter(outputStream);
@@ -33,24 +37,27 @@
             ListenOnInputStream();
         }
 
-        public virtual event EventHandler<GenericEventArgs<T>> MessageReceived;
+        public virtual event EventHandler<GenericEventArgs<RES>> MessageReceived;
 
-        public async virtual Task SendAsync(T message)
+        public async virtual Task SendAsync(REQ message)
         {
             Guard.ArgumentNotNull(message, "message");
-            var messageText = MessageConverter.ConvertToString(message);
+            var messageText = _requestConverter.ConvertToString(message);
             await _outputWriter.WriteLineAsync(messageText);
         }
 
         protected async void ListenOnInputStream()
         {
-            var line = await _inputReader.ReadLineAsync();
-            RaiseMessageReceivedEvent((T)MessageConverter.ConvertFromString(line));
+            while (!_inputReader.EndOfStream)
+            {
+                var line = await _inputReader.ReadLineAsync();
+                RaiseMessageReceivedEvent((RES)_responseConverter.ConvertFromString(line));
+            }
         }
 
-        protected virtual void RaiseMessageReceivedEvent(T message)
+        protected virtual void RaiseMessageReceivedEvent(RES message)
         {
-            RaiseEvent(MessageReceived, new GenericEventArgs<T>(message));
+            RaiseEvent(MessageReceived, new GenericEventArgs<RES>(message));
         }
     }
 }
