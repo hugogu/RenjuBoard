@@ -76,7 +76,9 @@
         private void OnNewGameEvent(NewGameOptions options)
         {
             RenewChildContainerForGame(options);
-            App.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
+            var newGame = _currentGameContainer.Resolve<MainWindowViewModel>();
+            App.Current.MainWindow.DataContext = newGame;
+            newGame.Initialize();
         }
     }
 }

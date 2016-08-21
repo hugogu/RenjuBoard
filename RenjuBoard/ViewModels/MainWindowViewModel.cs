@@ -11,6 +11,7 @@
     using Renju.Infrastructure;
     using Renju.Infrastructure.Events;
     using Renju.Infrastructure.Model;
+    using Renju.Infrastructure.Protocols;
 
     public class MainWindowViewModel : DisposableModelBase
     {
@@ -26,6 +27,9 @@
 
         [Dependency]
         public AIControllerViewModel AIControllerVM { get; internal set; }
+
+        [Dependency]
+        public IBoardMonitor Board { get; internal set; }
 
         [Dependency]
         public BoardTimingViewModel TimingVM { get; internal set; }
@@ -45,6 +49,11 @@
         public IEnumerable<PieceLine> Lines
         {
             get { return OptionsVM.Options.ShowLinesOnBoard ? GameBoard.Lines : new PieceLine[0]; }
+        }
+
+        public void Initialize()
+        {
+            AIControllerVM.AIPlayer.PlayOn(Board);
         }
 
         public ICommand DropPointCommand { get; private set; }

@@ -19,9 +19,8 @@
         private readonly IBoardOperator _operator;
         private readonly IDropResolver _resolver;
 
-        public AIGamePlayer(IBoardMonitor monitor, IBoardOperator operater, IDropResolver resolver)
+        public AIGamePlayer(IBoardOperator operater, IDropResolver resolver)
         {
-            Guard.ArgumentNotNull(monitor, "monitor");
             Guard.ArgumentNotNull(operater, "operater");
             Guard.ArgumentNotNull(resolver, "resolver");
 
@@ -29,24 +28,7 @@
             _resolver = resolver;
 
             resolver.CancelTaken = _aiResolvingCancelTokenSource.Token;
-
-            monitor.Loading += OnLoadingBoard;
-            monitor.Dropped += OnBoardDropped;
-            monitor.Taken += OnBoardDropTaken;
-            monitor.Starting += OnBoardStarting;
-            monitor.Ended += OnGameEnded;
-            monitor.AboutRequested += OnAboutRequested;
-
             AutoDispose(_aiResolvingCancelTokenSource);
-            AutoCallOnDisposing(() =>
-            {
-                monitor.Loading -= OnLoadingBoard;
-                monitor.Dropped -= OnBoardDropped;
-                monitor.Taken -= OnBoardDropTaken;
-                monitor.Starting -= OnBoardStarting;
-                monitor.Ended -= OnGameEnded;
-                monitor.AboutRequested -= OnAboutRequested;
-            });
         }
 
         [Dependency("AI")]
@@ -59,6 +41,26 @@
         public string AuthorName { get; set; }
 
         public string Country { get; set; }
+
+        public void PlayOn(IBoardMonitor monitor)
+        {
+            monitor.Loading += OnLoadingBoard;
+            monitor.Dropped += OnBoardDropped;
+            monitor.Taken += OnBoardDropTaken;
+            monitor.Starting += OnBoardStarting;
+            monitor.Ended += OnGameEnded;
+            monitor.AboutRequested += OnAboutRequested;
+
+            AutoCallOnDisposing(() =>
+            {
+                monitor.Loading -= OnLoadingBoard;
+                monitor.Dropped -= OnBoardDropped;
+                monitor.Taken -= OnBoardDropTaken;
+                monitor.Starting -= OnBoardStarting;
+                monitor.Ended -= OnGameEnded;
+                monitor.AboutRequested -= OnAboutRequested;
+            });
+        }
 
         protected override void Dispose(bool disposing)
         {
