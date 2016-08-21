@@ -95,6 +95,7 @@
     <Compile Include="AI\IDropSelector.cs" />
     <Compile Include="AI\Local\LocalGameBoardMonitor.cs" />
     <Compile Include="AI\Local\LocalGameBoardOperator.cs" />
+    <Compile Include="AI\Piskvork\PiskvorkBoardMonitor.cs" />
     <Compile Include="AI\Piskvork\PiskvorkBoardOperator.cs" />
     <Compile Include="Events\EvaluatedPointEvent.cs" />
     <Compile Include="Events\GenericEventArgs.cs" />

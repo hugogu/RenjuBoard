@@ -26,7 +26,7 @@
             });
         }
 
-        public event EventHandler<GenericEventArgs<PieceDrop>> Dropped;
+        public event EventHandler<GenericEventArgs<BoardPosition>> Dropped;
 
         public event EventHandler Ended;
 
@@ -37,6 +37,8 @@
         public event EventHandler Starting;
 
         public event EventHandler<GenericEventArgs<BoardPosition>> Taken;
+
+        public event EventHandler AboutRequested;
 
         protected override void Dispose(bool disposing)
         {
@@ -60,7 +62,7 @@
                 RaiseEvent(Loading, new GenericEventArgs<IEnumerable<PieceDrop>>(new[] { e.Drop }));
             }
 
-            RaiseEvent(Dropped, new GenericEventArgs<PieceDrop>(e.Drop));
+            RaiseEvent(Dropped, new GenericEventArgs<BoardPosition>(e.Drop));
 
             if (_gameBoard.ExpectedNextTurn == null)
             {

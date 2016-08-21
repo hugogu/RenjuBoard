@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Reflection;
     using System.Threading;
     using Infrastructure;
     using Infrastructure.AI;
@@ -33,6 +34,7 @@
             monitor.Taken += OnBoardDropTaken;
             monitor.Starting += OnBoardStarting;
             monitor.Ended += OnGameEnded;
+            monitor.AboutRequested += OnAboutRequested;
 
             AutoDispose(_aiResolvingCancelTokenSource);
             AutoCallOnDisposing(() =>
@@ -42,6 +44,7 @@
                 monitor.Taken -= OnBoardDropTaken;
                 monitor.Starting -= OnBoardStarting;
                 monitor.Ended -= OnGameEnded;
+                monitor.AboutRequested -= OnAboutRequested;
             });
         }
 
@@ -49,6 +52,12 @@
         public IGameBoard<IReadOnlyBoardPoint> VirtualAIGameBoard { get; set; }
 
         public Side Side { get; set; } = Side.White;
+
+        public string Name { get; set; }
+
+        public string AuthorName { get; set; }
+
+        public string Country { get; set; }
 
         protected override void Dispose(bool disposing)
         {
@@ -79,7 +88,7 @@
             OnPieceDropped();
         }
 
-        protected virtual void OnBoardDropped(object sender, GenericEventArgs<PieceDrop> e)
+        protected virtual void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
         {
             VirtualAIGameBoard.Drop(e.Message, OperatorType.Human);
             if (VirtualAIGameBoard[e.Message].Status == Sides.Opposite(Side))
@@ -99,6 +108,18 @@
             if (_aiResolvingCancelTokenSource.IsCancellationRequested)
                 return;
             _operator.Put(new PieceDrop(drop.Position, Side));
+        }
+
+        private void OnAboutRequested(object sender, EventArgs e)
+        {
+            var info = new AIInfo()
+            {
+                Name = Name,
+                Author = AuthorName,
+                Country = Country,
+                Version = Assembly.GetExecutingAssembly().GetName().Version.ToString()
+            };
+            _operator.ShowInfo(info);
         }
     }
 }

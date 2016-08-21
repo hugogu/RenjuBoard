@@ -13,10 +13,12 @@
 
         event EventHandler Ended;
 
-        event EventHandler<GenericEventArgs<PieceDrop>> Dropped;
+        event EventHandler<GenericEventArgs<BoardPosition>> Dropped;
 
         event EventHandler<GenericEventArgs<BoardPosition>> Taken;
 
         event EventHandler<GenericEventArgs<IEnumerable<PieceDrop>>> Loading;
+
+        event EventHandler AboutRequested;
     }
 }
