@@ -79,13 +79,12 @@
                              let axis = drop.Split(',')
                              select new
                              {
-                                 X = Convert.ToInt32(axis[0]),
-                                 Y = Convert.ToInt32(axis[1]),
+                                 Position = drop.AsBoardPosition(),
                                  N = Convert.ToInt32(axis[2])
                              }).ToList();
                 Func<int, Side> sideConverter = n => n == drops[0].N ? Side.Black : Side.White;
                 RaiseEvent(Loading, new GenericEventArgs<IEnumerable<PieceDrop>>(drops.Select(drop =>
-                    new PieceDrop(drop.X, drop.Y, sideConverter(drop.N)))));
+                    new PieceDrop(drop.Position, sideConverter(drop.N)))));
                 _loadingDrops = null;
             }
             else if (command.StartsWith("END", StringComparison.Ordinal))
@@ -110,10 +109,7 @@
 
         private void HandleTurnCommand(string command)
         {
-            var axis = command.Substring(4).Split(',');
-            var x = Convert.ToInt32(axis[0]);
-            var y = Convert.ToInt32(axis[1]);
-            RaiseEvent(Dropped, new GenericEventArgs<BoardPosition>(new BoardPosition(x, y)));
+            RaiseEvent(Dropped, new GenericEventArgs<BoardPosition>(command.Substring(4).AsBoardPosition()));
         }
     }
 }

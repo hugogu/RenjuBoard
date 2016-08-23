@@ -1,0 +1,1 @@
+Please download AIs from http://gomocup.org/download-gomoku-ai/ an place them in this folder

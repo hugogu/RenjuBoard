@@ -16,6 +16,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Infrastructure", "Ren
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Controls", "Renju.Controls\Renju.Controls.csproj", "{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PiskvorkAIs", "PiskvorkAIs", "{9677E1F2-0BD3-41A1-B59D-AF77C4C3BBA1}"
+	ProjectSection(SolutionItems) = preProject
+		ai\piskvork\Readme.txt = ai\piskvork\Readme.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

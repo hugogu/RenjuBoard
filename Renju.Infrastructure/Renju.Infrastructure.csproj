@@ -88,6 +88,12 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AI\GameInfo.cs" />
+    <Compile Include="AI\GameType.cs" />
+    <Compile Include="AI\IAIPlayer.cs" />
+    <Compile Include="AI\PiskvorkAIPlayerAdapter.cs" />
+    <Compile Include="IO\MessengerExtensions.cs" />
+    <Compile Include="IO\Messengers.cs" />
     <Compile Include="Protocols\AIInfo.cs" />
     <Compile Include="Protocols\IBoardOperator.cs" />
     <Compile Include="Protocols\IBoardMonitor.cs" />
@@ -136,6 +142,7 @@
     <Compile Include="Model\WinRateWithPath.cs" />
     <Compile Include="NumberUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocols\Piskvork\PiskvorkMessageUtils.cs" />
     <Compile Include="Reactives.cs" />
     <Compile Include="Execution\ReportExecutionObject.cs" />
     <Compile Include="Reflections.cs" />
