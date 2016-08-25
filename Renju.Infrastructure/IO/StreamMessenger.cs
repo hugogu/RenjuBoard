@@ -1,11 +1,9 @@
 ﻿namespace Renju.Infrastructure.IO
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
-    using System.Reactive.Concurrency;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Events;
@@ -26,7 +24,7 @@
             _inputReader = inputReader;
             _outputWriter = outputWriter;
 
-            AutoDispose(ReadLinesFromInputReader().ToObservable(TaskPoolScheduler.Default).Subscribe(OnReceivingStdOut));
+            AutoDispose(_inputReader.ReadAllLines().Subscribe(OnReceivingStdOut));
             AutoDispose(_inputReader);
             AutoDispose(_outputWriter);
         }
@@ -63,14 +61,6 @@
         protected virtual void RaiseMessageReceivedEvent(RES message)
         {
             RaiseEvent(MessageReceived, new GenericEventArgs<RES>(message));
-        }
-
-        private IEnumerable<string> ReadLinesFromInputReader()
-        {
-            while (!_inputReader.EndOfStream)
-            {
-                yield return _inputReader.ReadLine();
-            }
         }
     }
 }

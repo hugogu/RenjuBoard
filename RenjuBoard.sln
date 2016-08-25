@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PiskvorkAIs", "PiskvorkAIs"
 		ai\piskvork\Readme.txt = ai\piskvork\Readme.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renju.Infrastructure.Tests", "Renju.Infrastructure.Tests\Renju.Infrastructure.Tests.csproj", "{97A38B79-AAFB-4598-8784-C9B60B3F6174}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F8B9F5BC-2EAF-4F94-A1B7-735025D7A94A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,8 +51,15 @@ Global
 		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ADC2FFA-D00F-4F33-A6DF-366768F2F479}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97A38B79-AAFB-4598-8784-C9B60B3F6174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97A38B79-AAFB-4598-8784-C9B60B3F6174}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97A38B79-AAFB-4598-8784-C9B60B3F6174}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97A38B79-AAFB-4598-8784-C9B60B3F6174}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{97A38B79-AAFB-4598-8784-C9B60B3F6174} = {F8B9F5BC-2EAF-4F94-A1B7-735025D7A94A}
 	EndGlobalSection
 EndGlobal

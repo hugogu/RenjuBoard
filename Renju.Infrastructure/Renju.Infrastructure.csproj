@@ -94,6 +94,7 @@
     <Compile Include="AI\PiskvorkAIPlayerAdapter.cs" />
     <Compile Include="IO\MessengerExtensions.cs" />
     <Compile Include="IO\Messengers.cs" />
+    <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="Protocols\AIInfo.cs" />
     <Compile Include="Protocols\IBoardOperator.cs" />
     <Compile Include="Protocols\IBoardMonitor.cs" />
