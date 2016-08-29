@@ -7,7 +7,7 @@
     {
         void ShowInfo(AIInfo info);
 
-        void Put(PieceDrop position);
+        void Put(BoardPosition position);
 
         void Take(BoardPosition position);
 

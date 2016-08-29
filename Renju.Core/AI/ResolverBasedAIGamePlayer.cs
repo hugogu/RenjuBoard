@@ -1,11 +1,10 @@
-﻿namespace Renju.Core
+﻿namespace Renju.Core.AI
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Reflection;
     using System.Threading;
-    using Infrastructure;
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
@@ -13,18 +12,17 @@
     using Microsoft.Practices.Unity;
     using Microsoft.Practices.Unity.Utility;
 
-    public class AIGamePlayer : DisposableModelBase, IGamePlayer
+    public class ResolverBasedAIGamePlayer : RenjuBoardAIPlayer
     {
         private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
-        private readonly IBoardOperator _operator;
         private readonly IDropResolver _resolver;
 
-        public AIGamePlayer(IBoardOperator operater, IDropResolver resolver)
+        public ResolverBasedAIGamePlayer(IBoardOperator operater, IDropResolver resolver)
+            : base(operater)
         {
             Guard.ArgumentNotNull(operater, "operater");
             Guard.ArgumentNotNull(resolver, "resolver");
 
-            _operator = operater;
             _resolver = resolver;
 
             resolver.CancelTaken = _aiResolvingCancelTokenSource.Token;
@@ -33,34 +31,6 @@
 
         [Dependency("AI")]
         public IGameBoard<IReadOnlyBoardPoint> VirtualAIGameBoard { get; set; }
-
-        public Side Side { get; set; } = Side.White;
-
-        public string Name { get; set; }
-
-        public string AuthorName { get; set; }
-
-        public string Country { get; set; }
-
-        public void PlayOn(IBoardMonitor monitor)
-        {
-            monitor.Loading += OnLoadingBoard;
-            monitor.Dropped += OnBoardDropped;
-            monitor.Taken += OnBoardDropTaken;
-            monitor.Starting += OnBoardStarting;
-            monitor.Ended += OnGameEnded;
-            monitor.AboutRequested += OnAboutRequested;
-
-            AutoCallOnDisposing(() =>
-            {
-                monitor.Loading -= OnLoadingBoard;
-                monitor.Dropped -= OnBoardDropped;
-                monitor.Taken -= OnBoardDropTaken;
-                monitor.Starting -= OnBoardStarting;
-                monitor.Ended -= OnGameEnded;
-                monitor.AboutRequested -= OnAboutRequested;
-            });
-        }
 
         protected override void Dispose(bool disposing)
         {
@@ -73,25 +43,26 @@
             base.Dispose(disposing);
         }
 
-        protected virtual void OnBoardStarting(object sender, EventArgs e)
+        protected override void OnInitailizing(object sender, GenericEventArgs<int> e)
+        {
+            Trace.TraceInformation("Initializing board size " + e.Message);
+        }
+
+        protected override void OnBoardStarting(object sender, EventArgs e)
         {
             Debug.Assert(VirtualAIGameBoard.DropsCount == 0, "Starting event is not valid when game already started.");
             Side = Side.Black;
             VirtualAIGameBoard.Drop(new BoardPosition(7, 7), OperatorType.AI);
         }
 
-        protected virtual void OnGameEnded(object sender, EventArgs e)
-        {
-        }
-
-        protected virtual void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
+        protected override void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
         {
             foreach (var drop in e.Message)
                 VirtualAIGameBoard.Drop(drop, OperatorType.Loading);
             OnPieceDropped();
         }
 
-        protected virtual void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
+        protected override void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
         {
             VirtualAIGameBoard.Drop(e.Message, OperatorType.Human);
             if (VirtualAIGameBoard[e.Message].Status == Sides.Opposite(Side))
@@ -100,7 +71,7 @@
             }
         }
 
-        protected virtual void OnBoardDropTaken(object sender, GenericEventArgs<BoardPosition> e)
+        protected override void OnBoardDropTaken(object sender, GenericEventArgs<BoardPosition> e)
         {
             VirtualAIGameBoard.Take(e.Message);
         }
@@ -110,10 +81,10 @@
             var drop = await _resolver.ResolveAsync(VirtualAIGameBoard, Side);
             if (_aiResolvingCancelTokenSource.IsCancellationRequested)
                 return;
-            _operator.Put(new PieceDrop(drop.Position, Side));
+            Operator.Put(new PieceDrop(drop.Position, Side));
         }
 
-        private void OnAboutRequested(object sender, EventArgs e)
+        protected override void OnAboutRequested(object sender, EventArgs e)
         {
             var info = new AIInfo()
             {
@@ -122,7 +93,7 @@
                 Country = Country,
                 Version = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };
-            _operator.ShowInfo(info);
+            Operator.ShowInfo(info);
         }
     }
 }

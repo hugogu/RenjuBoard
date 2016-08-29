@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using AI;
     using Infrastructure.Model;
     using Microsoft.Practices.Unity;
     using Prism.Modularity;
@@ -24,7 +25,7 @@
         private static void RegisterTypes(IUnityContainer container)
         {
             container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IGamePlayer, AIGamePlayer>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IGamePlayer, ResolverBasedAIGamePlayer>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>("AI", new ContainerControlledLifetimeManager());
             container.RegisterType<IGameRuleEngine, DefaultGameRuleEngine>();

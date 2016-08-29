@@ -12,7 +12,7 @@
             _gameBoard = gameBoard;
         }
 
-        public void Put(PieceDrop position)
+        public void Put(BoardPosition position)
         {
             _gameBoard.Drop(position, OperatorType.AI);
         }

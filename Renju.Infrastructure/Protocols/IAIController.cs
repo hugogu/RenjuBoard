@@ -6,11 +6,11 @@
     using Model;
     using Protocols;
 
-    public interface IAIPlayer
+    public interface IAIController
     {
         event EventHandler<GenericEventArgs<BoardPosition>> Dropping;
 
-        event EventHandler<GenericEventArgs<String>> Says;
+        event EventHandler<GenericEventArgs<string>> Says;
 
         AIInfo AIInfo { get; }
 
@@ -22,7 +22,7 @@
 
         void Load(IEnumerable<PieceDrop> drops);
 
-        void OpponentDrops(PieceDrop stone);
+        void OpponentDrops(BoardPosition stone);
 
         void End();
 

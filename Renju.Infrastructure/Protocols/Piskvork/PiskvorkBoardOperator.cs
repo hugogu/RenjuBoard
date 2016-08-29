@@ -17,7 +17,7 @@
             _messenger = messenger;
         }
 
-        public void Put(PieceDrop position)
+        public void Put(BoardPosition position)
         {
             _messenger.SendAsync(String.Format("{0},{1}\r\n", position.X, position.Y));
         }

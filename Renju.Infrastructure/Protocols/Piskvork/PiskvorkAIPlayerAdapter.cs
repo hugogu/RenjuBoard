@@ -1,17 +1,19 @@
-﻿namespace Renju.Infrastructure.AI
+﻿namespace Renju.Infrastructure.Protocols.Piskvork
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Reactive.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using AI;
     using Events;
     using IO;
+    using Microsoft.Practices.Unity.Utility;
     using Model;
     using Protocols;
-    using Protocols.Piskvork;
 
-    public class PiskvorkAIPlayerAdapter : DisposableModelBase, IAIPlayer
+    public class PiskvorkAIPlayerAdapter : DisposableModelBase, IAIController
     {
         private static readonly Regex DropPattern = new Regex(@"[\d]+,[\d]+");
         private static readonly Regex InfoItemPattern = new Regex("\\w+=\"[^ \"]+\"");
@@ -21,13 +23,15 @@
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
+            Guard.ArgumentNotNull(aiFile, "aiFile");
+
             _process = new Lazy<Process>(() => StartProcess(aiFile));
             _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
         }
 
         public event EventHandler<GenericEventArgs<BoardPosition>> Dropping;
 
-        public event EventHandler<GenericEventArgs<String>> Says;
+        public event EventHandler<GenericEventArgs<string>> Says;
 
         public AIInfo AIInfo
         {
@@ -41,16 +45,20 @@
 
         public void Begin()
         {
+            Debug.Assert(_process.IsValueCreated);
             Messenger.SendAsync("BEGIN");
         }
 
         public void End()
         {
+            Debug.Assert(_process.IsValueCreated);
             Messenger.SendAsync("END");
         }
 
         public void Info(GameInfo info)
         {
+            Guard.ArgumentNotNull(info, "info");
+
             foreach (var message in info.ToMessages())
                 Messenger.SendAsync(message);
         }
@@ -62,12 +70,18 @@
 
         public void Load(IEnumerable<PieceDrop> drops)
         {
+            Debug.Assert(_process.IsValueCreated);
+            Guard.ArgumentNotNull(drops, "drops");
+
             Messenger.SendAsync("BOARD");
             Messenger.SendAsync("DONE");
         }
 
-        public void OpponentDrops(PieceDrop stone)
+        public void OpponentDrops(BoardPosition stone)
         {
+            Debug.Assert(_process.IsValueCreated);
+            Guard.ArgumentNotNull(stone, "stone");
+
             Messenger.SendAsync("TURN " + stone.AsString());
         }
 
@@ -104,7 +118,7 @@
             process.Exited += OnAIProcessExit;
             AutoDispose(process);
 
-            RequestAbout();
+            Task.Run(new Action(RequestAbout));
 
             return process;
         }
