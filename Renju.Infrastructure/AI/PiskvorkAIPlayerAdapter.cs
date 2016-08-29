@@ -14,31 +14,25 @@
     public class PiskvorkAIPlayerAdapter : DisposableModelBase, IAIPlayer
     {
         private static readonly Regex DropPattern = new Regex(@"[\d]+,[\d]+");
-        private readonly string _aifile;
-        private readonly Process _process;
+        private static readonly Regex InfoItemPattern = new Regex("\\w+=\"[^ \"]+\"");
+        private readonly Lazy<Process> _process;
         private readonly Lazy<IMessenger<string, string>> _aiMessenger;
+        private readonly AIInfo _info = new AIInfo();
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
-            _aifile = aiFile;
-            _process = StartProcess(aiFile);
-            _aiMessenger = new Lazy<IMessenger<string, string>>(() =>
-            {
-                var messenger = CreateMessenger(_process);
-                AutoDispose(messenger.GetResponsesStream().Subscribe(OnReceivingAIMessage));
-                AutoDispose(messenger);
-
-                return messenger;
-            });
-
-            AutoDispose(_process);
+            _process = new Lazy<Process>(() => StartProcess(aiFile));
+            _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
         }
 
         public event EventHandler<GenericEventArgs<BoardPosition>> Dropping;
 
-        public event EventHandler<GenericEventArgs<AIInfo>> Introducing;
-
         public event EventHandler<GenericEventArgs<String>> Says;
+
+        public AIInfo AIInfo
+        {
+            get { return _info; }
+        }
 
         public void RequestAbout()
         {
@@ -91,6 +85,11 @@
             get { return _aiMessenger.Value; }
         }
 
+        protected Process Process
+        {
+            get { return _process.Value; }
+        }
+
         protected virtual Process StartProcess(string executionFile)
         {
             var processInfo = new ProcessStartInfo();
@@ -101,12 +100,32 @@
             processInfo.CreateNoWindow = true;
             processInfo.ErrorDialog = false;
 
-            return Process.Start(processInfo);
+            var process = Process.Start(processInfo);
+            process.Exited += OnAIProcessExit;
+            AutoDispose(process);
+
+            RequestAbout();
+
+            return process;
         }
 
         protected virtual IMessenger<string, string> CreateMessenger(Process process)
         {
             return Messengers.FromProcess<string, string>(process);
+        }
+
+        private void OnAIProcessExit(object sender, EventArgs e)
+        {
+            RaiseEvent(Says, new GenericEventArgs<string>("I'm dead!"));
+        }
+
+        private IMessenger<string, string> CreateMessenger()
+        {
+            var messenger = CreateMessenger(Process);
+            AutoDispose(messenger.GetResponsesStream().Subscribe(OnReceivingAIMessage));
+            AutoDispose(messenger);
+
+            return messenger;
         }
 
         private void OnReceivingAIMessage(string airesponse)
@@ -116,9 +135,27 @@
             {
                 RaiseEvent(Dropping, new GenericEventArgs<BoardPosition>(drop.Value.AsBoardPosition()));
             }
-            else
+            else if (airesponse.StartsWith("MESSAGE") || airesponse.StartsWith("DEBUG") || airesponse.StartsWith("ERROR"))
             {
                 RaiseEvent(Says, new GenericEventArgs<string>(airesponse));
+            }
+            else if (airesponse.Contains("="))
+            {
+                var items = InfoItemPattern.Matches(airesponse);
+                foreach(Match match in items)
+                {
+                    var item = match.Value;
+                    var key = item.Substring(0, item.IndexOf('='));
+                    var value = item.Substring(item.IndexOf('"') + 1).TrimEnd('"');
+                    if (key == "name")
+                        _info.Name = value;
+                    else if (key == "author")
+                        _info.Author = value;
+                    else if (key == "country")
+                        _info.Country = value;
+                    else if (key == "version")
+                        _info.Version = value;
+                }
             }
         }
     }

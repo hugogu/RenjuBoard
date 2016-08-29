@@ -50,17 +50,19 @@
         {
             Guard.ArgumentNotNull(message, "message");
             var messageText = _requestConverter.ConvertToString(message);
-            await _outputWriter.WriteLineAsync(messageText);
+            await _outputWriter.WriteLineAsync(messageText).ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Trace.TraceError(task.Exception.Message);
+                }
+            });
         }
 
         protected virtual void OnReceivingStdOut(string message)
         {
-            RaiseMessageReceivedEvent((RES)_responseConverter.ConvertFromString(message));
-        }
-
-        protected virtual void RaiseMessageReceivedEvent(RES message)
-        {
-            RaiseEvent(MessageReceived, new GenericEventArgs<RES>(message));
+            var respose = (RES)_responseConverter.ConvertFromString(message);
+            RaiseEvent(MessageReceived, new GenericEventArgs<RES>(respose));
         }
     }
 }

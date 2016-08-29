@@ -10,9 +10,9 @@
     {
         event EventHandler<GenericEventArgs<BoardPosition>> Dropping;
 
-        event EventHandler<GenericEventArgs<AIInfo>> Introducing;
-
         event EventHandler<GenericEventArgs<String>> Says;
+
+        AIInfo AIInfo { get; }
 
         void Initialize(int boardSize);
 
