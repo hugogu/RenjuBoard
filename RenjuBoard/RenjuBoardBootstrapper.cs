@@ -5,12 +5,11 @@
     using System.Linq;
     using System.Windows;
     using Microsoft.Practices.Unity;
-    using Prism.Events;
     using Prism.Modularity;
     using Prism.Regions;
     using Prism.Unity;
     using Renju.Controls;
-    using Renju.Infrastructure.Events;
+    using Renju.Core;
     using ViewModels;
 
     public class RenjuBoardBootstrapper : UnityBootstrapper
@@ -40,7 +39,7 @@
         {
             base.InitializeModules();
             App.Current.MainWindow.Show();
-            Container.Resolve<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
+            Container.Resolve<GameSessionController<MainWindowViewModel>>().StartNewGame();
         }
     }
 }
