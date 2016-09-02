@@ -7,8 +7,11 @@
     using Microsoft.Practices.Unity;
     using Prism.Events;
     using Prism.Modularity;
+    using Prism.Regions;
     using Prism.Unity;
+    using Renju.Controls;
     using Renju.Infrastructure.Events;
+    using ViewModels;
 
     public class RenjuBoardBootstrapper : UnityBootstrapper
     {
@@ -23,6 +26,9 @@
 
         protected override DependencyObject CreateShell()
         {
+            var regionManager = Container.Resolve<IRegionManager>();
+            regionManager.RegisterViewWithRegion(RegionNames.Logging, typeof(GenericView<LogsViewModel>));
+
             return new Window()
             {
                 Height = 500, Width = 960,
