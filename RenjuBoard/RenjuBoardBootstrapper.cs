@@ -5,10 +5,12 @@
     using System.Linq;
     using System.Windows;
     using Microsoft.Practices.Unity;
-    using Prism.Events;
     using Prism.Modularity;
+    using Prism.Regions;
     using Prism.Unity;
-    using Renju.Infrastructure.Events;
+    using Renju.Controls;
+    using Renju.Core;
+    using ViewModels;
 
     public class RenjuBoardBootstrapper : UnityBootstrapper
     {
@@ -23,6 +25,9 @@
 
         protected override DependencyObject CreateShell()
         {
+            var regionManager = Container.Resolve<IRegionManager>();
+            regionManager.RegisterViewWithRegion(RegionNames.Logging, typeof(GenericView<LogsViewModel>));
+
             return new Window()
             {
                 Height = 500, Width = 960,
@@ -34,7 +39,7 @@
         {
             base.InitializeModules();
             App.Current.MainWindow.Show();
-            Container.Resolve<IEventAggregator>().GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
+            Container.Resolve<GameSessionController<MainWindowViewModel>>().StartNewGame();
         }
     }
 }

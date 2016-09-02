@@ -3,7 +3,7 @@
                     xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
                     xmlns:interaction="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:control="clr-namespace:Renju.Controls;assembly=Renju.Controls"
-                    xmlns:base="clr-namespace:Renju.Infrastructure.ViewModel;assembly=Renju.Infrastructure">
+                    xmlns:prism="http://www.codeplex.com/prism">
     <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
         <DataTemplate.Resources>
             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
@@ -94,8 +94,7 @@
                           Width="5"
                           HorizontalAlignment="Stretch" />
             <ContentControl Grid.Column="3"
-                            Content="{Binding}"
-                            DataContext="{Binding LogViewModel}" />
+                            prism:RegionManager.RegionName="{x:Static vm:RegionNames.Logging}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

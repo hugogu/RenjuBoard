@@ -115,6 +115,7 @@
     <Compile Include="RenjuBoardBootstrapper.cs" />
     <Compile Include="ViewModels\BoardTimingViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
+    <Compile Include="ViewModels\RegionNames.cs" />
     <Compile Include="ViewModels\SaveAndLoadViewModel.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

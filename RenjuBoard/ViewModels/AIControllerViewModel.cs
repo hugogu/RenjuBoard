@@ -46,9 +46,6 @@
         }
 
         [Dependency]
-        public IGamePlayer AIPlayer { get; internal set; }
-
-        [Dependency]
         public GameOptions Options { get; internal set; }
 
         public DelegateCommand PauseAICommand { get; private set; }
