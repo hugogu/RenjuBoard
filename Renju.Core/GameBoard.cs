@@ -5,7 +5,6 @@
     using System.Diagnostics.Contracts;
     using System.Linq;
     using Infrastructure;
-    using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Model.Extensions;
 
@@ -20,13 +19,13 @@
         public GameBoard(NewGameOptions newGameOptions, GameOptions options)
             : base(newGameOptions.BoardSize, BoardPoint.CreateIndexBasedFactory(newGameOptions.BoardSize))
         {
-            Options = options;
+            Options = newGameOptions;
             RuleEngine = newGameOptions.RuleEngine;
             _optionsObserver = options.ObserveProperty(() => options.ShowLinesOnBoard)
                                       .Subscribe(_ => OnPropertyChanged(() => Lines));
         }
 
-        public GameOptions Options { get; private set; }
+        public NewGameOptions Options { get; private set; }
 
         public override int DropsCount
         {
@@ -41,6 +40,11 @@
         public Side? ExpectedNextTurn
         {
             get { return _expectedNextTurn; }
+        }
+
+        public void BeginGame()
+        {
+            RaiseGameBeginEvent(Options);
         }
 
         public void SetState(BoardPosition position, Side side)

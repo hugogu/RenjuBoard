@@ -6,12 +6,13 @@
     using System.Linq;
     using Debugging;
     using Infrastructure;
+    using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Model.Extensions;
 
     [Serializable]
     [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
-    public class GameBoardDecoration : ModelBase, IReadBoardState<IReadOnlyBoardPoint>
+    public class GameBoardDecoration : DisposableModelBase, IReadBoardState<IReadOnlyBoardPoint>
     {
         private readonly IReadBoardState<IReadOnlyBoardPoint> _decoratedBoard;
         private readonly IReadOnlyBoardPoint _decorationPoint;
@@ -32,11 +33,22 @@
 
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
+            _decoratedBoard.Begin += OnDecoratedBoardBegin;
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
             _decoratedBoard.Taken += OnDecoratedBoardPieceTaken;
             _lines = this.FindAllLinesOnBoardWithNewPoint(_decorationPoint).ToList();
             this.InvalidateNearbyPointsOf(decorationPoint);
+
+            AutoCallOnDisposing(() =>
+            {
+                _decoratedBoard.Begin -= OnDecoratedBoardBegin;
+                _decoratedBoard.PieceDropped -= OnDecoratedBoardPieceDropped;
+                _decoratedBoard.Taken -= OnDecoratedBoardPieceTaken;
+            });
         }
+
+        [field: NonSerialized]
+        public event EventHandler<GenericEventArgs<NewGameOptions>> Begin;
 
         [field: NonSerialized]
         public event EventHandler<PieceDropEventArgs> PieceDropped;
@@ -92,6 +104,11 @@
         protected override void OnConstructingNewObject()
         {
             /* Noop */
+        }
+
+        private void OnDecoratedBoardBegin(object sender, GenericEventArgs<NewGameOptions> e)
+        {
+            RaiseEvent(Begin, e);
         }
 
         private void OnDecoratedBoardPieceDropped(object sender, PieceDropEventArgs e)

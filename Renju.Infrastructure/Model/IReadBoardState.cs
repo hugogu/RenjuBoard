@@ -2,10 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using Events;
 
     public interface IReadBoardState<out TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
+        event EventHandler<GenericEventArgs<NewGameOptions>> Begin;
+
         event EventHandler<PieceDropEventArgs> PieceDropped;
 
         event EventHandler<BoardPosition> Taken;

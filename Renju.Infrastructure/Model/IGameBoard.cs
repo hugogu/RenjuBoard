@@ -3,6 +3,8 @@
     public interface IGameBoard<out TPoint> : IReadBoardState<TPoint>
         where TPoint : IReadOnlyBoardPoint
     {
+        void BeginGame();
+
         Side? ExpectedNextTurn { get; }
 
         void SetState(BoardPosition position, Side side);

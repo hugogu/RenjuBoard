@@ -109,9 +109,8 @@
     <Compile Include="IO\IMessenger.cs" />
     <Compile Include="IO\StreamMessenger.cs" />
     <Compile Include="DisposableModelBase.cs" />
-    <Compile Include="Events\NewGameOptions.cs" />
+    <Compile Include="Model\NewGameOptions.cs" />
     <Compile Include="Events\ResolvingBoardEvent.cs" />
-    <Compile Include="Events\StartNewGameEvent.cs" />
     <Compile Include="Execution\ExecutionState.cs" />
     <Compile Include="Execution\ExecutionStepController.cs" />
     <Compile Include="Execution\ExecutionTimer.cs" />

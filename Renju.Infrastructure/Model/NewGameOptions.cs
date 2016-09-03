@@ -1,7 +1,6 @@
-﻿namespace Renju.Infrastructure.Events
+﻿namespace Renju.Infrastructure.Model
 {
     using Microsoft.Practices.Unity;
-    using Model;
 
     public class NewGameOptions
     {

@@ -2,39 +2,27 @@
 {
     using System;
     using System.Windows;
+    using Infrastructure;
     using Infrastructure.AI;
-    using Infrastructure.Events;
     using Infrastructure.Execution;
     using Infrastructure.Model;
     using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
-    using Prism.Events;
 
-    public class GameSessionController<TMainVM>
+    public class GameSessionController<TMainVM> : ModelBase
     {
         private IUnityContainer _currentGameContainer;
-        private IEventAggregator _eventAggregator;
 
         [Dependency]
         public IUnityContainer ApplicationContainer { get; set; }
 
-        public GameSessionController(IEventAggregator eventAggregator)
-        {
-            _eventAggregator = eventAggregator;
-            _eventAggregator.GetEvent<StartNewGameEvent>().Subscribe(OnNewGameEvent, ThreadOption.UIThread, true);
-        }
-
         public void StartNewGame()
         {
-            _eventAggregator.GetEvent<StartNewGameEvent>().Publish(NewGameOptions.Default);
-        }
-
-        private void OnNewGameEvent(NewGameOptions options)
-        {
-            RenewChildContainerForGame(options);
+            RenewChildContainerForGame(NewGameOptions.Default);
+            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<TMainVM>();
             var player = _currentGameContainer.Resolve<IGamePlayer>();
             player.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
-            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<TMainVM>();
+            _currentGameContainer.Resolve<IGameBoard<IReadOnlyBoardPoint>>().BeginGame();
         }
 
         private void RenewChildContainerForGame(NewGameOptions options)

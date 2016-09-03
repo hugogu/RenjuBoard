@@ -4,23 +4,22 @@
     using System.Collections.Generic;
     using Events;
     using Model;
-    using Prism.Events;
 
     public class LocalGameBoardMonitor : DisposableModelBase, IBoardMonitor
     {
         private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
 
-        public LocalGameBoardMonitor(IGameBoard<IReadOnlyBoardPoint> gameBoard, GameOptions options, IEventAggregator eventAggregator)
+        public LocalGameBoardMonitor(IGameBoard<IReadOnlyBoardPoint> gameBoard, GameOptions options)
         {
             _gameBoard = gameBoard;
             AutoDispose(options.ObserveProperty(() => options.AIFirst).Subscribe(_ => RaiseEvent(Starting)));
-            AutoDispose(eventAggregator.GetEvent<StartNewGameEvent>().Subscribe(
-                newGameOptions => RaiseEvent(Initailizing, new GenericEventArgs<int>(newGameOptions.BoardSize))));
+            gameBoard.Begin += OnGameBegin;
             gameBoard.PieceDropped += OnPieceDropped;
             gameBoard.Taken += OnPieceTaken;
 
             AutoCallOnDisposing(() =>
             {
+                gameBoard.Begin -= OnGameBegin;
                 gameBoard.Taken -= OnPieceTaken;
                 gameBoard.PieceDropped -= OnPieceDropped;
             });
@@ -48,6 +47,11 @@
             }
 
             base.Dispose(disposing);
+        }
+
+        private void OnGameBegin(object sender, GenericEventArgs<NewGameOptions> e)
+        {
+            RaiseEvent(Initailizing, new GenericEventArgs<int>(e.Message.BoardSize));
         }
 
         private void OnPieceTaken(object sender, BoardPosition e)

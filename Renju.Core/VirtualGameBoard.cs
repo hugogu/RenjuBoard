@@ -5,11 +5,12 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Linq;
-    using Microsoft.Practices.Unity.Utility;
     using Debugging;
     using Infrastructure;
+    using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Model.Extensions;
+    using Microsoft.Practices.Unity.Utility;
 
     [Serializable]
     [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
@@ -28,6 +29,9 @@
             Size = size;
             _points = new List<TPoint>(Enumerable.Range(0, size * size).Select(createPoint));
         }
+
+        [field: NonSerialized]
+        public event EventHandler<GenericEventArgs<NewGameOptions>> Begin;
 
         [field: NonSerialized]
         public virtual event EventHandler<PieceDropEventArgs> PieceDropped;
@@ -73,6 +77,11 @@
         {
             _lines.Clear();
             _lines.AddRange(lines);
+        }
+
+        protected virtual void RaiseGameBeginEvent(NewGameOptions options)
+        {
+            RaiseEvent(Begin, new GenericEventArgs<NewGameOptions>(options));
         }
 
         protected virtual void RaisePieceTakenEvent(BoardPosition position)

@@ -25,14 +25,17 @@
 
         protected override DependencyObject CreateShell()
         {
-            var regionManager = Container.Resolve<IRegionManager>();
-            regionManager.RegisterViewWithRegion(RegionNames.Logging, typeof(GenericView<LogsViewModel>));
+            Container.Resolve<IRegionManager>()
+                     .RegisterViewWithRegion(RegionNames.Logging, typeof(GenericView<LogsViewModel>))
+                     .RegisterViewWithRegion(RegionNames.Main, typeof(GenericView<MainWindowViewModel>));
 
-            return new Window()
+            var shell = new Window()
             {
                 Height = 500, Width = 960,
                 Title = Application.Current.FindResource("GameWindowTitle") as string
             };
+
+            return shell;
         }
 
         protected override void InitializeModules()
