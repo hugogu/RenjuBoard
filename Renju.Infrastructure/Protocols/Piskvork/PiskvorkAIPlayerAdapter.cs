@@ -38,56 +38,53 @@
             get { return _info; }
         }
 
-        public void RequestAbout()
+        public async Task RequestAbout()
         {
-            Messenger.SendAsync("ABOUT");
+            await Messenger.SendAsync("ABOUT");
         }
 
-        public void Begin()
-        {
-            Debug.Assert(_process.IsValueCreated);
-            Messenger.SendAsync("BEGIN");
-        }
-
-        public void End()
+        public async Task Begin()
         {
             Debug.Assert(_process.IsValueCreated);
-            Messenger.SendAsync("END");
+            await Messenger.SendAsync("BEGIN");
         }
 
-        public void Info(GameInfo info)
+        public async Task End()
+        {
+            Debug.Assert(_process.IsValueCreated);
+            await Messenger.SendAsync("END");
+        }
+
+        public async Task Info(GameInfo info)
         {
             Guard.ArgumentNotNull(info, "info");
-
             foreach (var message in info.ToMessages())
-                Messenger.SendAsync(message);
+                await Messenger.SendAsync(message);
         }
 
-        public void Initialize(int boardSize)
+        public async Task Initialize(int boardSize)
         {
-            Messenger.SendAsync("START "+ boardSize);
+            await Messenger.SendAsync("START " + boardSize);
         }
 
-        public void Load(IEnumerable<PieceDrop> drops)
+        public async Task Load(IEnumerable<PieceDrop> drops)
         {
             Debug.Assert(_process.IsValueCreated);
             Guard.ArgumentNotNull(drops, "drops");
-
-            Messenger.SendAsync("BOARD");
-            Messenger.SendAsync("DONE");
+            await Messenger.SendAsync("BOARD");
+            await Messenger.SendAsync("DONE");
         }
 
-        public void OpponentDrops(BoardPosition stone)
+        public async Task OpponentDrops(BoardPosition stone)
         {
             Debug.Assert(_process.IsValueCreated);
             Guard.ArgumentNotNull(stone, "stone");
-
-            Messenger.SendAsync("TURN " + stone.AsString());
+            await Messenger.SendAsync("TURN " + stone.AsString());
         }
 
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 Messenger.SendAsync("\0x1a");
             }
@@ -118,7 +115,7 @@
             process.Exited += OnAIProcessExit;
             AutoDispose(process);
 
-            Task.Run(new Action(RequestAbout));
+            Task.Run(async () => await RequestAbout());
 
             return process;
         }
@@ -157,7 +154,7 @@
             else if (airesponse.Contains("="))
             {
                 var items = InfoItemPattern.Matches(airesponse);
-                foreach(Match match in items)
+                foreach (Match match in items)
                 {
                     var item = match.Value;
                     var key = item.Substring(0, item.IndexOf('='));

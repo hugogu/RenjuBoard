@@ -2,7 +2,7 @@
 {
     using System.Diagnostics;
     using System.Threading;
-    using AI;
+    using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Model;
     using Protocols.Piskvork;
@@ -25,10 +25,13 @@
                     Trace.WriteLine(e.Message.AsString());
                     evt.Set();
                 };
-                adaptor.Initialize(15);
-                adaptor.OpponentDrops(new PieceDrop(7, 7, Side.Black));
-                evt.WaitOne(15000);
-                adaptor.End();
+                Task.Run(async () =>
+                {
+                    await adaptor.Initialize(15);
+                    await adaptor.OpponentDrops(new PieceDrop(7, 7, Side.Black));
+                    evt.WaitOne(15000);
+                    await adaptor.End();
+                }).Wait();
             }
         }
     }

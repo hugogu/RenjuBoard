@@ -9,7 +9,7 @@
 
     public class PiskvorkAIPlayer : RenjuBoardAIPlayer, IGamePlayer
     {
-        private PiskvorkAIPlayerAdapter _piskvorkAI;
+        private readonly PiskvorkAIPlayerAdapter _piskvorkAI;
 
         [Dependency]
         public IReadBoardState<IReadOnlyBoardPoint> RenjuBoard { get; set; }
@@ -45,20 +45,20 @@
             set { throw new NotSupportedException(); }
         }
 
-        protected override void OnInitailizing(object sender, GenericEventArgs<int> e)
+        protected override async void OnInitailizing(object sender, GenericEventArgs<int> e)
         {
-            _piskvorkAI.Initialize(e.Message);
+            await _piskvorkAI.Initialize(e.Message);
         }
 
-        protected override void OnAboutRequested(object sender, EventArgs e)
+        protected override async void OnAboutRequested(object sender, EventArgs e)
         {
-            _piskvorkAI.RequestAbout();
+            await _piskvorkAI.RequestAbout();
         }
 
-        protected override void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
+        protected override async void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
         {
             if (RenjuBoard[e.Message].Status != Side)
-                _piskvorkAI.OpponentDrops(e.Message);
+                await _piskvorkAI.OpponentDrops(e.Message);
         }
 
         protected override void OnBoardDropTaken(object sender, GenericEventArgs<BoardPosition> e)
@@ -66,14 +66,14 @@
             throw new NotSupportedException();
         }
 
-        protected override void OnBoardStarting(object sender, EventArgs e)
+        protected override async void OnBoardStarting(object sender, EventArgs e)
         {
-            _piskvorkAI.Begin();
+            await _piskvorkAI.Begin();
         }
 
-        protected override void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
+        protected override async void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
         {
-            _piskvorkAI.Load(e.Message);
+            await _piskvorkAI.Load(e.Message);
         }
 
         private void OnAISays(object sender, GenericEventArgs<string> e)

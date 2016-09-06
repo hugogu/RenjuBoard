@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Events;
     using Model;
     using Protocols;
@@ -14,18 +15,18 @@
 
         AIInfo AIInfo { get; }
 
-        void Initialize(int boardSize);
+        Task Initialize(int boardSize);
 
-        void Begin();
+        Task Begin();
 
-        void Info(GameInfo inf);
+        Task Info(GameInfo inf);
 
-        void Load(IEnumerable<PieceDrop> drops);
+        Task Load(IEnumerable<PieceDrop> drops);
 
-        void OpponentDrops(BoardPosition stone);
+        Task OpponentDrops(BoardPosition stone);
 
-        void End();
+        Task End();
 
-        void RequestAbout();
+        Task RequestAbout();
     }
 }
