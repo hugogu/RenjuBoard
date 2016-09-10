@@ -17,10 +17,8 @@
         private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
         private readonly IDropResolver _resolver;
 
-        public ResolverBasedAIGamePlayer(IBoardOperator operater, IDropResolver resolver)
-            : base(operater)
+        public ResolverBasedAIGamePlayer(IDropResolver resolver)
         {
-            Guard.ArgumentNotNull(operater, "operater");
             Guard.ArgumentNotNull(resolver, "resolver");
 
             _resolver = resolver;

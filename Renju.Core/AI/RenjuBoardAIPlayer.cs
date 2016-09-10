@@ -7,6 +7,7 @@
     using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Protocols;
+    using Microsoft.Practices.Unity;
     using Microsoft.Practices.Unity.Utility;
 
     public abstract class RenjuBoardAIPlayer : DisposableModelBase, IGamePlayer
@@ -15,13 +16,6 @@
         public virtual string Country { get; set; }
         public virtual string Name { get; set; }
         public virtual Side Side { get; set; } = Side.White;
-
-        public RenjuBoardAIPlayer(IBoardOperator boardOperator)
-        {
-            Guard.ArgumentNotNull(boardOperator, "boardOperator");
-
-            Operator = boardOperator;
-        }
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
@@ -47,7 +41,8 @@
             });
         }
 
-        protected IBoardOperator Operator { get; private set; }
+        [Dependency]
+        public virtual IBoardOperator Operator { get; internal set; }
 
         protected abstract void OnInitailizing(object sender, GenericEventArgs<int> e);
 

@@ -1,6 +1,5 @@
 ﻿namespace Renju.Infrastructure.Model
 {
-    using System.Collections.Generic;
     using Protocols;
 
     public interface IGamePlayer

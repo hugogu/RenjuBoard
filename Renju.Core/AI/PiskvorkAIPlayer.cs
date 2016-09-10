@@ -4,15 +4,17 @@
     using System.Collections.Generic;
     using Infrastructure.Events;
     using Infrastructure.Model;
-    using Infrastructure.Protocols;
     using Infrastructure.Protocols.Piskvork;
+    using Microsoft.Practices.Unity;
 
     public class PiskvorkAIPlayer : RenjuBoardAIPlayer, IGamePlayer
     {
         private PiskvorkAIPlayerAdapter _piskvorkAI;
 
-        public PiskvorkAIPlayer(string piskvorkAIExecutionFile, IBoardOperator boardOperator)
-            : base(boardOperator)
+        [Dependency]
+        public IReadBoardState<IReadOnlyBoardPoint> RenjuBoard { get; set; }
+
+        public PiskvorkAIPlayer(string piskvorkAIExecutionFile)
         {
             _piskvorkAI = new PiskvorkAIPlayerAdapter(piskvorkAIExecutionFile);
             _piskvorkAI.Dropping += OnAIDropping;
@@ -55,7 +57,8 @@
 
         protected override void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
         {
-            _piskvorkAI.OpponentDrops(e.Message);
+            if (RenjuBoard[e.Message].Status != Side)
+                _piskvorkAI.OpponentDrops(e.Message);
         }
 
         protected override void OnBoardDropTaken(object sender, GenericEventArgs<BoardPosition> e)

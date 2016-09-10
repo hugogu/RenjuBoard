@@ -1,5 +1,4 @@
-﻿using System;
-namespace Renju.Infrastructure.AI
+﻿namespace Renju.Infrastructure.AI
 {
     using Model;
 

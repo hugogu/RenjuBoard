@@ -26,10 +26,13 @@
         private static void RegisterTypes(IUnityContainer container)
         {
             container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IGamePlayer, ResolverBasedAIGamePlayer>(new ContainerControlledLifetimeManager());
+            // TODO: Investigate why this registration is nessesary and why only one GameBoard is created. (Expected.)
+            container.RegisterType<IReadBoardState<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>("AI", new ContainerControlledLifetimeManager());
             container.RegisterType<IGameRuleEngine, DefaultGameRuleEngine>();
+            container.RegisterType<IGamePlayer, ResolverBasedAIGamePlayer>(new ContainerControlledLifetimeManager());
+            //container.RegisterType<IGamePlayer, PiskvorkAIPlayer>(new ContainerControlledLifetimeManager(), new InjectionConstructor(@".\piskvork\pbrain-yixin16_64.exe"));
         }
     }
 }
