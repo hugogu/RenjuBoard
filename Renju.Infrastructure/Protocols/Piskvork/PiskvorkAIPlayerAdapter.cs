@@ -145,13 +145,14 @@
         private void OnReceivingAIMessage(string airesponse)
         {
             var drop = DropPattern.Match(airesponse);
-            if (drop.Success)
-            {
-                RaiseEvent(Dropping, new GenericEventArgs<BoardPosition>(drop.Value.AsBoardPosition()));
-            }
-            else if (airesponse.StartsWith("MESSAGE") || airesponse.StartsWith("DEBUG") || airesponse.StartsWith("ERROR"))
+            
+            if (airesponse.StartsWith("MESSAGE") || airesponse.StartsWith("DEBUG") || airesponse.StartsWith("ERROR"))
             {
                 RaiseEvent(Says, new GenericEventArgs<string>(airesponse));
+            }
+            else if (drop.Success)
+            {
+                RaiseEvent(Dropping, new GenericEventArgs<BoardPosition>(drop.Value.AsBoardPosition()));
             }
             else if (airesponse.Contains("="))
             {
