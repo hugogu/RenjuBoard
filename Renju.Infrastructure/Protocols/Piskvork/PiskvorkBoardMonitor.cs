@@ -63,7 +63,7 @@
             }
             else if (command.StartsWith("TURN", StringComparison.Ordinal))
             {
-                HandleStartCommand(command);
+                HandleTurnCommand(command);
             }
             else if (command.StartsWith("INFO", StringComparison.Ordinal))
             {
