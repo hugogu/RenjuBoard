@@ -20,7 +20,6 @@
                 WithName.TypeName,
                 WithLifetime.PerResolve);
             Container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
-            Container.RegisterType(typeof(GameSessionController<>), new ContainerControlledLifetimeManager());
         }
 
         private static void RegisterTypes(IUnityContainer container)

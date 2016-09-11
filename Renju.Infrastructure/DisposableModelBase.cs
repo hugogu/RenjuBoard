@@ -46,9 +46,11 @@
 
         protected void AutoDispose(IDisposable disposable)
         {
-            Guard.ArgumentNotNull(disposable, "disposable");
-            CheckDisposableReference(disposable);
-            _disposables.Add(disposable);
+            if (disposable != null)
+            {
+                CheckDisposableReference(disposable);
+                _disposables.Add(disposable);
+            }
         }
 
         [Conditional("DEBUG")]

@@ -21,7 +21,7 @@
         }
 
         [Dependency]
-        public GameSessionController<MainWindowViewModel> GameSessionController { get; set; }
+        public GameSessionController GameSessionController { get; set; }
 
         [Dependency]
         public BoardRecorder BoardRecorder { get; internal set; }

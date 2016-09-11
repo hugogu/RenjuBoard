@@ -1,15 +1,17 @@
-﻿namespace Renju.Core
+﻿namespace RenjuBoard
 {
     using System;
     using System.Windows;
-    using Infrastructure;
-    using Infrastructure.AI;
-    using Infrastructure.Execution;
-    using Infrastructure.Model;
-    using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
+    using Renju.Core;
+    using Renju.Infrastructure;
+    using Renju.Infrastructure.AI;
+    using Renju.Infrastructure.Execution;
+    using Renju.Infrastructure.Model;
+    using Renju.Infrastructure.Protocols;
+    using ViewModels;
 
-    public class GameSessionController<TMainVM> : ModelBase
+    public class GameSessionController : ModelBase
     {
         private IUnityContainer _currentGameContainer;
 
@@ -19,7 +21,7 @@
         public void StartNewGame()
         {
             RenewChildContainerForGame(NewGameOptions.Default);
-            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<TMainVM>();
+            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
             var player = _currentGameContainer.Resolve<IGamePlayer>();
             player.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
             _currentGameContainer.Resolve<IGameBoard<IReadOnlyBoardPoint>>().BeginGame();

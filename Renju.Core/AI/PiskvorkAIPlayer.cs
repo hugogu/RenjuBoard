@@ -2,14 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Protocols.Piskvork;
     using Microsoft.Practices.Unity;
 
-    public class PiskvorkAIPlayer : RenjuBoardAIPlayer, IGamePlayer
+    public class PiskvorkAIPlayer : RenjuBoardAIPlayer
     {
-        private readonly PiskvorkAIPlayerAdapter _piskvorkAI;
+        private readonly IAIController _piskvorkAI;
 
         [Dependency]
         public IReadBoardState<IReadOnlyBoardPoint> RenjuBoard { get; set; }
@@ -24,7 +25,7 @@
                 _piskvorkAI.Dropping -= OnAIDropping;
                 _piskvorkAI.Says -= OnAISays;
             });
-            AutoDispose(_piskvorkAI);
+            AutoDispose(_piskvorkAI as IDisposable);
         }
 
         public override string AuthorName

@@ -92,7 +92,6 @@
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameBoardDecoration.cs" />
     <Compile Include="GameBoardUtils.cs" />
-    <Compile Include="GameSessionController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\BlackForbiddenRules.cs" />
     <Compile Include="Rules\DropValidationRule.cs" />

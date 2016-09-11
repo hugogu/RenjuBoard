@@ -38,6 +38,7 @@
                 new InjectionFactory(c => c.BuildUp(new GameOptions().CopyFromObject(Settings.Default))));
             container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
             container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
+            container.RegisterType<GameSessionController>(new ContainerControlledLifetimeManager());
         }
     }
 }

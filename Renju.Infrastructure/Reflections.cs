@@ -1,10 +1,12 @@
 ﻿namespace Renju.Infrastructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Microsoft.Practices.Unity;
     using Microsoft.Practices.Unity.Utility;
 
     public static class Reflections
@@ -52,6 +54,16 @@
             }
 
             return target;
+        }
+
+        public static IEnumerable<Type> FindAllImplementations(this Type baseType)
+        {
+            foreach (Type type in from t in AllClasses.FromAssembliesInBasePath()
+                                  where baseType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract
+                                  select t)
+            {
+                yield return type;
+            }
         }
 
         private static Action<T, object> CreatePropertySetter<T>(PropertyInfo sourceProperty, PropertyInfo targetProperty)
