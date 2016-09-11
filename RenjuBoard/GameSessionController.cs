@@ -1,6 +1,7 @@
 ﻿namespace RenjuBoard
 {
     using System;
+    using System.Diagnostics;
     using System.Windows;
     using Microsoft.Practices.Unity;
     using Renju.Core;
@@ -22,7 +23,10 @@
         {
             RenewChildContainerForGame(NewGameOptions.Default);
             Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
-            var player = _currentGameContainer.Resolve<IGamePlayer>();
+            var newGameViewModel = _currentGameContainer.Resolve<NewGameSettingsViewModel>();
+            Debug.Assert(newGameViewModel.WhitePlayerBuilder.Container == _currentGameContainer);
+            newGameViewModel.CreateViewModelDialog("Start New Game").ShowDialog();
+            var player = newGameViewModel.WhitePlayerBuilder.CreatedPlayer;
             player.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
             _currentGameContainer.Resolve<IGameBoard<IReadOnlyBoardPoint>>().BeginGame();
         }
