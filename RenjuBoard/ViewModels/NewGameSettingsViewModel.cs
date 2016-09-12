@@ -14,13 +14,13 @@
         private GamePlayerSetupViewModel _blackPlayerSetupModel;
         private GamePlayerSetupViewModel _whitePlayerSetupModel;
 
-        public Type BlackPlayer
+        public Type BlackPlayerType
         {
             get { return _blackPlayer; }
             set { SetProperty(ref _blackPlayer, value); }
         }
 
-        public Type WhitePlayer
+        public Type WhitePlayerType
         {
             get { return _whitePlayer; }
             set { SetProperty(ref _whitePlayer, value); }
@@ -43,13 +43,13 @@
         public NewGameSettingsViewModel(IUnityContainer container)
         {
             GamePlayers = typeof(IGamePlayer).FindAllImplementations().Concat(new Type[] { null });
-            AutoDispose(this.ObserveProperty(() => BlackPlayer).Subscribe(e =>
-                BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayer) { Container = container }));
-            AutoDispose(this.ObserveProperty(() => WhitePlayer).Subscribe(e =>
-                WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayer) { Container = container }));
+            AutoDispose(this.ObserveProperty(() => BlackPlayerType).Subscribe(e =>
+                BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayerType) { Container = container }));
+            AutoDispose(this.ObserveProperty(() => WhitePlayerType).Subscribe(e =>
+                WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayerType) { Container = container }));
 
-            BlackPlayer = GamePlayers.First();
-            WhitePlayer = GamePlayers.First();
+            BlackPlayerType = GamePlayers.First();
+            WhitePlayerType = GamePlayers.First();
         }
     }
 }

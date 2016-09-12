@@ -46,9 +46,10 @@
         }
     }
 
-    public class ParameterModel
+    public class ParameterModel : ModelBase
     {
         private readonly ParameterInfo _parameterInfo;
+        private object _value;
 
         public ParameterModel(ParameterInfo parameter, IEnumerable<object> candidates)
         {
@@ -61,7 +62,16 @@
             get { return _parameterInfo.Name; }
         }
 
-        public object SelectedCandidate { get; set; }
+        public bool HasCandidates
+        {
+            get { return Candidates.Any(); }
+        }
+
+        public object SelectedCandidate
+        {
+            get { return _value; }
+            set { SetProperty(ref _value, value); }
+        }
 
         public IEnumerable<object> Candidates { get; private set; }
 
@@ -71,7 +81,14 @@
             {
                 if (parameterInfo.ParameterType == typeof(string))
                 {
-                    yield return new ParameterModel(parameterInfo, Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories));
+                    if (parameterInfo.Name.EndsWith("file", StringComparison.OrdinalIgnoreCase))
+                        yield return new ParameterModel(parameterInfo, Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories));
+                    else
+                        yield return new ParameterModel(parameterInfo, new object[0]) { SelectedCandidate = String.Empty };
+                }
+                else if (parameterInfo.ParameterType.IsEnum)
+                {
+                    yield return new ParameterModel(parameterInfo, Enum.GetValues(parameterInfo.ParameterType).Cast<object>());
                 }
                 else if (parameterInfo.ParameterType.IsInterface)
                 {
