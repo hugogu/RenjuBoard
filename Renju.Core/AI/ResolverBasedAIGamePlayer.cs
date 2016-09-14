@@ -2,9 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Reflection;
     using System.Threading;
+    using Infrastructure;
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
@@ -12,12 +14,13 @@
     using Microsoft.Practices.Unity;
     using Microsoft.Practices.Unity.Utility;
 
+    [DisplayName("Renju Built-in AI")]
     public class ResolverBasedAIGamePlayer : RenjuBoardAIPlayer
     {
         private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
         private readonly IDropResolver _resolver;
 
-        public ResolverBasedAIGamePlayer(IDropResolver resolver)
+        public ResolverBasedAIGamePlayer([Description("AI")] IDropResolver resolver)
         {
             Guard.ArgumentNotNull(resolver, "resolver");
 
@@ -29,6 +32,27 @@
 
         [Dependency("AI")]
         public IGameBoard<IReadOnlyBoardPoint> VirtualAIGameBoard { get; set; }
+
+        [ReadOnly(true)]
+        public override string Name
+        {
+            get { return _resolver.GetType().Assembly.GetTitle(); }
+            set { throw new NotSupportedException(); }
+        }
+
+        [ReadOnly(true)]
+        public override string AuthorName
+        {
+            get { return _resolver.GetType().Assembly.GetCompany(); }
+            set { throw new NotSupportedException(); }
+        }
+
+        [ReadOnly(true)]
+        public override string Country
+        {
+            get { return _resolver.GetType().Assembly.GetCultureInfo().NativeName; }
+            set { throw new NotSupportedException(); }
+        }
 
         protected override void Dispose(bool disposing)
         {

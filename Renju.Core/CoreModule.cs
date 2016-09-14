@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using AI;
     using Infrastructure.Model;
     using Microsoft.Practices.Unity;
     using Prism.Modularity;
@@ -24,14 +23,18 @@
 
         private static void RegisterTypes(IUnityContainer container)
         {
+            container.RegisterTypes(
+                AllClasses.FromLoadedAssemblies().Where(t => typeof(IGamePlayer).IsAssignableFrom(t)),
+                WithMappings.None,
+                WithName.Default,
+                WithLifetime.ContainerControlled);
+
             container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
             // TODO: Investigate why this registration is nessesary and why only one GameBoard is created. (Expected.)
             container.RegisterType<IReadBoardState<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>(new ContainerControlledLifetimeManager());
             container.RegisterType<IGameBoard<IReadOnlyBoardPoint>, GameBoard>("AI", new ContainerControlledLifetimeManager());
             container.RegisterType<IGameRuleEngine, DefaultGameRuleEngine>();
-            container.RegisterType<IGamePlayer, ResolverBasedAIGamePlayer>(new ContainerControlledLifetimeManager());
-            //container.RegisterType<IGamePlayer, PiskvorkAIPlayer>(new ContainerControlledLifetimeManager(), new InjectionConstructor(@".\piskvork\pbrain-yixin16_64.exe"));
         }
     }
 }

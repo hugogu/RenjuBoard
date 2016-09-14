@@ -113,6 +113,7 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="GameSessionController.cs" />
+    <Compile Include="Models\ResolveOverrideItem.cs" />
     <Compile Include="RenjuBoardBootstrapper.cs" />
     <Compile Include="ViewModels\BoardTimingViewModel.cs" />
     <Compile Include="ViewModels\GamePlayerSetupViewModel.cs" />

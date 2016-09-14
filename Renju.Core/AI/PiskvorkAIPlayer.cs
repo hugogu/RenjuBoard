@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Protocols.Piskvork;
     using Microsoft.Practices.Unity;
 
+    [DisplayName("Piskvork AI")]
     public class PiskvorkAIPlayer : RenjuBoardAIPlayer
     {
         private readonly IAIController _piskvorkAI;
@@ -15,7 +17,7 @@
         [Dependency]
         public IReadBoardState<IReadOnlyBoardPoint> RenjuBoard { get; set; }
 
-        public PiskvorkAIPlayer(string piskvorkAIExecutionFile)
+        public PiskvorkAIPlayer([Description("Execution File")] string piskvorkAIExecutionFile)
         {
             _piskvorkAI = new PiskvorkAIPlayerAdapter(piskvorkAIExecutionFile);
             _piskvorkAI.Dropping += OnAIDropping;

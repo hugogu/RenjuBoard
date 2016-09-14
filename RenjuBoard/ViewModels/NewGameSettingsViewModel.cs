@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Microsoft.Practices.Unity;
     using Renju.Infrastructure;
@@ -42,14 +43,15 @@
 
         public NewGameSettingsViewModel(IUnityContainer container)
         {
-            GamePlayers = typeof(IGamePlayer).FindAllImplementations().Concat(new Type[] { null });
+            GamePlayers = typeof(IGamePlayer).FindAllImplementations();
+            Debug.Assert(GamePlayers.Any(), "No Gameplayer found");
             AutoDispose(this.ObserveProperty(() => BlackPlayerType).Subscribe(e =>
                 BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayerType) { Container = container }));
             AutoDispose(this.ObserveProperty(() => WhitePlayerType).Subscribe(e =>
                 WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayerType) { Container = container }));
 
             BlackPlayerType = GamePlayers.First();
-            WhitePlayerType = GamePlayers.First();
+            WhitePlayerType = GamePlayers.Skip(1).First();
         }
     }
 }

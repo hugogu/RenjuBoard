@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using Infrastructure;
     using Infrastructure.Events;
@@ -12,9 +13,15 @@
 
     public abstract class RenjuBoardAIPlayer : DisposableModelBase, IGamePlayer
     {
+        [DisplayName("Author Name")]
         public virtual string AuthorName { get; set; }
+
+        [DisplayName("Country")]
         public virtual string Country { get; set; }
+
+        [DisplayName("Name")]
         public virtual string Name { get; set; }
+
         public virtual Side Side { get; set; } = Side.White;
 
         public virtual void PlayOn(IBoardMonitor monitor)

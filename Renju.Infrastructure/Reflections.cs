@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -64,6 +66,35 @@
             {
                 yield return type;
             }
+        }
+
+        public static string GetDisplayName(this Type type)
+        {
+            var nameAttribute = type.GetCustomAttribute<DisplayNameAttribute>();
+
+            return nameAttribute == null ? type.Name : nameAttribute.DisplayName;
+        }
+
+        public static string GetDisplayName(this ParameterInfo parameterInfo)
+        {
+            var descriptionAttribute = parameterInfo.GetCustomAttribute<DescriptionAttribute>();
+
+            return descriptionAttribute == null ? parameterInfo.Name : descriptionAttribute.Description;
+        }
+
+        public static string GetTitle(this Assembly assembly)
+        {
+            return assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
+        }
+
+        public static string GetCompany(this Assembly assembly)
+        {
+            return assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
+        }
+
+        public static CultureInfo GetCultureInfo(this Assembly assembly)
+        {
+            return CultureInfo.GetCultureInfo(assembly.GetCustomAttribute<AssemblyCultureAttribute>().Culture);
         }
 
         private static Action<T, object> CreatePropertySetter<T>(PropertyInfo sourceProperty, PropertyInfo targetProperty)

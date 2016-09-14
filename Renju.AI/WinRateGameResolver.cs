@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
@@ -14,6 +15,7 @@
     using Microsoft.Practices.Unity;
     using Prism.Events;
 
+    [DisplayName("Rating based AI")]
     public class WinRateGameResolver : ReportExecutionObject, IDropResolver
     {
         private readonly IDropSelector _selector;
