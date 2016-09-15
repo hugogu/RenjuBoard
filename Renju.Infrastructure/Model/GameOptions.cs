@@ -11,7 +11,6 @@
         private bool _showPreviewLine = true;
         private bool _showCalibrationLabels = true;
         private bool _isAITimeLimited = true;
-        private bool _aiFirst = false;
         private bool _steppingAI = false;
         private int _aiAggresiveBonus = 0;
         private int _aiStepTimeLimit = 20000;
@@ -56,12 +55,6 @@
         {
             get { return _steppingAI; }
             set { SetProperty(ref _steppingAI, value); }
-        }
-
-        public bool AIFirst
-        {
-            get { return _aiFirst; }
-            set { SetProperty(ref _aiFirst, value); }
         }
 
         public bool IsAITimeLimited

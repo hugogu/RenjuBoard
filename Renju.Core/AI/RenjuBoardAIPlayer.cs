@@ -22,7 +22,7 @@
         [DisplayName("Name")]
         public virtual string Name { get; set; }
 
-        public virtual Side Side { get; set; } = Side.White;
+        public virtual Side Side { get; set; }
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
@@ -53,7 +53,7 @@
 
         protected abstract void OnInitailizing(object sender, GenericEventArgs<int> e);
 
-        protected abstract void OnBoardStarting(object sender, EventArgs e);
+        protected abstract void OnPlayerStarting();
 
         protected virtual void OnGameEnded(object sender, EventArgs e)
         {
@@ -68,6 +68,14 @@
 
         protected virtual void OnAboutRequested(object sender, EventArgs e)
         {
+        }
+
+        private void OnBoardStarting(object sender, EventArgs e)
+        {
+            if (Side == Side.Black)
+            {
+                OnPlayerStarting();
+            }
         }
     }
 }

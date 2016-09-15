@@ -18,13 +18,12 @@
     public class ResolverBasedAIGamePlayer : RenjuBoardAIPlayer
     {
         private readonly CancellationTokenSource _aiResolvingCancelTokenSource = new CancellationTokenSource();
-        private readonly IDropResolver _resolver;
 
         public ResolverBasedAIGamePlayer([Description("AI")] IDropResolver resolver)
         {
             Guard.ArgumentNotNull(resolver, "resolver");
 
-            _resolver = resolver;
+            Resolver = resolver;
 
             resolver.CancelTaken = _aiResolvingCancelTokenSource.Token;
             AutoDispose(_aiResolvingCancelTokenSource);
@@ -33,29 +32,34 @@
         [Dependency("AI")]
         public IGameBoard<IReadOnlyBoardPoint> VirtualAIGameBoard { get; set; }
 
+        public IDropResolver Resolver { get; private set; }
+
         [ReadOnly(true)]
         public override string Name
         {
-            get { return _resolver.GetType().Assembly.GetTitle(); }
+            get { return Resolver.GetType().Assembly.GetTitle(); }
             set { throw new NotSupportedException(); }
         }
 
         [ReadOnly(true)]
         public override string AuthorName
         {
-            get { return _resolver.GetType().Assembly.GetCompany(); }
+            get { return Resolver.GetType().Assembly.GetCompany(); }
             set { throw new NotSupportedException(); }
         }
 
         [ReadOnly(true)]
         public override string Country
         {
-            get { return _resolver.GetType().Assembly.GetCultureInfo().NativeName; }
+            get { return Resolver.GetType().Assembly.GetCultureInfo().NativeName; }
             set { throw new NotSupportedException(); }
         }
 
         protected override void Dispose(bool disposing)
         {
+            if (Disposed)
+                return;
+
             if (disposing)
             {
                 _aiResolvingCancelTokenSource.Cancel();
@@ -70,11 +74,11 @@
             Trace.TraceInformation("Initializing board size " + e.Message);
         }
 
-        protected override void OnBoardStarting(object sender, EventArgs e)
+        protected override void OnPlayerStarting()
         {
             Debug.Assert(VirtualAIGameBoard.DropsCount == 0, "Starting event is not valid when game already started.");
-            Side = Side.Black;
-            VirtualAIGameBoard.Drop(new BoardPosition(7, 7), OperatorType.AI);
+            Debug.Assert(Side == Side.Black);
+            Operator.Put(new PieceDrop(new BoardPosition(7, 7), Side));
         }
 
         protected override void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
@@ -100,7 +104,7 @@
 
         private async void OnPieceDropped()
         {
-            var drop = await _resolver.ResolveAsync(VirtualAIGameBoard, Side);
+            var drop = await Resolver.ResolveAsync(VirtualAIGameBoard, Side);
             if (_aiResolvingCancelTokenSource.IsCancellationRequested)
                 return;
             Operator.Put(new PieceDrop(drop.Position, Side));

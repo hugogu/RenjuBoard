@@ -46,9 +46,9 @@
             GamePlayers = typeof(IGamePlayer).FindAllImplementations();
             Debug.Assert(GamePlayers.Any(), "No Gameplayer found");
             AutoDispose(this.ObserveProperty(() => BlackPlayerType).Subscribe(e =>
-                BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayerType) { Container = container }));
+                BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayerType, Side.Black) { Container = container }));
             AutoDispose(this.ObserveProperty(() => WhitePlayerType).Subscribe(e =>
-                WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayerType) { Container = container }));
+                WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayerType, Side.White) { Container = container }));
 
             BlackPlayerType = GamePlayers.First();
             WhitePlayerType = GamePlayers.Skip(1).First();

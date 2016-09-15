@@ -69,6 +69,8 @@
                        LastChildFill="False"
                        DockPanel.Dock="Bottom" >
                 <Button Content="OK"
+                        IsDefault="True"
+                        IsCancel="True"
                         DockPanel.Dock="Right" />
             </DockPanel>
             <Grid>

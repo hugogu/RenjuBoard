@@ -9,10 +9,9 @@
     {
         private readonly IGameBoard<IReadOnlyBoardPoint> _gameBoard;
 
-        public LocalGameBoardMonitor(IGameBoard<IReadOnlyBoardPoint> gameBoard, GameOptions options)
+        public LocalGameBoardMonitor(IGameBoard<IReadOnlyBoardPoint> gameBoard)
         {
             _gameBoard = gameBoard;
-            AutoDispose(options.ObserveProperty(() => options.AIFirst).Subscribe(_ => RaiseEvent(Starting)));
             gameBoard.Begin += OnGameBegin;
             gameBoard.PieceDropped += OnPieceDropped;
             gameBoard.Taken += OnPieceTaken;
@@ -52,6 +51,7 @@
         private void OnGameBegin(object sender, GenericEventArgs<NewGameOptions> e)
         {
             RaiseEvent(Initailizing, new GenericEventArgs<int>(e.Message.BoardSize));
+            RaiseEvent(Starting);
         }
 
         private void OnPieceTaken(object sender, BoardPosition e)

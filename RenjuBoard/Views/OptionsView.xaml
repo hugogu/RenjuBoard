@@ -71,8 +71,6 @@
                                          Text="{Binding AIStepTimeLimit}" />
                             </Grid>
                         </GroupBox>
-                        <CheckBox Content="AI First"
-                                  IsChecked="{Binding AIFirst}" />
                         <CheckBox Content="Stepping AI"
                                   IsChecked="{Binding SteppingAI}" />
                     </StackPanel>

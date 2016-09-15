@@ -69,7 +69,7 @@
             throw new NotSupportedException();
         }
 
-        protected override async void OnBoardStarting(object sender, EventArgs e)
+        protected override async void OnPlayerStarting()
         {
             await _piskvorkAI.Begin();
         }

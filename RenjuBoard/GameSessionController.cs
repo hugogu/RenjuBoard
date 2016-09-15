@@ -22,12 +22,17 @@
         public void StartNewGame()
         {
             RenewChildContainerForGame(NewGameOptions.Default);
-            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
+
             var newGameViewModel = _currentGameContainer.Resolve<NewGameSettingsViewModel>();
             Debug.Assert(newGameViewModel.WhitePlayerBuilder.Container == _currentGameContainer);
             newGameViewModel.CreateViewModelDialog("Start New Game").ShowDialog();
-            var player = newGameViewModel.WhitePlayerBuilder.CreatedPlayer;
-            player.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
+            var blackplayer = newGameViewModel.BlackPlayerBuilder.CreatedPlayer;
+            var whiteplayer = newGameViewModel.WhitePlayerBuilder.CreatedPlayer;
+            Debug.Assert(blackplayer.Side == Side.Black);
+            Debug.Assert(whiteplayer.Side == Side.White);
+            Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
+            whiteplayer.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
+            blackplayer.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
             _currentGameContainer.Resolve<IGameBoard<IReadOnlyBoardPoint>>().BeginGame();
         }
 

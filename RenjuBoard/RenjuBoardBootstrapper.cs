@@ -31,7 +31,7 @@
             var shell = new Window()
             {
                 Height = 500, Width = 960,
-                Title = Application.Current.FindResource("GameWindowTitle") as string
+                Title = Application.Current.FindResource("GameWindowTitle") as string,
             };
 
             return shell;

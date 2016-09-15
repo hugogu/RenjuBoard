@@ -2,8 +2,9 @@
 {
     using System;
     using System.Reactive.Linq;
+    using Microsoft.Practices.Unity;
+    using Renju.Core;
     using Renju.Infrastructure;
-    using Renju.Infrastructure.AI;
     using Renju.Infrastructure.Execution;
     using Renju.Infrastructure.Model;
 
@@ -12,13 +13,14 @@
         private readonly ExecutionTimer _blackTimer;
         private readonly ExecutionTimer _whiteTimer;
 
-        // TODO: Support two AI and zero AI.
-        public BoardTimingViewModel(GameOptions options, IGameBoard<IReadOnlyBoardPoint> gameBoard, IDropResolver ai)
+        public BoardTimingViewModel(IGameBoard<IReadOnlyBoardPoint> gameBoard,
+            [Dependency("Black")] IGamePlayer blackPlayer,
+            [Dependency("White")] IGamePlayer whitePlayer)
         {
-            var humanTimer = new SideExecutionReporter(gameBoard, options.AIFirst ? Side.White : Side.Black);
-            _blackTimer = options.AIFirst ? ai.ExecutionTimer : humanTimer.ExecutionTimer;
-            _whiteTimer = options.AIFirst ? humanTimer.ExecutionTimer : ai.ExecutionTimer;
-            AutoDispose(humanTimer);
+            _blackTimer = gameBoard.GetExecutionTimer(blackPlayer);
+            _whiteTimer = gameBoard.GetExecutionTimer(whitePlayer);
+            AutoDispose(_blackTimer);
+            AutoDispose(_whiteTimer);
             AutoDispose(_blackTimer.ObserveProperty(() => _blackTimer.TotalExecutionTime)
                                    .Subscribe(_ => OnPropertyChanged(() => BlackTime)));
             AutoDispose(_whiteTimer.ObserveProperty(() => _whiteTimer.TotalExecutionTime)

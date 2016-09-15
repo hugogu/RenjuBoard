@@ -10,7 +10,8 @@
     {
         [NonSerialized]
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private bool _disposed;
+
+        public bool Disposed { get; protected set; }
 
         ~DisposableModelBase()
         {
@@ -25,7 +26,7 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (Disposed)
                 return;
 
             if (disposing)
@@ -35,7 +36,7 @@
                 _disposables.Dispose();
             }
 
-            _disposed = true;
+            Disposed = true;
         }
 
         protected void AutoCallOnDisposing(Action action)
