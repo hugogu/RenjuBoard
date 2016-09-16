@@ -28,6 +28,7 @@
             newGameViewModel.CreateViewModelDialog("Start New Game").ShowDialog();
             var blackplayer = newGameViewModel.BlackPlayerBuilder.CreatedPlayer;
             var whiteplayer = newGameViewModel.WhitePlayerBuilder.CreatedPlayer;
+            Debug.Assert(blackplayer != whiteplayer);
             Debug.Assert(blackplayer.Side == Side.Black);
             Debug.Assert(whiteplayer.Side == Side.White);
             Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();

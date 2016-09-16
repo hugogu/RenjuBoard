@@ -86,7 +86,16 @@
         {
             if (disposing)
             {
-                Messenger.SendAsync("\0x1a");
+                try
+                {
+                    // Send Stream Ending to Terminate the process.
+                    Messenger.SendAsync("\0x1a");
+                }
+                catch (InvalidOperationException)
+                {
+                    Messenger.Dispose();
+                    Process.Dispose();
+                }
             }
             base.Dispose(disposing);
         }

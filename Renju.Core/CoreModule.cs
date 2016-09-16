@@ -27,7 +27,7 @@
                 AllClasses.FromLoadedAssemblies().Where(t => typeof(IGamePlayer).IsAssignableFrom(t)),
                 WithMappings.None,
                 WithName.Default,
-                WithLifetime.ContainerControlled);
+                WithLifetime.PerResolve);
 
             container.RegisterType<BoardRecorder>(new ContainerControlledLifetimeManager());
             // TODO: Investigate why this registration is nessesary and why only one GameBoard is created. (Expected.)
