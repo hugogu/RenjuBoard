@@ -16,6 +16,7 @@
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding IsReadOnly}" Value="True">
                 <Setter TargetName="valueEditor" Property="BorderThickness" Value="0" />
+                <Setter TargetName="valueEditor" Property="IsTabStop" Value="False" />
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
@@ -45,7 +46,8 @@
         </DataTemplate.Triggers>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:GamePlayerSetupViewModel}">
-        <ItemsControl ItemsSource="{Binding DisplayItems}">
+        <ItemsControl ItemsSource="{Binding DisplayItems}"
+                      IsTabStop="False">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Grid.IsSharedSizeScope="True" />
@@ -77,6 +79,8 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="12" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <GroupBox Header="Black" Grid.Column="0">
@@ -89,7 +93,19 @@
                         <ContentPresenter Content="{Binding BlackPlayerBuilder}" />
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Header="White" Grid.Column="2">
+                <Button Grid.Column="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" 
+                        MinWidth="20"
+                        Padding="6"
+                        Command="{Binding SwitchPlayer}">
+                    <Path Data="M8,3 L3,6 13,6 M3,10 L13,10 8,13"
+                          Stretch="Uniform"
+                          StrokeThickness="1"
+                          Stroke="Black"
+                          Width="16" Height="16" />
+                </Button>
+                <GroupBox Header="White" Grid.Column="4">
                     <DockPanel>
                         <ComboBox ItemsSource="{Binding GamePlayers}"
                                   DisplayMemberPath="Name"

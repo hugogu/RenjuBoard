@@ -74,7 +74,10 @@
             if (dataType == typeof(string))
             {
                 if (valueName.EndsWith("file", StringComparison.OrdinalIgnoreCase))
-                    return Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories);
+                {
+                    var entryFileName = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().CodeBase);
+                    return Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories).Where(f => !f.Contains(entryFileName));
+                }
                 else
                     return new object[0];
             }

@@ -1,13 +1,14 @@
 ﻿namespace Renju.Infrastructure
 {
     using System.Windows;
+    using System.Windows.Media;
 
     public static class DialogUtils
     {
         public static Window CreateViewModelDialog<T>(this T viewModel, string title)
             where T : ModelBase
         {
-            return new Window()
+            var window = new Window()
             {
                 Title = title,
                 DataContext = viewModel,
@@ -16,8 +17,13 @@
                 ShowInTaskbar = false,
                 ShowActivated = true,
                 ResizeMode = ResizeMode.CanMinimize,
-                SizeToContent = SizeToContent.WidthAndHeight
+                SizeToContent = SizeToContent.WidthAndHeight,
+                UseLayoutRounding = true,
+                SnapsToDevicePixels = true,
             };
+            TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
+
+            return window;
         }
     }
 }

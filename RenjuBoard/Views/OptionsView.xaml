@@ -77,6 +77,7 @@
                 </TabItem>
                 <TabItem Header="Rules">
                     <ItemsControl Margin="5"
+                                  IsTabStop="False"
                                   ItemsSource="{Binding Rules}" />
                 </TabItem>
             </TabControl>

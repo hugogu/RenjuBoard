@@ -6,9 +6,9 @@
     using System.Windows.Input;
     using Microsoft.Practices.Unity;
     using Prism.Commands;
+    using Properties;
     using Renju.Infrastructure;
     using Renju.Infrastructure.Model;
-    using Properties;
 
     public class OptionsViewModel : ModelBase
     {
@@ -34,20 +34,9 @@
         private void OnShowOptionsCommand()
         {
             var optionsCopy = new OptionsViewModel(new GameOptions(Options)) { Rules = this.Rules };
-            var optionsWindow = new Window()
-            {
-                Owner = Application.Current.MainWindow,
-                Title = "Renju Options",
-                DataContext = optionsCopy,
-                MinHeight = 200,
-                MinWidth = 300,
-                ResizeMode = ResizeMode.NoResize,
-                SizeToContent = SizeToContent.WidthAndHeight,
-                ShowInTaskbar = false,
-                Topmost = true,
-                WindowStyle = WindowStyle.SingleBorderWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
+            var optionsWindow = optionsCopy.CreateViewModelDialog("Renju Options");
+            optionsWindow.MinHeight = 200;
+            optionsWindow.MinWidth = 300;
             if (optionsWindow.ShowDialog() == true)
             {
                 Options.CopyFrom(optionsCopy.Options);

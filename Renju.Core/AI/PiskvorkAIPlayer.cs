@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using Infrastructure.AI;
     using Infrastructure.Events;
     using Infrastructure.Model;
@@ -86,7 +87,15 @@
 
         private void OnAIDropping(object sender, GenericEventArgs<BoardPosition> e)
         {
-            Operator.Put(e.Message);
+            try
+            {
+                Operator.Put(e.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Trace.TraceError(ex.Message);
+                _piskvorkAI.Begin();
+            }
         }
     }
 }
