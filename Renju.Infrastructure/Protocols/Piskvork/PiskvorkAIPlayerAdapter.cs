@@ -105,7 +105,7 @@
             get { return _aiMessenger.Value; }
         }
 
-        protected Process Process
+        protected internal Process Process
         {
             get { return _process.Value; }
         }

@@ -5,7 +5,7 @@
 
     public static class DialogUtils
     {
-        public static Window CreateViewModelDialog<T>(this T viewModel, string title)
+        public static Window CreateViewModelDialog<T>(this T viewModel, string title, ResizeMode resizeMode = ResizeMode.CanMinimize)
             where T : ModelBase
         {
             var window = new Window()
@@ -16,8 +16,8 @@
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 ShowInTaskbar = false,
                 ShowActivated = true,
-                ResizeMode = ResizeMode.CanMinimize,
-                SizeToContent = SizeToContent.WidthAndHeight,
+                ResizeMode = resizeMode,
+                SizeToContent = resizeMode == ResizeMode.CanMinimize ? SizeToContent.WidthAndHeight : SizeToContent.Manual,
                 UseLayoutRounding = true,
                 SnapsToDevicePixels = true,
             };

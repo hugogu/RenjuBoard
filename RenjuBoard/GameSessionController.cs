@@ -31,10 +31,24 @@
             Debug.Assert(blackplayer != whiteplayer);
             Debug.Assert(blackplayer.Side == Side.Black);
             Debug.Assert(whiteplayer.Side == Side.White);
+            ShowResourceMonitorForPlayer(blackplayer);
+            ShowResourceMonitorForPlayer(whiteplayer);
             Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
             whiteplayer.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
             blackplayer.PlayOn(_currentGameContainer.Resolve<IBoardMonitor>());
             _currentGameContainer.Resolve<IGameBoard<IReadOnlyBoardPoint>>().BeginGame();
+        }
+
+        private void ShowResourceMonitorForPlayer(IGamePlayer player)
+        {
+            if (player is IReportResourceUsage)
+            {
+                var resourceVM = new AIResourceUsageViewModel(player as IReportResourceUsage);
+                var resourceWin = resourceVM.CreateViewModelDialog("Resource Monitor - " + player.Name, ResizeMode.CanResizeWithGrip);
+                resourceWin.Width = 500;
+                resourceWin.Height = 400;
+                resourceWin.Show();
+            }
         }
 
         private void RenewChildContainerForGame(NewGameOptions options)

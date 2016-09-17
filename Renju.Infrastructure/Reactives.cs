@@ -21,5 +21,29 @@
                       .Where(args => propertyGetters.Select(g => g.GetMemberName())
                                                     .Any(propertyName => String.Compare(args.PropertyName, propertyName) == 0));
         }
+
+        /// <summary>
+        /// Produce the deltas of given input source. Delta means the changes compare with the previous item in the source. 
+        /// 
+        /// For example: 1, 2, 4, 5, 8 produce delta list of 1, 2, 1, 3
+        /// </summary>
+        public static IObservable<TResult> Deltas<TSource, TResult>(this IObservable<TSource> source, Func<TSource, TSource, TResult> calcDelta)
+        {
+            return Observable.Create<TResult>(observer =>
+            {
+                TSource lastSource = default(TSource);
+                var sourceSubscription = source.Select((s, i) => new { Item = s, Index = i }).Subscribe(newSource =>
+                {
+                    if (newSource.Index != 0)
+                    {
+                        var delta = calcDelta(lastSource, newSource.Item);
+                        observer.OnNext(delta);
+                    }
+                    lastSource = newSource.Item;
+                }, observer.OnError, observer.OnCompleted);
+
+                return sourceSubscription;
+            });
+        }
     }
 }

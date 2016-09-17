@@ -95,6 +95,9 @@
     <Compile Include="AI\GameInfo.cs" />
     <Compile Include="AI\GameType.cs" />
     <Compile Include="DialogUtils.cs" />
+    <Compile Include="Execution\IReportResourceUsage.cs" />
+    <Compile Include="Execution\ProcessResourceUsageMonitor.cs" />
+    <Compile Include="Execution\ResourceUsageInformation.cs" />
     <Compile Include="Protocols\IAIController.cs" />
     <Compile Include="Protocols\Piskvork\PiskvorkAIPlayerAdapter.cs" />
     <Compile Include="IO\MessengerExtensions.cs" />

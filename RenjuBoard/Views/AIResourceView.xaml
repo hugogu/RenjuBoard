@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:RenjuBoard.ViewModels"
+                    xmlns:chart="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit">
+    <DataTemplate DataType="{x:Type vm:AIResourceUsageViewModel}">
+        <chart:Chart>
+            <chart:LineSeries ItemsSource="{Binding UsageInfo}"
+                              Title="CPU Usage"
+                              DependentValuePath="CPU"
+                              IndependentValuePath="Time">
+                <chart:LineSeries.DependentRangeAxis>
+                    <chart:LinearAxis Orientation="Y"
+                                      Interval="0.1" Minimum="0" Maximum="1"
+                                      Title="CPU %" />
+                </chart:LineSeries.DependentRangeAxis>
+            </chart:LineSeries>
+            <chart:LineSeries ItemsSource="{Binding UsageInfo}"
+                              Title="Memory Usage"
+                              DependentValuePath="Memory"
+                              IndependentValuePath="Time">
+                <chart:LineSeries.DependentRangeAxis>
+                    <chart:LinearAxis Orientation="Y"
+                                      Title="Memory Byte" />
+                </chart:LineSeries.DependentRangeAxis>
+            </chart:LineSeries>
+        </chart:Chart>
+    </DataTemplate>
+</ResourceDictionary>
