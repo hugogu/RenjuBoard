@@ -34,13 +34,10 @@
         private void OnShowOptionsCommand()
         {
             var optionsCopy = new OptionsViewModel(new GameOptions(Options)) { Rules = this.Rules };
-            var optionsWindow = optionsCopy.CreateViewModelDialog("Renju Options");
-            optionsWindow.MinHeight = 200;
-            optionsWindow.MinWidth = 300;
-            if (optionsWindow.ShowDialog() == true)
-            {
-                Options.CopyFrom(optionsCopy.Options);
-            }
+            optionsCopy.CreateViewModelDialog("Renju Options")
+                       .WithMinSize(300, 200)
+                       .OnOKDo(() => Options.CopyFrom(optionsCopy.Options))
+                       .ShowDialog();
         }
 
         private void OnSaveCommand()

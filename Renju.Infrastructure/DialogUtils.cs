@@ -1,5 +1,6 @@
 ﻿namespace Renju.Infrastructure
 {
+    using System;
     using System.Windows;
     using System.Windows.Media;
 
@@ -22,6 +23,35 @@
                 SnapsToDevicePixels = true,
             };
             TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
+
+            return window;
+        }
+
+        public static Window WithSize(this Window window, double width, double height)
+        {
+            window.Width = width;
+            window.Height = height;
+
+            return window;
+        }
+
+        public static Window WithMinSize(this Window window, double minWidth, double minHeight)
+        {
+            window.MinHeight = minHeight;
+            window.MinWidth = minWidth;
+
+            return window;
+        }
+
+        public static Window OnOKDo(this Window window, Action okAction)
+        {
+            window.Closed += (sender, e) =>
+            {
+                if (window.DialogResult == true && okAction != null)
+                {
+                    okAction();
+                }
+            };
 
             return window;
         }

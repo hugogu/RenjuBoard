@@ -43,11 +43,10 @@
         {
             if (player is IReportResourceUsage)
             {
-                var resourceVM = new AIResourceUsageViewModel(player as IReportResourceUsage);
-                var resourceWin = resourceVM.CreateViewModelDialog("Resource Monitor - " + player.Name, ResizeMode.CanResizeWithGrip);
-                resourceWin.Width = 500;
-                resourceWin.Height = 400;
-                resourceWin.Show();
+                new AIResourceUsageViewModel(player as IReportResourceUsage)
+                    .CreateViewModelDialog("Resource Monitor - " + player.Name, ResizeMode.CanResizeWithGrip)
+                    .WithSize(500, 400)
+                    .Show();
             }
         }
 

@@ -12,7 +12,6 @@
     using Prism.Events;
     using Renju.Core;
     using Renju.Infrastructure;
-    using Renju.Infrastructure.AI;
     using Renju.Infrastructure.Events;
     using Renju.Infrastructure.Execution;
     using Renju.Infrastructure.Model;
@@ -23,7 +22,7 @@
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
 
-        public AIControllerViewModel(IStepController aiStepController, IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
+        public AIControllerViewModel(IStepController aiStepController, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
         {
             Guard.ArgumentNotNull(aiStepController, "aiStepController");
             Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");

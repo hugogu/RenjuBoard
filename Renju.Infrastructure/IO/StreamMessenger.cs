@@ -38,10 +38,10 @@
             Debug.Assert(outputStream.CanWrite, "output stream should be writable.");
 
             if (!_responseConverter.CanConvertFrom(typeof(string)))
-                throw new ArgumentException(String.Format("Response message type {0} must be convertable from String.", typeof(RES)));
+                throw new NotSupportedException(String.Format("Response message type {0} must be convertable from String.", typeof(RES)));
 
             if (!_requestConverter.CanConvertTo(typeof(string)))
-                throw new ArgumentException(String.Format("Request message type {0} must be convertable to String.", typeof(REQ)));
+                throw new NotSupportedException(String.Format("Request message type {0} must be convertable to String.", typeof(REQ)));
         }
 
         public virtual event EventHandler<GenericEventArgs<RES>> MessageReceived;

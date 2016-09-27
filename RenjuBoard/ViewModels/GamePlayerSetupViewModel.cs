@@ -2,9 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using Microsoft.Practices.Unity;
+    using Microsoft.Practices.Unity.Utility;
     using Models;
     using Renju.Infrastructure;
     using Renju.Infrastructure.Model;
@@ -51,15 +53,9 @@
 
         public GamePlayerSetupViewModel(Type playerType, Side side)
         {
-            if (!typeof(IGamePlayer).IsAssignableFrom(playerType))
-            {
-                throw new ArgumentException(String.Format("{0} is not valid game player type", playerType));
-            }
+            Guard.TypeIsAssignable(typeof(IGamePlayer), playerType, "playerType");
             Constructor = playerType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-            if (Constructor == null)
-            {
-                throw new ArgumentException(String.Format("{0} doesn't have a valid constructor.", playerType), "playerType");
-            }
+            Debug.Assert(Constructor != null, String.Format("{0} doesn't have a valid constructor.", playerType));
             _side = side;
             _playerType = playerType;
             Parameters = ResolveOverrideItem.BuildParameterModels(Constructor).ToList();
