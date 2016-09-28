@@ -28,7 +28,7 @@
         }
 
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public Func<Type, ResolverOverride[], IGamePlayer> CreateGamePlayer { get; set; }
 
         public string Name
         {
@@ -41,18 +41,16 @@
             {
                 var resolverOverrides = Parameters.Select(p => new ParameterOverride(p.Name, p.SelectedCandidate) as ResolverOverride)
                     .Concat(Properties.Where(p => !p.IsReadOnly).Select(p => new PropertyOverride(p.Name, p.SelectedCandidate)))
+                    .Concat(new[] { new PropertyOverride("Side", _side) })
                     .ToArray();
 
-                var player = Container.Resolve(_playerType, resolverOverrides) as IGamePlayer;
-                player.Side = _side;
-                Container.RegisterInstance(_side.ToString(), player);
-
-                return player;
+                return CreateGamePlayer(_playerType, resolverOverrides);
             }
         }
 
         public GamePlayerSetupViewModel(Type playerType, Side side)
         {
+            Guard.ArgumentNotNull(playerType, "playerType");
             Guard.TypeIsAssignable(typeof(IGamePlayer), playerType, "playerType");
             Constructor = playerType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
             Debug.Assert(Constructor != null, String.Format("{0} doesn't have a valid constructor.", playerType));

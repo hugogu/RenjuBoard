@@ -17,9 +17,10 @@
 
         public static IObservable<PropertyChangedEventArgs> ObserveProperty<T>(this INotifyPropertyChanged obj, params Expression<Func<T>>[] propertyGetters)
         {
-            return obj.ObserveAnyProperties()
-                      .Where(args => propertyGetters.Select(g => g.GetMemberName())
-                                                    .Any(propertyName => String.Compare(args.PropertyName, propertyName) == 0));
+            var names = propertyGetters.Select(g => g.GetMemberName()).ToList();
+            Func<string, bool> matchNames = givenName => names.Any(name => String.Equals(givenName, name));
+
+            return obj.ObserveAnyProperties().Where(args => matchNames(args.PropertyName));
         }
 
         /// <summary>

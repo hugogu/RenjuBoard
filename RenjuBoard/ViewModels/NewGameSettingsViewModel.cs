@@ -5,7 +5,6 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Windows.Input;
-    using Microsoft.Practices.Unity;
     using Prism.Commands;
     using Renju.Infrastructure;
     using Renju.Infrastructure.Model;
@@ -17,14 +16,14 @@
         private GamePlayerSetupViewModel _blackPlayerSetupModel;
         private GamePlayerSetupViewModel _whitePlayerSetupModel;
 
-        public NewGameSettingsViewModel(IUnityContainer container)
+        public NewGameSettingsViewModel(Func<Type, Side, GamePlayerSetupViewModel> createPlayerSetupVM)
         {
             GamePlayers = typeof(IGamePlayer).FindAllImplementations();
             Debug.Assert(GamePlayers.Any(), "No Gameplayer found");
             AutoDispose(this.ObserveProperty(() => BlackPlayerType).Subscribe(e =>
-                BlackPlayerBuilder = new GamePlayerSetupViewModel(BlackPlayerType, Side.Black) { Container = container }));
+                BlackPlayerBuilder = createPlayerSetupVM(BlackPlayerType, Side.Black)));
             AutoDispose(this.ObserveProperty(() => WhitePlayerType).Subscribe(e =>
-                WhitePlayerBuilder = new GamePlayerSetupViewModel(WhitePlayerType, Side.White) { Container = container }));
+                WhitePlayerBuilder = createPlayerSetupVM(WhitePlayerType, Side.White)));
 
             BlackPlayerType = GamePlayers.First();
             WhitePlayerType = GamePlayers.Skip(1).First();

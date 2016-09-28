@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Practices.Unity;
+    using Microsoft.Practices.Unity.Utility;
     using Prism.Modularity;
     using Properties;
     using Renju.Infrastructure;
@@ -28,6 +29,14 @@
                 WithMappings.FromMatchingInterface,
                 WithName.Default,
                 WithLifetime.ContainerControlled);
+            container.RegisterInstance<Func<Type, Side, GamePlayerSetupViewModel>>((playerType, side) =>
+                container.BuildUp(new GamePlayerSetupViewModel(playerType, side)));
+            container.RegisterInstance<Func<Type, ResolverOverride[], IGamePlayer>>((playerType, overrides) => {
+                Guard.TypeIsAssignable(typeof(IGamePlayer), playerType, "playerType");
+                var player = container.Resolve(playerType, overrides) as IGamePlayer;
+                container.RegisterInstance(player.Side.ToString(), player);
+                return player;
+            });
         }
 
         private void RegistApplicationDependencies(IUnityContainer container)
@@ -38,6 +47,7 @@
                 new InjectionFactory(c => c.BuildUp(new GameOptions().CopyFromObject(Settings.Default))));
             container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
             container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
+            container.RegisterInstance<Func<IUnityContainer>>("GameSession", container.CreateChildContainer);
             container.RegisterType<GameSessionController>(new ContainerControlledLifetimeManager());
         }
     }

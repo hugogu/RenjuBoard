@@ -22,6 +22,7 @@
         [DisplayName("Name")]
         public virtual string Name { get; set; }
 
+        [Dependency]
         public virtual Side Side { get; set; }
 
         public virtual void PlayOn(IBoardMonitor monitor)
