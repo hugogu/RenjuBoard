@@ -26,7 +26,7 @@
             if (!decorationPoint.Status.HasValue)
                 throw new ArgumentException("decoration Point much has a Side. ", "decorationPoint");
 
-            var lastPoint = board.Points.Where(p => p.Index.HasValue).OrderByDescending(p => p.Index.Value).FirstOrDefault();
+            var lastPoint = board.DroppedPoints.LastOrDefault();
             if ((lastPoint == null && decorationPoint.Status == Side.White) ||
                 (lastPoint != null && lastPoint.Status.Value == decorationPoint.Status.Value))
                 throw new ArgumentException("Side of decorationPoint is wrong.", "decorationPoint");

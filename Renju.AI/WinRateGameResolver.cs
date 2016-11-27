@@ -45,9 +45,6 @@
 
         protected internal virtual void PublishResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            if (EventAggregator == null)
-                return;
-
             EventAggregator.GetEvent<ResolvingBoardEvent>().Publish(board);
         }
 

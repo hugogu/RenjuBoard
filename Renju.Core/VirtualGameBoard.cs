@@ -18,6 +18,7 @@
         where TPoint : IReadOnlyBoardPoint
     {
         private readonly ObservableCollection<PieceLine> _lines = new ObservableCollection<PieceLine>();
+        private readonly LinkedList<TPoint> _droppedPoints = new LinkedList<TPoint>();
         private readonly List<TPoint> _points;
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
@@ -41,12 +42,12 @@
 
         public virtual IEnumerable<TPoint> DroppedPoints
         {
-            get { throw new NotSupportedException(); }
+            get { return _droppedPoints; }
         }
 
         public virtual int DropsCount
         {
-            get { throw new NotSupportedException(); }
+            get { return _droppedPoints.Count; }
         }
 
         public virtual IEnumerable<TPoint> Points
@@ -86,12 +87,21 @@
 
         protected virtual void RaisePieceTakenEvent(BoardPosition position)
         {
+            var point = GetPoint(position);
+            _droppedPoints.RemoveLast();
+            UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithoutPoint(point).ToList());
             RaiseEvent(Taken, position);
+            OnPropertyChanged(() => DropsCount);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
         {
+            var point = GetPoint(drop);
+            _droppedPoints.AddLast(point);
+            ((IReadBoardState<IReadOnlyBoardPoint>)this).InvalidateNearbyPointsOf(point);
+            UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithNewPoint(point).ToList());
             RaiseEvent(PieceDropped, new PieceDropEventArgs(drop, operatorType));
+            OnPropertyChanged(() => DropsCount);
         }
 
         protected virtual TPoint GetPoint(BoardPosition position)

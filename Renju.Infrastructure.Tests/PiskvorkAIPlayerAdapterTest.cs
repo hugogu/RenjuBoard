@@ -4,8 +4,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Model;
     using Protocols.Piskvork;
+    using Infrastructure.Model;
 
     [TestClass]
     public class PiskvorkAIPlayerAdapterTest

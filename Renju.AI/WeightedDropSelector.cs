@@ -45,7 +45,7 @@
             }
 
             return from point in pointsCandidates
-                   where point.Status == null && board.RuleEngine.CanDropOn(board, new PieceDrop(point.Position, side))
+                   where point.Status == null && board.RuleEngine.GetRuleStopDropOn(board, new PieceDrop(point.Position, side)) == null
                    orderby point.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
                    select point;
         }
