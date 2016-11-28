@@ -41,7 +41,7 @@
 
         protected void AutoCallOnDisposing(Action action)
         {
-            Guard.ArgumentNotNull(action, "atcion");
+            Guard.ArgumentNotNull(action, nameof(action));
             _disposables.Add(Disposable.Create(action));
         }
 

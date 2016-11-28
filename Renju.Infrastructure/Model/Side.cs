@@ -18,7 +18,7 @@
             if (side == Side.White)
                 return Side.Black;
 
-            throw new ArgumentOutOfRangeException("side");
+            throw new ArgumentOutOfRangeException(nameof(side));
         }
     }
 }

@@ -27,8 +27,8 @@
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
-            Guard.ArgumentNotNull(windowService, "windowService");
-            Guard.ArgumentNotNull(objectProvider, "objectProvider");
+            Guard.ArgumentNotNull(windowService, nameof(windowService));
+            Guard.ArgumentNotNull(objectProvider, nameof(objectProvider));
 
             var data = objectProvider.GetObject();
             var board = data as IReadBoardState<IReadOnlyBoardPoint>;

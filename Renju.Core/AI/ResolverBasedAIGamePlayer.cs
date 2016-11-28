@@ -21,7 +21,7 @@
 
         public ResolverBasedAIGamePlayer([Description("AI")] IDropResolver resolver)
         {
-            Guard.ArgumentNotNull(resolver, "resolver");
+            Guard.ArgumentNotNull(resolver, nameof(resolver));
 
             Resolver = resolver;
 

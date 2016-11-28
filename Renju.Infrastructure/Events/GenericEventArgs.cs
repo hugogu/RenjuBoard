@@ -7,7 +7,7 @@
     {
         public GenericEventArgs(T message)
         {
-            Guard.ArgumentNotNull(message, "message");
+            Guard.ArgumentNotNull(message, nameof(message));
 
             Message = message;
         }

@@ -18,8 +18,8 @@
 
         public StreamMessenger(StreamReader inputReader, StreamWriter outputWriter)
         {
-            Guard.ArgumentNotNull(inputReader, "inputReader");
-            Guard.ArgumentNotNull(outputWriter, "outputWriter");
+            Guard.ArgumentNotNull(inputReader, nameof(inputReader));
+            Guard.ArgumentNotNull(outputWriter, nameof(outputWriter));
 
             _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s));
             _writeBlock.Completion.ContinueWith(_ => outputWriter.Dispose());
@@ -32,8 +32,8 @@
         public StreamMessenger(Stream inputStream, Stream outputStream)
             : this(new StreamReader(inputStream), new StreamWriter(outputStream))
         {
-            Guard.ArgumentNotNull(inputStream, "inputStream");
-            Guard.ArgumentNotNull(outputStream, "outputStream");
+            Guard.ArgumentNotNull(inputStream, nameof(inputStream));
+            Guard.ArgumentNotNull(outputStream, nameof(outputStream));
             Debug.Assert(inputStream.CanRead, "input stream should be readable.");
             Debug.Assert(outputStream.CanWrite, "output stream should be writable.");
 
@@ -48,11 +48,11 @@
 
         public async virtual Task SendAsync(REQ message)
         {
-            Guard.ArgumentNotNull(message, "message");
+            Guard.ArgumentNotNull(message, nameof(message));
             var messageText = _requestConverter.ConvertToString(message);
             if (!await _writeBlock.SendAsync(messageText))
             {
-                throw new ObjectDisposedException("_writeBlock");
+                throw new ObjectDisposedException(nameof(_writeBlock));
             }
         }
 

@@ -23,9 +23,9 @@
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
         {
-            Guard.ArgumentNotNull(createPoint, "createPoint");
+            Guard.ArgumentNotNull(createPoint, nameof(createPoint));
             if (size <= 0)
-                throw new ArgumentOutOfRangeException("size", "size must be postive.");
+                throw new ArgumentOutOfRangeException(nameof(size), "size must be postive.");
 
             Size = size;
             _points = new List<TPoint>(Enumerable.Range(0, size * size).Select(createPoint));
@@ -106,7 +106,7 @@
 
         protected virtual TPoint GetPoint(BoardPosition position)
         {
-            Guard.ArgumentNotNull(position, "position");
+            Guard.ArgumentNotNull(position, nameof(position));
 
             return _points[position.Y * Size + position.X];
         }

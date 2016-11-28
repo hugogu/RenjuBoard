@@ -14,8 +14,8 @@
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            Guard.ArgumentNotNull(value, "value");
-            Guard.InstanceIsAssignable(typeof(string), value, "value");
+            Guard.ArgumentNotNull(value, nameof(value));
+            Guard.InstanceIsAssignable(typeof(string), value, nameof(value));
             var values = (value as string).Split(' ');
             if (values.Length != 3)
                 throw new ArgumentException("String form of PeiceDrop must have 3 segments.");
@@ -30,8 +30,8 @@
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            Guard.ArgumentNotNull(value, "value");
-            Guard.TypeIsAssignable(destinationType, typeof(string), "destinationType");
+            Guard.ArgumentNotNull(value, nameof(value));
+            Guard.TypeIsAssignable(destinationType, typeof(string), nameof(destinationType));
             var drop = value as PieceDrop;
 
             return String.Format("{0} {1} {2}", drop.X, drop.Y, drop.Side);

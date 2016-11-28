@@ -62,7 +62,7 @@
             _currentGameContainer.RegisterInstance(options);
             _currentGameContainer.RegisterInstance(BoardPoint.CreateIndexBasedFactory(options.BoardSize));
             var ai = _currentGameContainer.Resolve<IDropResolver>();
-            _currentGameContainer.RegisterInstance<IReportExecutionStatus>("ai", ai);
+            _currentGameContainer.RegisterInstance<IReportExecutionStatus>(nameof(ai), ai);
         }
     }
 }

@@ -39,12 +39,12 @@
 
         public bool CanUndo
         {
-            get { return _undoDrops.Any(); }
+            get { return _undoDrops.Count > 0; }
         }
 
         public bool CanRedo
         {
-            get { return _redoDrops.Any(); }
+            get { return _redoDrops.Count > 0; }
         }
 
         public void ClearGameBoard()

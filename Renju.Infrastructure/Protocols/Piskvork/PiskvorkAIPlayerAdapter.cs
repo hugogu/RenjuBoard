@@ -19,11 +19,10 @@
         private static readonly Regex InfoItemPattern = new Regex("\\w+=\"[^ \"]+\"");
         private readonly Lazy<Process> _process;
         private readonly Lazy<IMessenger<string, string>> _aiMessenger;
-        private readonly AIInfo _info = new AIInfo();
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
-            Guard.ArgumentNotNull(aiFile, "aiFile");
+            Guard.ArgumentNotNull(aiFile, nameof(aiFile));
 
             _process = new Lazy<Process>(() => StartProcess(aiFile));
             _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
@@ -33,10 +32,7 @@
 
         public event EventHandler<GenericEventArgs<string>> Says;
 
-        public AIInfo AIInfo
-        {
-            get { return _info; }
-        }
+        public AIInfo AIInfo { get; } = new AIInfo();
 
         public async Task RequestAbout()
         {
@@ -57,7 +53,7 @@
 
         public async Task Info(GameInfo info)
         {
-            Guard.ArgumentNotNull(info, "info");
+            Guard.ArgumentNotNull(info, nameof(info));
             foreach (var message in info.ToMessages())
                 await Messenger.SendAsync(message);
         }
@@ -70,7 +66,7 @@
         public async Task Load(IEnumerable<PieceDrop> drops)
         {
             Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(drops, "drops");
+            Guard.ArgumentNotNull(drops, nameof(drops));
             await Messenger.SendAsync("BOARD");
             await Messenger.SendAsync("DONE");
         }
@@ -78,7 +74,7 @@
         public async Task OpponentDrops(BoardPosition stone)
         {
             Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(stone, "stone");
+            Guard.ArgumentNotNull(stone, nameof(stone));
             await Messenger.SendAsync("TURN " + stone.AsString());
         }
 
@@ -151,7 +147,6 @@
         private void OnReceivingAIMessage(string airesponse)
         {
             var drop = DropPattern.Match(airesponse);
-            
             if (airesponse.StartsWith("MESSAGE") || airesponse.StartsWith("DEBUG") || airesponse.StartsWith("ERROR"))
             {
                 RaiseEvent(Says, new GenericEventArgs<string>(airesponse));
@@ -169,13 +164,13 @@
                     var key = item.Substring(0, item.IndexOf('='));
                     var value = item.Substring(item.IndexOf('"') + 1).TrimEnd('"');
                     if (key == "name")
-                        _info.Name = value;
+                        AIInfo.Name = value;
                     else if (key == "author")
-                        _info.Author = value;
+                        AIInfo.Author = value;
                     else if (key == "country")
-                        _info.Country = value;
+                        AIInfo.Country = value;
                     else if (key == "version")
-                        _info.Version = value;
+                        AIInfo.Version = value;
                 }
             }
         }

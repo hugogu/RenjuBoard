@@ -16,10 +16,7 @@
             using (var adaptor = new PiskvorkAIPlayerAdapter(@"..\..\..\bin\Debug\piskvork\pbrain-yixin16_64.exe"))
             {
                 var evt = new AutoResetEvent(false);
-                adaptor.Says += (sender, e) =>
-                {
-                    Trace.WriteLine(e.Message);
-                };
+                adaptor.Says += (sender, e) => Trace.WriteLine(e.Message);
                 adaptor.Dropping += (sender, e) =>
                 {
                     Trace.WriteLine(e.Message.AsString());

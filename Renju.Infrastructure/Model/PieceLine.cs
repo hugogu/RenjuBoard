@@ -17,7 +17,7 @@
         {
         }
 
-        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate) 
+        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate)
             : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)), validate)
         {
         }
@@ -36,7 +36,7 @@
             StartPosition = start;
             EndPosition = end;
             Direction = direction;
-            Side = Points.Select(p => p.Status).Where(s => s.HasValue).First().Value;
+            Side = Points.Select(p => p.Status).First(s => s.HasValue).Value;
 
             if (validate)
                 ValidatePoint();
@@ -93,7 +93,7 @@
             get
             {
                 if (index < 0 || index >= Length)
-                    throw new ArgumentOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index));
                 return Board[StartPosition + Direction * index];
             }
         }

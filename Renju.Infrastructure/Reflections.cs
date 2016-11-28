@@ -29,8 +29,8 @@
 
         public static T CopyFrom<T>(this T target, T source)
         {
-            Guard.ArgumentNotNull(target, "target");
-            Guard.ArgumentNotNull(source, "source");
+            Guard.ArgumentNotNull(target, nameof(target));
+            Guard.ArgumentNotNull(source, nameof(source));
 
             foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                               .Where(p => p.CanWrite && p.CanRead))
@@ -43,8 +43,8 @@
 
         public static T CopyFromObject<T>(this T target, object source)
         {
-            Guard.ArgumentNotNull(target, "target");
-            Guard.ArgumentNotNull(source, "source");
+            Guard.ArgumentNotNull(target, nameof(target));
+            Guard.ArgumentNotNull(source, nameof(source));
 
             foreach (var copyFrom in from targetProperty in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                      where targetProperty.CanWrite

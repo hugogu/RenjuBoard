@@ -14,7 +14,7 @@
 
         public DefaultGameRuleEngine(IEnumerable<IGameRule> rules)
         {
-            Guard.ArgumentNotNull(rules, "rules");
+            Guard.ArgumentNotNull(rules, nameof(rules));
             Debug.Assert(rules.Any(), "Rules can't be empty.");
             _rules = rules;
             foreach (var rule in rules)

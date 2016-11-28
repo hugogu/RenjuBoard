@@ -15,11 +15,11 @@
 
         public ResolveOverrideItem(string name, string displayName, IEnumerable<object> candidates, bool isReadOnly = false)
         {
-            Guard.ArgumentNotNull(name, "name");
-            Guard.ArgumentNotNull(candidates, "candidates");
+            Guard.ArgumentNotNull(name, nameof(name));
+            Guard.ArgumentNotNull(candidates, nameof(candidates));
             if (isReadOnly && candidates.Any())
             {
-                throw new ArgumentException("Readonly property shouldn't have any value candidates. ", "candidates");
+                throw new ArgumentException("Readonly property shouldn't have any value candidates. ", nameof(candidates));
             }
 
             Name = name;

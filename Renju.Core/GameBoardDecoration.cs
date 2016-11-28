@@ -24,12 +24,12 @@
                 throw new InvalidOperationException("Can't decorate with a point already in use.");
 
             if (!decorationPoint.Status.HasValue)
-                throw new ArgumentException("decoration Point much has a Side. ", "decorationPoint");
+                throw new ArgumentException("decoration Point much has a Side. ", nameof(decorationPoint));
 
             var lastPoint = board.DroppedPoints.LastOrDefault();
             if ((lastPoint == null && decorationPoint.Status == Side.White) ||
                 (lastPoint != null && lastPoint.Status.Value == decorationPoint.Status.Value))
-                throw new ArgumentException("Side of decorationPoint is wrong.", "decorationPoint");
+                throw new ArgumentException("Side of decorationPoint is wrong.", nameof(decorationPoint));
 
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;

@@ -12,9 +12,9 @@ namespace Renju.Infrastructure.Model.Extensions
 
         public static PieceLine To(this IReadOnlyBoardPoint pointFrom, IReadOnlyBoardPoint pointTo, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Guard.ArgumentNotNull(pointFrom, "pointFrom");
-            Guard.ArgumentNotNull(pointTo, "pointTo");
-            Guard.ArgumentNotNull(board, "board");
+            Guard.ArgumentNotNull(pointFrom, nameof(pointFrom));
+            Guard.ArgumentNotNull(pointTo, nameof(pointTo));
+            Guard.ArgumentNotNull(board, nameof(board));
             Debug.Assert(pointFrom != pointTo, "from and to point must be different.");
 
             return new PieceLine(board, pointFrom.Position, pointTo.Position, false);

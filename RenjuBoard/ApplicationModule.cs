@@ -32,7 +32,7 @@
             container.RegisterInstance<Func<Type, Side, GamePlayerSetupViewModel>>((playerType, side) =>
                 container.BuildUp(new GamePlayerSetupViewModel(playerType, side)));
             container.RegisterInstance<Func<Type, ResolverOverride[], IGamePlayer>>((playerType, overrides) => {
-                Guard.TypeIsAssignable(typeof(IGamePlayer), playerType, "playerType");
+                Guard.TypeIsAssignable(typeof(IGamePlayer), playerType, nameof(playerType));
                 var player = container.Resolve(playerType, overrides) as IGamePlayer;
                 container.RegisterInstance(player.Side.ToString(), player);
                 return player;

@@ -27,7 +27,7 @@
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
-            Guard.ArgumentNotNull(monitor, "monitor");
+            Guard.ArgumentNotNull(monitor, nameof(monitor));
 
             monitor.Initailizing += OnInitailizing;
             monitor.Loading += OnLoadingBoard;
