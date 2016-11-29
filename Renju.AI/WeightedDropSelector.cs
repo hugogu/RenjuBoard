@@ -52,11 +52,7 @@
 
         private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
         {
-            foreach (var points in findPointsFuncs.Select(f => f().ToList()))
-                if (points.Count > 0)
-                    return points;
-
-            throw new InvalidOperationException("Can't find any point to drop. One side must have won the game.");
+            return findPointsFuncs.Select(f => f().ToList()).First(l => l.Count > 0);
         }
     }
 }

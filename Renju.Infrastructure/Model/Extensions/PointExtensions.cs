@@ -1,21 +1,22 @@
 namespace Renju.Infrastructure.Model.Extensions
 {
-    using System.Diagnostics;
-    using Microsoft.Practices.Unity.Utility;
+    using System.Diagnostics.Contracts;
 
     public static class PointExtensions
     {
+        [Pure]
         public static string GetLiternalPresentation(this Side? side)
         {
             return side == null ? "_" : (side == Side.Black ? "●" : "○");
         }
 
+        [Pure]
         public static PieceLine To(this IReadOnlyBoardPoint pointFrom, IReadOnlyBoardPoint pointTo, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Guard.ArgumentNotNull(pointFrom, nameof(pointFrom));
-            Guard.ArgumentNotNull(pointTo, nameof(pointTo));
-            Guard.ArgumentNotNull(board, nameof(board));
-            Debug.Assert(pointFrom != pointTo, "from and to point must be different.");
+            Contract.Requires(pointFrom != null);
+            Contract.Requires(pointTo != null);
+            Contract.Requires(board != null);
+            Contract.Requires(pointFrom != pointTo, "from and to point must be different.");
 
             return new PieceLine(board, pointFrom.Position, pointTo.Position, false);
         }

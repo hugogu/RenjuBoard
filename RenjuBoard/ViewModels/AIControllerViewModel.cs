@@ -3,11 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Reactive.Linq;
     using System.Windows.Input;
     using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
     using Prism.Commands;
     using Prism.Events;
     using Renju.Core;
@@ -24,8 +23,8 @@
 
         public AIControllerViewModel(IStepController aiStepController, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
         {
-            Guard.ArgumentNotNull(aiStepController, "aiStepController");
-            Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
+            Contract.Assert(aiStepController != null);
+            Contract.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
             eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
             eventAggregator.GetEvent<EvaluatedPointEvent>().Subscribe(OnEvaluatingPoint);

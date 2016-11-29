@@ -1,6 +1,7 @@
 ﻿namespace Renju.Infrastructure.Execution
 {
     using System;
+    using System.Diagnostics.Contracts;
     using System.Reactive.Linq;
 
     public class ExecutionTimer : DisposableModelBase
@@ -13,13 +14,13 @@
         {
             executor.Started += OnExecutorStarted;
             executor.Finished += OnExecutorFinished;
-            AutoDispose(Observable.Interval(TimeSpan.FromMilliseconds(notifyIntervalInMs)).Subscribe(_ =>
+            AutoDispose(Observable
+                .Interval(TimeSpan.FromMilliseconds(notifyIntervalInMs))
+                .Where(_ => IsExecutorRunning)
+                .Subscribe(_ =>
             {
-                if (_lastExecutionStartTime.HasValue)
-                {
-                    OnPropertyChanged(() => CurrentExecutionTime);
-                    OnPropertyChanged(() => TotalExecutionTime);
-                }
+                OnPropertyChanged(() => CurrentExecutionTime);
+                OnPropertyChanged(() => TotalExecutionTime);
             }));
         }
 
@@ -28,7 +29,7 @@
             get
             {
                 return _pausedDuration.HasValue ? _pausedDuration.Value :
-                       (_lastExecutionStartTime.HasValue ? DateTime.Now - _lastExecutionStartTime.Value : TimeSpan.Zero);
+                       (IsExecutorRunning ? DateTime.Now - _lastExecutionStartTime.Value : TimeSpan.Zero);
             }
         }
 
@@ -39,13 +40,9 @@
 
         public void Pause()
         {
-            if (_lastExecutionStartTime.HasValue)
-            {
-                _pausedDuration = DateTime.Now - _lastExecutionStartTime.Value;
-                _lastExecutionStartTime = null;
-            }
-            else
-                throw new InvalidOperationException("Can't pause when it is not executing.");
+            Contract.Assert(IsExecutorRunning, "Can't pause when it is not executing.");
+            _pausedDuration = DateTime.Now - _lastExecutionStartTime.Value;
+            _lastExecutionStartTime = null;
         }
 
         public void Resume()
@@ -57,15 +54,20 @@
             }
         }
 
+        protected bool IsExecutorRunning
+        {
+            get { return _lastExecutionStartTime.HasValue; }
+        }
+
         private void OnExecutorFinished(object sender, EventArgs e)
         {
-            if (_lastExecutionStartTime.HasValue)
+            if (IsExecutorRunning)
             {
                 _executedTime += DateTime.Now - _lastExecutionStartTime.Value;
                 _lastExecutionStartTime = null;
             }
             else if (_pausedDuration.HasValue)
-                throw new InvalidOperationException("Can handle finished event while paused.");
+                throw new InvalidOperationException("Can't handle finished event while paused.");
         }
 
         private void OnExecutorStarted(object sender, EventArgs e)

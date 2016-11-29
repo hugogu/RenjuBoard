@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
-    using Microsoft.Practices.Unity.Utility;
     using Infrastructure.Model;
 
     [Serializable]
@@ -14,8 +14,8 @@
 
         public DefaultGameRuleEngine(IEnumerable<IGameRule> rules)
         {
-            Guard.ArgumentNotNull(rules, nameof(rules));
-            Debug.Assert(rules.Any(), "Rules can't be empty.");
+            Contract.Requires(rules != null);
+            Contract.Requires(rules.Any());
             _rules = rules;
             foreach (var rule in rules)
                 Trace.WriteLine("Loaded rule " + rule.Name);

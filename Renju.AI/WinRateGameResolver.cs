@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -60,7 +61,7 @@
                                               orderby winRateWithPath.WinRate descending, weight descending
                                               select new { Point = point, WinRate = winRateWithPath })
                 {
-                    Debug.Assert(pointWithRate.Point.Status == null, "A point candidate must be empty.");
+                    Contract.Assert(pointWithRate.Point.Status == null, "A point candidate must be empty.");
                     Trace.WriteLine(String.Format("Evaluated {0} boards in {1} ms.", iteratedBoardCount, ExecutionTimer.CurrentExecutionTime.TotalMilliseconds));
                     yield return pointWithRate.Point;
                 }
@@ -104,7 +105,7 @@
 
             var oppositeSide = Sides.Opposite(point.Status.Value);
             var drops = SelectDropsWithinWidth(virtualBoard, oppositeSide).ToList();
-            Debug.Assert(drops.Count > 0, "drop selector must yield some point candidate.");
+            Contract.Assert(drops.Count > 0, "drop selector must yield some point candidate.");
             PublishResolvingBoardEvent(virtualBoard);
             RaiseStepFinishedEvent();
             var winRate = (from drop in drops

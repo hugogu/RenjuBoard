@@ -2,8 +2,8 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.Contracts;
     using System.Globalization;
-    using Microsoft.Practices.Unity.Utility;
 
     public class PieceDropTypeConverter : TypeConverter
     {
@@ -14,11 +14,10 @@
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            Guard.ArgumentNotNull(value, nameof(value));
-            Guard.InstanceIsAssignable(typeof(string), value, nameof(value));
+            Contract.Assert(value != null);
+            Contract.Assert(value is string);
             var values = (value as string).Split(' ');
-            if (values.Length != 3)
-                throw new ArgumentException("String form of PeiceDrop must have 3 segments.");
+            Contract.Assert(values.Length == 3, "String form of PeiceDrop must have 3 segments.");
 
             return new PieceDrop(Convert.ToInt32(values[0]), Convert.ToInt32(values[1]), (Side)Enum.Parse(typeof(Side), values[2]));
         }
@@ -30,8 +29,8 @@
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            Guard.ArgumentNotNull(value, nameof(value));
-            Guard.TypeIsAssignable(destinationType, typeof(string), nameof(destinationType));
+            Contract.Assert(value != null);
+            Contract.Assert(typeof(string).IsAssignableFrom(destinationType));
             var drop = value as PieceDrop;
 
             return String.Format("{0} {1} {2}", drop.X, drop.Y, drop.Side);

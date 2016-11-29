@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Reflection;
     using System.Threading;
     using Infrastructure;
@@ -12,7 +13,6 @@
     using Infrastructure.Model;
     using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
 
     [DisplayName("Renju Built-in AI")]
     public class ResolverBasedAIGamePlayer : RenjuBoardAIPlayer
@@ -21,7 +21,7 @@
 
         public ResolverBasedAIGamePlayer([Description("AI")] IDropResolver resolver)
         {
-            Guard.ArgumentNotNull(resolver, nameof(resolver));
+            Contract.Requires(resolver != null);
 
             Resolver = resolver;
 
@@ -76,8 +76,8 @@
 
         protected override void OnPlayerStarting()
         {
-            Debug.Assert(VirtualAIGameBoard.DropsCount == 0, "Starting event is not valid when game already started.");
-            Debug.Assert(Side == Side.Black);
+            Contract.Assert(VirtualAIGameBoard.DropsCount == 0, "Starting event is not valid when game already started.");
+            Contract.Assert(Side == Side.Black);
             Operator.Put(new PieceDrop(new BoardPosition(7, 7), Side));
         }
 

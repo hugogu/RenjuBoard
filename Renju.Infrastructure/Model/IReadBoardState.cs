@@ -2,8 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
     using Events;
 
+    [ContractClass(typeof(ReadGameBoardContract<>))]
     public interface IReadBoardState<out TPoint>
         where TPoint : IReadOnlyBoardPoint
     {

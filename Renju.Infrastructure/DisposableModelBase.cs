@@ -2,9 +2,9 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reactive.Disposables;
-    using Microsoft.Practices.Unity.Utility;
 
     public class DisposableModelBase : ModelBase, IDisposable
     {
@@ -41,7 +41,7 @@
 
         protected void AutoCallOnDisposing(Action action)
         {
-            Guard.ArgumentNotNull(action, nameof(action));
+            Contract.Requires(action != null);
             _disposables.Add(Disposable.Create(action));
         }
 
@@ -66,10 +66,7 @@
         [Conditional("DEBUG")]
         private void CheckDisposableReference(IDisposable disposable)
         {
-            if (_disposables.Any(d => d == disposable))
-            {
-                throw new InvalidOperationException(String.Format("IDisposable of Type {0} has already been added.", disposable.GetType().Name));
-            }
+            Contract.Assert(!_disposables.Any(d => d == disposable), String.Format("IDisposable of Type {0} has already been added.", disposable.GetType().Name));
         }
     }
 }

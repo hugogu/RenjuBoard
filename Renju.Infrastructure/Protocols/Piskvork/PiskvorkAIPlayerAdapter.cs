@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Reactive.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AI;
     using Events;
     using IO;
-    using Microsoft.Practices.Unity.Utility;
     using Model;
     using Protocols;
 
@@ -22,7 +22,7 @@
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
-            Guard.ArgumentNotNull(aiFile, nameof(aiFile));
+            Contract.Requires(aiFile != null);
 
             _process = new Lazy<Process>(() => StartProcess(aiFile));
             _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
@@ -41,19 +41,18 @@
 
         public async Task Begin()
         {
-            Debug.Assert(_process.IsValueCreated);
+            Contract.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("BEGIN");
         }
 
         public async Task End()
         {
-            Debug.Assert(_process.IsValueCreated);
+            Contract.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("END");
         }
 
         public async Task Info(GameInfo info)
         {
-            Guard.ArgumentNotNull(info, nameof(info));
             foreach (var message in info.ToMessages())
                 await Messenger.SendAsync(message);
         }
@@ -65,16 +64,14 @@
 
         public async Task Load(IEnumerable<PieceDrop> drops)
         {
-            Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(drops, nameof(drops));
+            Contract.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("BOARD");
             await Messenger.SendAsync("DONE");
         }
 
         public async Task OpponentDrops(BoardPosition stone)
         {
-            Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(stone, nameof(stone));
+            Contract.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("TURN " + stone.AsString());
         }
 

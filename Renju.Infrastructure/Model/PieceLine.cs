@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Windows;
     using Extensions;
@@ -24,13 +25,8 @@
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
         {
-            if (start.X != end.X &&
-                start.Y != end.Y &&
-                Math.Abs(start.X - end.X) != Math.Abs(start.Y - end.Y))
-                throw new ArgumentException(String.Format("Point {0} and {1} in not on the same line. ", start, end));
-
-            if (start.X == end.X && start.Y == end.Y)
-                throw new ArgumentException(String.Format("Point {0} and {1} are the same. ", start, end));
+            Contract.Requires<ArgumentException>(!Equals(start, end), "Point start and end are the same. ");
+            Contract.Requires<ArgumentException>(start.IsOnLineWith(end), "Point start and end in not on the same line. ");
 
             Board = board;
             StartPosition = start;
@@ -92,8 +88,8 @@
         {
             get
             {
-                if (index < 0 || index >= Length)
-                    throw new ArgumentOutOfRangeException(nameof(index));
+                Contract.Requires<ArgumentOutOfRangeException>(index < 0 || index >= Length);
+
                 return Board[StartPosition + Direction * index];
             }
         }
@@ -102,9 +98,7 @@
         {
             if (a == null || b == null)
                 return null;
-
-            if (a.Board != b.Board)
-                throw new InvalidOperationException("Two line is not on the same game board.");
+            Contract.Assert(a?.Board == b?.Board, "Two line is not on the same game board.");
 
             if (a.Side != b.Side)
                 return null;
@@ -185,8 +179,7 @@
         [Conditional("DEBUG")]
         private void ValidatePoint()
         {
-            if (Points.GroupBy(p => p.Status).Count() > 2)
-                throw new InvalidOperationException("A PieceLine shouldn't contains 3 kinds of states.");
+            Contract.Assert(Points.GroupBy(p => p.Status).Count() <= 2, "A PieceLine shouldn't contains 3 kinds of states.");
         }
     }
 }

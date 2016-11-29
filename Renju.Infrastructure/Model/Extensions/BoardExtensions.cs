@@ -2,12 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
+    using ReadOnlyBoard = IReadBoardState<IReadOnlyBoardPoint>;
 
     public static class BoardExtensions
     {
-        public static void InvalidateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        public static void InvalidateNearbyPointsOf(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
             foreach (var affectedPoint in board.IterateNearbyPointsOf(point))
             {
@@ -15,13 +16,15 @@
             }
         }
 
-        public static Side SideOfLastDrop(this IReadBoardState<IReadOnlyBoardPoint> board)
+        [Pure]
+        public static Side SideOfLastDrop(this ReadOnlyBoard board)
         {
-            Debug.Assert(board.DroppedPoints.Any(), "board should have some drops by now.");
+            Contract.Requires(board.DroppedPoints.Any(), "board should have some drops by now.");
 
             return board.DroppedPoints.Last().Status.Value;
         }
 
+        [Pure]
         public static string GetLiternalPresentation<TPoint>(this IReadBoardState<TPoint> board)
             where TPoint : IReadOnlyBoardPoint
         {
@@ -31,7 +34,8 @@
                             .Select(row => String.Join("_", row.Select(p => p.Status.GetLiternalPresentation()))));
         }
 
-        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, int distance = 4, bool onLineOnly = true)
+        [Pure]
+        public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this ReadOnlyBoard board, IReadOnlyBoardPoint point, int distance = 4, bool onLineOnly = true)
         {
             for (var x = Math.Max(0, point.Position.X - distance); x <= Math.Min(board.Size - 1, point.Position.X + distance); x++)
             {
@@ -47,6 +51,7 @@
             }
         }
 
+        [Pure]
         public static IEnumerable<BoardPosition> GetHalfDirections()
         {
             yield return new BoardPosition(1, 0);
@@ -55,15 +60,16 @@
             yield return new BoardPosition(-1, 1);
         }
 
-        public static PieceLine GetRowOnBoard(this IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition position, BoardPosition direction, bool includeBlank)
+        [Pure]
+        public static PieceLine GetRowOnBoard(this ReadOnlyBoard board, BoardPosition position, BoardPosition direction, bool includeBlank)
         {
             return includeBlank ? board.GetDashRowOnBoard(position, direction) : board.GetContinuousRowOnBoard(position, direction);
         }
 
-        public static PieceLine GetContinuousRowOnBoard(this IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition position, BoardPosition direction)
+        [Pure]
+        public static PieceLine GetContinuousRowOnBoard(this ReadOnlyBoard board, BoardPosition position, BoardPosition direction)
         {
-            if (!position.IsDropped(board))
-                throw new InvalidOperationException("ContinousLine can't start with blank.");
+            Contract.Requires(position.IsDropped(board), "ContinousLine can't start with blank.");
 
             var endPosition = position + direction;
             while (endPosition.IsOnBoard(board) && endPosition.IsDropped(board) && board[endPosition].Status.Value == board[position].Status.Value)
@@ -76,7 +82,8 @@
             return Equals(position, endPosition) ? null : new PieceLine(board, position, endPosition);
         }
 
-        public static PieceLine GetDashRowOnBoard(this IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition position, BoardPosition direction)
+        [Pure]
+        public static PieceLine GetDashRowOnBoard(this ReadOnlyBoard board, BoardPosition position, BoardPosition direction)
         {
             var firstState = board[position].Status;
             var endPosition = position;
@@ -89,7 +96,8 @@
                     null : new PieceLine(board, position, endPosition).TrimEnd();
         }
 
-        public static IEnumerable<PieceLine> GetRowsFromPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point, bool includeBlank = false)
+        [Pure]
+        public static IEnumerable<PieceLine> GetRowsFromPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point, bool includeBlank = false)
         {
             foreach (var direction in GetHalfDirections())
             {
@@ -98,29 +106,30 @@
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
-                    Debug.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
-                    Debug.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
+                    Contract.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
+                    Contract.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
                     yield return combinedLine;
                     continue;
                 }
 
                 if (line != null)
                 {
-                    Debug.Assert(line.EndPosition.IsDropped(board), "line must be dropped on start position.");
+                    Contract.Assert(line.EndPosition.IsDropped(board), "line must be dropped on start position.");
                     yield return line;
                 }
 
                 if (oppositeLine != null)
                 {
-                    Debug.Assert(oppositeLine.EndPosition.IsDropped(board), "opposite Line must be dropped on start position.");
+                    Contract.Assert(oppositeLine.EndPosition.IsDropped(board), "opposite Line must be dropped on start position.");
                     yield return oppositeLine;
                 }
             }
         }
 
-        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithoutPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        [Pure]
+        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithoutPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
-            Debug.Assert(point.Status == null, "point mustn't been dropped.");
+            Contract.Requires(point.Status == null, "point mustn't been dropped.");
 
             foreach (var line in board.Lines)
             {
@@ -139,9 +148,10 @@
                     yield return jointLine;
         }
 
-        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        [Pure]
+        public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
-            Debug.Assert(point.Status.HasValue, "point must be dropped,");
+            Contract.Requires(point.Status.HasValue, "point must be dropped,");
 
             foreach (var line in board.Lines)
             {
@@ -161,14 +171,16 @@
                 yield return newLine;
         }
 
-        public static IEnumerable<PieceLine> GetLines(this IReadBoardState<IReadOnlyBoardPoint> board, Func<int, bool> dropsCount, Side? side = null, bool openOnly = false)
+        [Pure]
+        public static IEnumerable<PieceLine> GetLines(this ReadOnlyBoard board, Func<int, bool> dropsCount, Side? side = null, bool openOnly = false)
         {
             return board.Lines.Where(l => dropsCount(l.DroppedCount) &&
                                    (openOnly && !l.IsClosed(board)) &&
                                    (side.HasValue && side == l.Side));
         }
 
-        private static bool CanMoveAlone(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition direction, ref Side? pickedSide)
+        [Pure]
+        private static bool CanMoveAlone(this BoardPosition position, ReadOnlyBoard board, BoardPosition direction, ref Side? pickedSide)
         {
             var nextPosition = position + direction;
             if (!nextPosition.IsOnBoard(board))

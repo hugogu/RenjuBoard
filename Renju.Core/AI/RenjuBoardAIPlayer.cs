@@ -4,12 +4,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using Infrastructure;
     using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
 
     public abstract class RenjuBoardAIPlayer : DisposableModelBase, IGamePlayer
     {
@@ -27,7 +27,7 @@
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
-            Guard.ArgumentNotNull(monitor, nameof(monitor));
+            Contract.Requires(monitor != null);
 
             monitor.Initailizing += OnInitailizing;
             monitor.Loading += OnLoadingBoard;

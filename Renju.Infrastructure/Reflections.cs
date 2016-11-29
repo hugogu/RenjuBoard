@@ -4,12 +4,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
 
     public static class Reflections
     {
@@ -20,17 +20,15 @@
             {
                 memberExpression = (expression.Body as UnaryExpression).Operand as MemberExpression;
             }
-
-            if (memberExpression == null)
-                throw new ArgumentException("expression is not a valid member expression", "expression");
+            Contract.Assert(memberExpression != null, nameof(expression) + " is not a valid member expression");
 
             return memberExpression.Member.Name;
         }
 
         public static T CopyFrom<T>(this T target, T source)
         {
-            Guard.ArgumentNotNull(target, nameof(target));
-            Guard.ArgumentNotNull(source, nameof(source));
+            Contract.Requires(target != null);
+            Contract.Requires(source != null);
 
             foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                               .Where(p => p.CanWrite && p.CanRead))
@@ -43,8 +41,8 @@
 
         public static T CopyFromObject<T>(this T target, object source)
         {
-            Guard.ArgumentNotNull(target, nameof(target));
-            Guard.ArgumentNotNull(source, nameof(source));
+            Contract.Requires(target != null);
+            Contract.Requires(source != null);
 
             foreach (var copyFrom in from targetProperty in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                      where targetProperty.CanWrite

@@ -2,13 +2,12 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using Events;
-    using Microsoft.Practices.Unity.Utility;
 
     public class StreamMessenger<REQ, RES> : DisposableModelBase, IMessenger<REQ, RES>
     {
@@ -16,10 +15,16 @@
         private static readonly TypeConverter _requestConverter = TypeDescriptor.GetConverter(typeof(REQ));
         private readonly ActionBlock<String> _writeBlock;
 
+        static StreamMessenger()
+        {
+            Contract.Assume(_requestConverter.CanConvertTo(typeof(string)), "Request message type must be convertable to String.");
+            Contract.Assume(_responseConverter.CanConvertFrom(typeof(string)), "Response message type must be convertable from String.");
+        }
+
         public StreamMessenger(StreamReader inputReader, StreamWriter outputWriter)
         {
-            Guard.ArgumentNotNull(inputReader, nameof(inputReader));
-            Guard.ArgumentNotNull(outputWriter, nameof(outputWriter));
+            Contract.Requires(inputReader != null);
+            Contract.Requires(outputWriter != null);
 
             _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s));
             _writeBlock.Completion.ContinueWith(_ => outputWriter.Dispose());
@@ -32,23 +37,16 @@
         public StreamMessenger(Stream inputStream, Stream outputStream)
             : this(new StreamReader(inputStream), new StreamWriter(outputStream))
         {
-            Guard.ArgumentNotNull(inputStream, nameof(inputStream));
-            Guard.ArgumentNotNull(outputStream, nameof(outputStream));
-            Debug.Assert(inputStream.CanRead, "input stream should be readable.");
-            Debug.Assert(outputStream.CanWrite, "output stream should be writable.");
-
-            if (!_responseConverter.CanConvertFrom(typeof(string)))
-                throw new NotSupportedException(String.Format("Response message type {0} must be convertable from String.", typeof(RES)));
-
-            if (!_requestConverter.CanConvertTo(typeof(string)))
-                throw new NotSupportedException(String.Format("Request message type {0} must be convertable to String.", typeof(REQ)));
+            Contract.Requires(inputStream != null);
+            Contract.Requires(outputStream != null);
+            Contract.Requires(inputStream.CanRead, "input stream should be readable.");
+            Contract.Requires(outputStream.CanWrite, "output stream should be writable.");
         }
 
         public virtual event EventHandler<GenericEventArgs<RES>> MessageReceived;
 
         public async virtual Task SendAsync(REQ message)
         {
-            Guard.ArgumentNotNull(message, nameof(message));
             var messageText = _requestConverter.ConvertToString(message);
             if (!await _writeBlock.SendAsync(messageText))
             {

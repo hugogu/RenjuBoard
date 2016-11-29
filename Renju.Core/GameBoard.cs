@@ -43,7 +43,7 @@
                 return DropResult.InvalidDrop;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _optionsObserver.Dispose();
         }
@@ -51,18 +51,12 @@
         public void Take(BoardPosition position)
         {
             var point = GetPoint(position);
-            if (point.Status == null)
-                throw new InvalidOperationException(String.Format("{0} hasn't been dropped.", position));
-            Contract.Assert(DropsCount > 0);
+            Contract.Assert(point.Status != null, String.Format("{0} hasn't been dropped.", position));
             var lastPoint = DroppedPoints.Last();
-            if (Equals(point, lastPoint))
-            {
-                _expectedNextTurn = point.Status.Value;
-                point.ResetToEmpty();
-                RaisePieceTakenEvent(position);
-            }
-            else
-                throw new InvalidOperationException(String.Format("{0} wasn't the last drop.", position));
+            Contract.Assert(Equals(point, lastPoint), String.Format("{0} wasn't the last drop.", position));
+            _expectedNextTurn = point.Status.Value;
+            point.ResetToEmpty();
+            RaisePieceTakenEvent(position);
         }
 
         protected virtual DropResult Put(PieceDrop drop, OperatorType type)

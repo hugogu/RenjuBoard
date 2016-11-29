@@ -1,7 +1,7 @@
 ﻿namespace Renju.Core.Debugging
 {
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
     using System.Windows;
@@ -11,7 +11,6 @@
     using Controls;
     using Infrastructure;
     using Infrastructure.Model;
-    using Microsoft.Practices.Unity.Utility;
     using Microsoft.VisualStudio.DebuggerVisualizers;
 
     public class RenjuBoardVisualizer : DialogDebuggerVisualizer
@@ -22,13 +21,13 @@
         {
             var mainAssembly = Assembly.Load("RenjuBoard");
             BoardResources = mainAssembly.TryFindResourceDictionaries(key => key.StartsWith("themes/"));
-            Debug.Assert(BoardResources.Any(), "Resources can't be empty.");
+            Contract.Assert(BoardResources.Any(), "Resources can't be empty.");
         }
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
-            Guard.ArgumentNotNull(windowService, nameof(windowService));
-            Guard.ArgumentNotNull(objectProvider, nameof(objectProvider));
+            Contract.Assert(windowService != null);
+            Contract.Assert(objectProvider != null);
 
             var data = objectProvider.GetObject();
             var board = data as IReadBoardState<IReadOnlyBoardPoint>;

@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Microsoft.Practices.Unity.Utility;
     using Renju.Infrastructure;
 
     public class ResolveOverrideItem : ModelBase
@@ -15,12 +15,9 @@
 
         public ResolveOverrideItem(string name, string displayName, IEnumerable<object> candidates, bool isReadOnly = false)
         {
-            Guard.ArgumentNotNull(name, nameof(name));
-            Guard.ArgumentNotNull(candidates, nameof(candidates));
-            if (isReadOnly && candidates.Any())
-            {
-                throw new ArgumentException("Readonly property shouldn't have any value candidates. ", nameof(candidates));
-            }
+            Contract.Requires(name != null);
+            Contract.Requires(candidates != null);
+            Contract.Requires<ArgumentException>(!isReadOnly || !candidates.Any(), "Readonly property shouldn't have any value candidates. ");
 
             Name = name;
             DisplayName = displayName;
