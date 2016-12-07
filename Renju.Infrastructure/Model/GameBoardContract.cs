@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using Events;
 
     [ContractClassFor(typeof(IReadBoardState<>))]
@@ -27,16 +28,6 @@
                 Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
                 return default(IEnumerable<T>);
-            }
-        }
-
-        int IReadBoardState<T>.DropsCount
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
-                return default(int);
             }
         }
 
@@ -80,16 +71,6 @@
             }
         }
 
-        string IReadBoardState<T>.VisualBoard
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-
-                return default(string);
-            }
-        }
-
         event EventHandler<GenericEventArgs<NewGameOptions>> IReadBoardState<T>.Begin
         {
             add { }
@@ -116,12 +97,10 @@
         public abstract T this[BoardPosition position] { get; }
 
         public abstract IEnumerable<T> DroppedPoints { get; }
-        public abstract int DropsCount { get; }
         public abstract IEnumerable<PieceLine> Lines { get; }
         public abstract IEnumerable<T> Points { get; }
         public abstract IGameRuleEngine RuleEngine { get; }
         public abstract int Size { get; }
-        public abstract string VisualBoard { get; }
 
         Side? IGameBoard<T>.ExpectedNextTurn
         {
@@ -150,7 +129,7 @@
         void IGameBoard<T>.Take(BoardPosition position)
         {
             Contract.Requires(position != null);
-            Contract.Requires(DropsCount > 0);
+            Contract.Requires(DroppedPoints.Any());
         }
     }
 }

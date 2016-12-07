@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using System.Reflection;
     using System.Threading;
     using Infrastructure;
@@ -76,7 +77,7 @@
 
         protected override void OnPlayerStarting()
         {
-            Contract.Assert(VirtualAIGameBoard.DropsCount == 0, "Starting event is not valid when game already started.");
+            Contract.Assert(!VirtualAIGameBoard.DroppedPoints.Any(), "Starting event is not valid when game already started.");
             Contract.Assert(Side == Side.Black);
             Operator.Put(new PieceDrop(new BoardPosition(7, 7), Side));
         }

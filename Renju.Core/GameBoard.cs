@@ -77,7 +77,7 @@
         {
             var point = GetPoint(position);
             point.Status = side;
-            point.Index = DropsCount + 1;
+            point.Index = DroppedPoints.Count() + 1;
         }
     }
 }

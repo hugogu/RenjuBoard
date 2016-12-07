@@ -90,7 +90,6 @@
             _droppedPoints.RemoveLast();
             UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithoutPoint(point).ToList());
             RaiseEvent(Taken, position);
-            OnPropertyChanged(() => DropsCount);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
@@ -100,7 +99,6 @@
             ((IReadBoardState<IReadOnlyBoardPoint>)this).InvalidateNearbyPointsOf(point);
             UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithNewPoint(point).ToList());
             RaiseEvent(PieceDropped, new PieceDropEventArgs(drop, operatorType));
-            OnPropertyChanged(() => DropsCount);
         }
 
         protected virtual TPoint GetPoint(BoardPosition position)

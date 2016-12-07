@@ -54,11 +54,6 @@
         [field: NonSerialized]
         public event EventHandler<BoardPosition> Taken;
 
-        public int DropsCount
-        {
-            get { return _decoratedBoard.DropsCount + 1; }
-        }
-
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return _decoratedBoard.Points.Select(p => this[p.Position]); }
