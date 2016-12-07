@@ -64,18 +64,18 @@
 
         protected override async void OnInitailizing(object sender, GenericEventArgs<int> e)
         {
-            await _piskvorkAI.Initialize(e.Message);
+            await _piskvorkAI.InitializeAsync(e.Message).ConfigureAwait(false);
         }
 
         protected override async void OnAboutRequested(object sender, EventArgs e)
         {
-            await _piskvorkAI.RequestAbout();
+            await _piskvorkAI.RequestAboutAsync().ConfigureAwait(false);
         }
 
         protected override async void OnBoardDropped(object sender, GenericEventArgs<BoardPosition> e)
         {
             if (RenjuBoard[e.Message].Status != Side)
-                await _piskvorkAI.OpponentDrops(e.Message);
+                await _piskvorkAI.OpponentDropsAsync(e.Message).ConfigureAwait(false);
         }
 
         protected override void OnBoardDropTaken(object sender, GenericEventArgs<BoardPosition> e)
@@ -85,12 +85,12 @@
 
         protected override async void OnPlayerStarting()
         {
-            await _piskvorkAI.Begin();
+            await _piskvorkAI.BeginAsync().ConfigureAwait(false);
         }
 
         protected override async void OnLoadingBoard(object sender, GenericEventArgs<IEnumerable<PieceDrop>> e)
         {
-            await _piskvorkAI.Load(e.Message);
+            await _piskvorkAI.LoadAsync(e.Message).ConfigureAwait(false);
         }
 
         private void OnAISays(object sender, GenericEventArgs<string> e)
@@ -107,7 +107,7 @@
             catch (InvalidOperationException ex)
             {
                 Trace.TraceError(ex.Message);
-                _piskvorkAI.Begin();
+                _piskvorkAI.BeginAsync();
             }
         }
     }

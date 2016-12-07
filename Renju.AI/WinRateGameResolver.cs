@@ -41,7 +41,7 @@
 
         public async Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
-            return await Task.Run(() => Resolve(board, side).First());
+            return await Task.Run(() => Resolve(board, side).First()).ConfigureAwait(false);
         }
 
         protected internal virtual void PublishResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)

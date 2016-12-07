@@ -26,7 +26,7 @@
             Contract.Requires(inputReader != null);
             Contract.Requires(outputWriter != null);
 
-            _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s));
+            _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s).ConfigureAwait(false));
             _writeBlock.Completion.ContinueWith(_ => outputWriter.Dispose());
 
             AutoDispose(inputReader.ReadAllLines().Subscribe(OnReceivingStdOut));
@@ -48,7 +48,7 @@
         public async virtual Task SendAsync(REQ message)
         {
             var messageText = _requestConverter.ConvertToString(message);
-            if (!await _writeBlock.SendAsync(messageText))
+            if (!await _writeBlock.SendAsync(messageText).ConfigureAwait(false))
             {
                 throw new ObjectDisposedException(nameof(_writeBlock));
             }

@@ -17,10 +17,7 @@
                 Contract.Ensures(Contract.Result<CancellationToken>() != null);
                 return default(CancellationToken);
             }
-            set
-            {
-                Contract.Requires(value != null);
-            }
+            set { Contract.Requires(value != null); }
         }
 
         ExecutionTimer IReportExecutionStatus.ExecutionTimer { get; }

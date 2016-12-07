@@ -105,7 +105,7 @@
 
         private async void OnPieceDropped()
         {
-            var drop = await Resolver.ResolveAsync(VirtualAIGameBoard, Side);
+            var drop = await Resolver.ResolveAsync(VirtualAIGameBoard, Side).ConfigureAwait(false);
             if (_aiResolvingCancelTokenSource.IsCancellationRequested)
                 return;
             Operator.Put(new PieceDrop(drop.Position, Side));

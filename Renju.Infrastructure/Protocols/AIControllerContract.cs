@@ -33,21 +33,21 @@
             remove { }
         }
 
-        Task IAIController.Begin()
+        Task IAIController.BeginAsync()
         {
             Contract.Ensures(Contract.Result<Task>() != null);
 
             return default(Task);
         }
 
-        Task IAIController.End()
+        Task IAIController.EndAsync()
         {
             Contract.Ensures(Contract.Result<Task>() != null);
 
             return default(Task);
         }
 
-        Task IAIController.Info(GameInfo info)
+        Task IAIController.InfoAsync(GameInfo info)
         {
             Contract.Requires(info != null);
             Contract.Ensures(Contract.Result<Task>() != null);
@@ -55,7 +55,7 @@
             return default(Task);
         }
 
-        Task IAIController.Initialize(int boardSize)
+        Task IAIController.InitializeAsync(int boardSize)
         {
             Contract.Requires(boardSize > 0);
             Contract.Ensures(Contract.Result<Task>() != null);
@@ -63,7 +63,7 @@
             return default(Task);
         }
 
-        Task IAIController.Load(IEnumerable<PieceDrop> drops)
+        Task IAIController.LoadAsync(IEnumerable<PieceDrop> drops)
         {
             Contract.Requires(drops != null);
             Contract.Ensures(Contract.Result<Task>() != null);
@@ -71,7 +71,7 @@
             return default(Task);
         }
 
-        Task IAIController.OpponentDrops(BoardPosition stone)
+        Task IAIController.OpponentDropsAsync(BoardPosition stone)
         {
             Contract.Requires(stone != null);
             Contract.Ensures(Contract.Result<Task>() != null);
@@ -79,7 +79,7 @@
             return default(Task);
         }
 
-        Task IAIController.RequestAbout()
+        Task IAIController.RequestAboutAsync()
         {
             Contract.Ensures(Contract.Result<Task>() != null);
 

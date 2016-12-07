@@ -24,10 +24,10 @@
                 };
                 Task.Run(async () =>
                 {
-                    await adaptor.Initialize(15);
-                    await adaptor.OpponentDrops(new PieceDrop(7, 7, Side.Black));
+                    await adaptor.InitializeAsync(15).ConfigureAwait(false);
+                    await adaptor.OpponentDropsAsync(new PieceDrop(7, 7, Side.Black)).ConfigureAwait(false);
                     evt.WaitOne(15000);
-                    await adaptor.End();
+                    await adaptor.EndAsync().ConfigureAwait(false);
                 }).Wait();
             }
         }

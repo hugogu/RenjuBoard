@@ -34,45 +34,45 @@
 
         public AIInfo AIInfo { get; } = new AIInfo();
 
-        public async Task RequestAbout()
+        public async Task RequestAboutAsync()
         {
-            await Messenger.SendAsync("ABOUT");
+            await Messenger.SendAsync("ABOUT").ConfigureAwait(false);
         }
 
-        public async Task Begin()
-        {
-            Contract.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("BEGIN");
-        }
-
-        public async Task End()
+        public async Task BeginAsync()
         {
             Contract.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("END");
+            await Messenger.SendAsync("BEGIN").ConfigureAwait(false);
         }
 
-        public async Task Info(GameInfo info)
+        public async Task EndAsync()
+        {
+            Contract.Assert(_process.IsValueCreated);
+            await Messenger.SendAsync("END").ConfigureAwait(false);
+        }
+
+        public async Task InfoAsync(GameInfo info)
         {
             foreach (var message in info.ToMessages())
-                await Messenger.SendAsync(message);
+                await Messenger.SendAsync(message).ConfigureAwait(false);
         }
 
-        public async Task Initialize(int boardSize)
+        public async Task InitializeAsync(int boardSize)
         {
-            await Messenger.SendAsync("START " + boardSize);
+            await Messenger.SendAsync("START " + boardSize).ConfigureAwait(false);
         }
 
-        public async Task Load(IEnumerable<PieceDrop> drops)
-        {
-            Contract.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("BOARD");
-            await Messenger.SendAsync("DONE");
-        }
-
-        public async Task OpponentDrops(BoardPosition stone)
+        public async Task LoadAsync(IEnumerable<PieceDrop> drops)
         {
             Contract.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("TURN " + stone.AsString());
+            await Messenger.SendAsync("BOARD").ConfigureAwait(false);
+            await Messenger.SendAsync("DONE").ConfigureAwait(false);
+        }
+
+        public async Task OpponentDropsAsync(BoardPosition stone)
+        {
+            Contract.Assert(_process.IsValueCreated);
+            await Messenger.SendAsync("TURN " + stone.AsString()).ConfigureAwait(false);
         }
 
         protected override void Dispose(bool disposing)
@@ -82,7 +82,7 @@
                 try
                 {
                     // Send Stream Ending to Terminate the process.
-                    Messenger.SendAsync("\0x1a");
+                    Messenger.SendAsync("\0x1a").ConfigureAwait(false);
                 }
                 catch (InvalidOperationException)
                 {
@@ -117,7 +117,7 @@
             process.Exited += OnAIProcessExit;
             AutoDispose(process);
 
-            Task.Run(async () => await RequestAbout());
+            Task.Run(async () => await RequestAboutAsync().ConfigureAwait(false));
 
             return process;
         }

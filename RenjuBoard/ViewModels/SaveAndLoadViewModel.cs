@@ -41,7 +41,7 @@
                     var converter = TypeDescriptor.GetConverter(typeof(PieceDrop));
                     while (!streamReader.EndOfStream)
                     {
-                        var line = await streamReader.ReadLineAsync();
+                        var line = await streamReader.ReadLineAsync().ConfigureAwait(false);
                         var drop = converter.ConvertFromString(line) as PieceDrop;
                         GameBoard.Drop(drop, OperatorType.Loading);
                     }

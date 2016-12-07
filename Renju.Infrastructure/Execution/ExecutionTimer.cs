@@ -61,13 +61,13 @@
 
         private void OnExecutorFinished(object sender, EventArgs e)
         {
+            Contract.Assert(IsExecutorRunning || !_pausedDuration.HasValue, "Can't handle finished event while paused.");
+
             if (IsExecutorRunning)
             {
                 _executedTime += DateTime.Now - _lastExecutionStartTime.Value;
                 _lastExecutionStartTime = null;
             }
-            else if (_pausedDuration.HasValue)
-                throw new InvalidOperationException("Can't handle finished event while paused.");
         }
 
         private void OnExecutorStarted(object sender, EventArgs e)
