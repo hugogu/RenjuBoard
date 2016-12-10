@@ -7,6 +7,7 @@
     using Microsoft.Practices.Unity;
     using Prism.Commands;
     using Properties;
+    using Reflection4Net.Extensions;
     using Renju.Infrastructure;
     using Renju.Infrastructure.Model;
 
@@ -33,7 +34,7 @@
 
         private void OnShowOptionsCommand()
         {
-            var optionsCopy = new OptionsViewModel(new GameOptions(Options)) { Rules = this.Rules };
+            var optionsCopy = new OptionsViewModel(new GameOptions().CopyFrom(Options)) { Rules = this.Rules };
             optionsCopy.CreateViewModelDialog("Renju Options")
                        .WithMinSize(300, 200)
                        .OnOKDo(() => Options.CopyFrom(optionsCopy.Options))
@@ -42,7 +43,7 @@
 
         private void OnSaveCommand()
         {
-            Settings.Default.CopyFromObject(Options);
+            Settings.Default.MapFrom(Options);
             Settings.Default.Save();
             var optionWindow = Application.Current.Windows.Cast<Window>().Last();
             optionWindow.DialogResult = true;

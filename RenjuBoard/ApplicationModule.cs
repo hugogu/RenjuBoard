@@ -7,7 +7,7 @@
     using Microsoft.Practices.Unity;
     using Prism.Modularity;
     using Properties;
-    using Renju.Infrastructure;
+    using Reflection4Net.Extensions;
     using Renju.Infrastructure.Model;
     using ViewModels;
 
@@ -44,7 +44,7 @@
             container.RegisterType(typeof(IEnumerable<>), new InjectionFactory((c, type, name) => c.ResolveAll(type.GetGenericArguments().Single())));
             container.RegisterType<GameOptions>(
                 new ContainerControlledLifetimeManager(),
-                new InjectionFactory(c => c.BuildUp(new GameOptions().CopyFromObject(Settings.Default))));
+                new InjectionFactory(c => c.BuildUp(new GameOptions().MapFrom(Settings.Default))));
             container.RegisterType<LogsViewModel>(new ContainerControlledLifetimeManager());
             container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
             container.RegisterInstance<Func<IUnityContainer>>("GameSession", container.CreateChildContainer);

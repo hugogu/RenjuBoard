@@ -1,7 +1,6 @@
 ﻿namespace Renju.Infrastructure.Model
 {
     using System;
-    using Microsoft.Practices.Unity;
 
     [Serializable]
     public class GameOptions : ModelBase
@@ -12,20 +11,8 @@
         private bool _showCalibrationLabels = true;
         private bool _isAITimeLimited = true;
         private bool _steppingAI = false;
-        private int _aiAggresiveBonus = 0;
         private int _aiStepTimeLimit = 20000;
         private int _aiTimeLimit = 500000;
-
-        [InjectionConstructor]
-        public GameOptions()
-        {
-        }
-
-        public GameOptions(GameOptions options)
-            : this()
-        {
-            this.CopyFrom(options);
-        }
 
         public bool ShowLinesOnBoard
         {
@@ -66,12 +53,6 @@
                 OnPropertyChanged(() => AIStepTimeSpan);
                 OnPropertyChanged(() => AITotalTimeSpan);
             }
-        }
-
-        public int AIAggresiveBonus
-        {
-            get { return _aiAggresiveBonus; }
-            set { SetProperty(ref _aiAggresiveBonus, value); }
         }
 
         public int AIStepTimeLimit

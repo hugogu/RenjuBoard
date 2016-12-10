@@ -8,6 +8,7 @@
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Threading;
+    using Reflection4Net.Extensions;
 
     [Serializable]
     public class ModelBase : INotifyPropertyChanged
