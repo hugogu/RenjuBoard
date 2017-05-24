@@ -16,7 +16,7 @@
         public OptionsViewModel(GameOptions options)
         {
             Options = options;
-            CancelCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = false);
+            CancelCommand = new DelegateCommand(() => FindWindowOfThisViewModel().DialogResult = false);
             SaveCommand = new DelegateCommand(OnSaveCommand);
             ShowOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
         }
@@ -45,8 +45,14 @@
         {
             Settings.Default.MapFrom(Options);
             Settings.Default.Save();
-            var optionWindow = Application.Current.Windows.Cast<Window>().Last();
+            var optionWindow = FindWindowOfThisViewModel();
             optionWindow.DialogResult = true;
         }
+
+        private Window FindWindowOfThisViewModel()
+        {
+            return Application.Current.Windows.Cast<Window>().Single(w => w.DataContext == this);
+        }
+
     }
 }

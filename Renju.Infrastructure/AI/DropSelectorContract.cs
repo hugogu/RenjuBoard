@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using Model;
 
     [ContractClassFor(typeof(IDropSelector))]
@@ -11,6 +12,7 @@
         {
             Contract.Requires(board != null);
             Contract.Ensures(Contract.Result<IEnumerable<IReadOnlyBoardPoint>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IReadOnlyBoardPoint>>().Any());
 
             return default(IEnumerable<IReadOnlyBoardPoint>);
         }

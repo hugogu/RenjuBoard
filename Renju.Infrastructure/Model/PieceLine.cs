@@ -88,7 +88,7 @@
         {
             get
             {
-                Contract.Requires<ArgumentOutOfRangeException>(index < 0 || index >= Length);
+                Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < Length);
 
                 return Board[StartPosition + Direction * index];
             }
