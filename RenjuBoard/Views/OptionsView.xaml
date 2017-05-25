@@ -29,6 +29,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <CheckBox Content="Show preview line"
                                   IsChecked="{Binding ShowPreviewLine}" />
@@ -41,6 +42,9 @@
                         <CheckBox Content="Show calibration labels"
                                   Grid.Row="3"
                                   IsChecked="{Binding ShowCalibrationLabels}" />
+                        <CheckBox Content="Show Point Weight"
+                                  Grid.Row="4"
+                                  IsChecked="{Binding ShowPointWeight}" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="AI"

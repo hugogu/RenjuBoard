@@ -6,6 +6,7 @@
     public class GameOptions : ModelBase
     {
         private bool _showLinesOnBoard = false;
+        private bool _showPointWeight = true;
         private bool _showAISteps = true;
         private bool _showPreviewLine = true;
         private bool _showCalibrationLabels = true;
@@ -18,6 +19,12 @@
         {
             get { return _showLinesOnBoard; }
             set { SetProperty(ref _showLinesOnBoard, value); }
+        }
+
+        public bool ShowPointWeight
+        {
+            get { return _showPointWeight; }
+            set { SetProperty(ref _showPointWeight, value); }
         }
 
         public bool ShowAISteps
