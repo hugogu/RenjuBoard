@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Reactive.Disposables;
 
+    [Serializable]
     public class DisposableModelBase : ModelBase, IDisposable
     {
         [NonSerialized]

@@ -1,7 +1,9 @@
 ﻿namespace Renju.Infrastructure.Model
 {
+    using System;
     using Microsoft.Practices.Unity;
 
+    [Serializable]
     public class NewGameOptions
     {
         public static NewGameOptions Default { get; } = new NewGameOptions();
