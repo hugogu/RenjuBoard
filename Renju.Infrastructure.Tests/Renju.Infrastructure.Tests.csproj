@@ -54,6 +54,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AI\WeightingStrategyTest.cs" />
+    <Compile Include="Model\BoardPositionTest.cs" />
     <Compile Include="PiskvorkAIPlayerAdapterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
