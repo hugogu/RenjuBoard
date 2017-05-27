@@ -1,6 +1,8 @@
 ﻿namespace Renju.Infrastructure
 {
     using System;
+    using AI;
+    using AI.Weight;
     using Execution;
     using IO;
     using Microsoft.Practices.Unity;
@@ -16,6 +18,7 @@
         public void Initialize()
         {
             Container.RegisterInstance<Action<IUnityContainer>>(GetType().Name, RegisterTypes);
+            Container.RegisterType<IDropWeightEvaluator, WeightingStrategy>(new ContainerControlledLifetimeManager(), new InjectionConstructor("AIWeightingStrategy.txt"));
             Container.RegisterType<IMessenger<string, string>>(
                 "Console",
                 new ContainerControlledLifetimeManager(),
@@ -24,6 +27,8 @@
 
         private static void RegisterTypes(IUnityContainer container)
         {
+            container.RegisterType<IDropSelector, PrioritizedDropsSelector>(new PerResolveLifetimeManager());
+            //container.RegisterType<IDropSelector, WeightPatternDropSelector>(new PerResolveLifetimeManager());
             container.RegisterType<IStepController, ExecutionStepController>(new ContainerControlledLifetimeManager());
             container.RegisterType<IBoardMonitor, LocalGameBoardMonitor>(new ContainerControlledLifetimeManager());
             container.RegisterType<IBoardOperator, LocalGameBoardOperator>(new ContainerControlledLifetimeManager());

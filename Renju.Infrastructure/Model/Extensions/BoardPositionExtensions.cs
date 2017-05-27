@@ -13,6 +13,11 @@
             return diff.X == 0 || diff.Y == 0 || Math.Abs(diff.X) == Math.Abs(diff.Y);
         }
 
+        public static int LineDistanceTo(this BoardPosition x, BoardPosition that)
+        {
+            return Math.Abs(x.X - that.X) + Math.Abs(x.Y - that.Y);
+        }
+
         [Pure]
         public static bool IsOnBoard(this BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {

@@ -11,6 +11,12 @@ namespace Renju.Infrastructure.Model.Extensions
         }
 
         [Pure]
+        public static string GetPatterOnSide(this IReadOnlyBoardPoint point, Side side)
+        {
+            return point.Status == null ? "_" : (point.Status == side ? "+" : "-");
+        }
+
+        [Pure]
         public static PieceLine To(this IReadOnlyBoardPoint pointFrom, IReadOnlyBoardPoint pointTo, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Contract.Requires(pointFrom != null);

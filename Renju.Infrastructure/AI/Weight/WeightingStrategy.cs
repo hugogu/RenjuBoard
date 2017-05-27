@@ -2,15 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Microsoft.Practices.Unity;
+    using Model;
+    using Model.Extensions;
 
-    public class WeightingStrategy
+    public class WeightingStrategy : IDropWeightEvaluator
     {
         private readonly IList<WeightingRule> rules = new List<WeightingRule>();
         private readonly IDictionary<WeightingPattern, double> weightingPatterns = new Dictionary<WeightingPattern, double>();
         private Regex regularPatternRegex = new Regex("[+-._,]+");
+
+        [InjectionConstructor]
+        public WeightingStrategy(string weightPatternFile)
+            : this(File.OpenRead(weightPatternFile))
+        {
+        }
 
         public WeightingStrategy(Stream stream)
         {
@@ -72,6 +82,32 @@
                     }
                 }
             }
+        }
+
+        public double CalculateWeight(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
+        {
+            return board.GetRowsFromPoint(drop, true)
+                        .Select(l => l.ExtendTo(PatternLength, drop.Position)
+                                      .GetPatternStringOfSide(drop.Position, dropSide))
+                        .Sum(p => FindWeightForPattern(p));
+        }
+
+        private double FindWeightForPattern(string pattern)
+        {
+            double weight = 0.0;
+            if (weightingPatterns.TryGetValue(pattern, out weight) ||
+                weightingPatterns.TryGetValue(Reverse(pattern), out weight))
+            {
+                return weight;
+            }
+            Trace.WriteLine("Pattern {0} not found", pattern);
+
+            return 0;
+        }
+
+        private string Reverse(string value)
+        {
+            return new string(value.Reverse().ToArray());
         }
     }
 }

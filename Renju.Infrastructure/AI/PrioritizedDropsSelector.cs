@@ -1,17 +1,17 @@
-﻿namespace Renju.AI
+﻿namespace Renju.Infrastructure.AI
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
+    using Events;
     using Infrastructure;
-    using Infrastructure.AI;
-    using Infrastructure.Events;
-    using Infrastructure.Model;
-    using Infrastructure.Model.Extensions;
     using Microsoft.Practices.Unity;
+    using Model;
+    using Model.Extensions;
     using Prism.Events;
 
-    public class WeightedDropSelector : IDropSelector
+    public class PrioritizedDropsSelector : IDropSelector
     {
         public bool RandomEqualSelections { get; set; } = true;
 
@@ -30,9 +30,17 @@
                       board.GetLines(c => c == 3).Where(l => l.IsClosed(board)).SelectMany(l => l.GetBlockPoints(board))),
                 () => board.IterateNearbyPointsOf(board.DroppedPoints.Last(), 2)
                            .Where(p => p.Status == null)
-                           .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length));
+                           .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length)).ToList();
+
+            if (prioritizedDrops.Count == 0)
+                Debugger.Break();
 
             return OrderCandidatesPointsByWeight(prioritizedDrops, board, side);
+        }
+
+        protected virtual double CacluateWeightOfPoint(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
+        {
+            return board.GetRowsFromPoint(drop, true).Sum(_ => _.Weight);
         }
 
         private IEnumerable<IReadOnlyBoardPoint> OrderCandidatesPointsByWeight(IEnumerable<IReadOnlyBoardPoint> pointsCandidates, IReadBoardState<IReadOnlyBoardPoint> board, Side side)
@@ -40,7 +48,7 @@
             foreach (var pointToWeight in pointsCandidates.Where(p => p.Status == null && p.RequiresReevaluateWeight))
             {
                 pointToWeight.RequiresReevaluateWeight = false;
-                pointToWeight.Weight = board.GetRowsFromPoint(pointToWeight, true).Sum(_ => _.Weight);
+                pointToWeight.Weight = Convert.ToInt32(CacluateWeightOfPoint(board, pointToWeight, side));
                 EventAggregator.GetEvent<EvaluatedPointEvent>().Publish(pointToWeight);
             }
 

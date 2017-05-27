@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics.Contracts;
 
-    public class WeightingPattern
+    public class WeightingPattern : IEquatable<WeightingPattern>
     {
         public WeightingPattern(string pattern, string originRegularPattern)
         {
@@ -17,6 +17,11 @@
 
         public string OriginPattern { get; private set; }
 
+        public static implicit operator WeightingPattern(string pattern)
+        {
+            return new WeightingPattern(pattern, String.Empty);
+        }
+
         public override string ToString()
         {
             return string.Format("WeightPattern[({1})->{0}]", Pattern, OriginPattern);
@@ -25,6 +30,16 @@
         public override int GetHashCode()
         {
             return Pattern.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as WeightingPattern);
+        }
+
+        public bool Equals(WeightingPattern other)
+        {
+            return other == null ? false : other.Pattern.Equals(Pattern);
         }
     }
 }

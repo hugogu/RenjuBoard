@@ -65,17 +65,20 @@
 
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
+            get { return Positions.Where(p => p.IsOnBoard(Board)).Select(p => Board[p]); }
+        }
+
+        public IEnumerable<BoardPosition> Positions
+        {
             get
             {
                 var position = StartPosition;
                 while (!Equals(position, EndPosition))
                 {
-                    if (position.IsOnBoard(Board))
-                        yield return Board[position];
+                    yield return position;
                     position += Direction;
                 }
-
-                yield return Board[EndPosition];
+                yield return position;
             }
         }
 
@@ -136,6 +139,34 @@
         public static PieceLine operator -(int offset, PieceLine line)
         {
             return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
+        }
+
+        public string GetPatternStringOfSide(BoardPosition drop, Side side)
+        {
+            Contract.Assert(Board[drop].Status == null);
+
+            return String.Concat(Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_")));
+        }
+
+        public PieceLine ExtendTo(int length, BoardPosition centerPoint)
+        {
+            Contract.Assert(centerPoint.IsInLine(this));
+            Contract.Assert(Length <= length);
+
+            var result = this;
+            while (result.Length < length)
+            {
+                if (centerPoint.LineDistanceTo(result.StartPosition) < centerPoint.LineDistanceTo(result.EndPosition))
+                {
+                    result = 1 + result;
+                }
+                else
+                {
+                    result = result + 1;
+                }
+            }
+
+            return result;
         }
 
         public PieceLine Trim()

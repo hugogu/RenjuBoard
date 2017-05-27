@@ -144,6 +144,9 @@
     <Compile Include="AI\DropSelectorContract.cs" />
     <Compile Include="AI\GameInfo.cs" />
     <Compile Include="AI\GameType.cs" />
+    <Compile Include="AI\IDropWeightEvaluator.cs" />
+    <Compile Include="AI\PrioritizedDropsSelector.cs" />
+    <Compile Include="AI\WeightPatternDropSelector.cs" />
     <Compile Include="AI\Weight\WeightingPattern.cs" />
     <Compile Include="AI\Weight\WeightingRule.cs" />
     <Compile Include="AI\Weight\WeightingStrategy.cs" />
