@@ -56,9 +56,8 @@
             {
                 RaiseStartedEvent();
                 foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
-                                              let weight = point.Weight
                                               let winRateWithPath = GetWinRateOf(board, point.As(side, board), side, 1)
-                                              orderby winRateWithPath.WinRate descending, weight descending
+                                              orderby winRateWithPath.WinRate descending, point.Weight descending
                                               select new { Point = point, WinRate = winRateWithPath })
                 {
                     Contract.Assert(pointWithRate.Point.Status == null, "A point candidate must be empty.");

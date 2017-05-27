@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using Events;
     using Infrastructure;
@@ -22,6 +21,7 @@
         {
             var prioritizedDrops = FindDropsFromPrioritizedTargets(
                 board,
+                side,
                 () => board.GetLines(c => c >= 4, side, true).SelectMany(l => l.GetBlockPoints(board)),
                 () => board.GetLines(c => c >= 4, Sides.Opposite(side), true).SelectMany(l => l.GetBlockPoints(board)),
                 () => board.GetLines(c => c == 3, side, true).SelectMany(l => l.GetBlockPoints(board)),
@@ -30,10 +30,7 @@
                       board.GetLines(c => c == 3).Where(l => l.IsClosed(board)).SelectMany(l => l.GetBlockPoints(board))),
                 () => board.IterateNearbyPointsOf(board.DroppedPoints.Last(), 2)
                            .Where(p => p.Status == null)
-                           .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length)).ToList();
-
-            if (prioritizedDrops.Count == 0)
-                Debugger.Break();
+                           .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length));
 
             return OrderCandidatesPointsByWeight(prioritizedDrops, board, side);
         }
@@ -53,14 +50,14 @@
             }
 
             return from point in pointsCandidates
-                   where point.Status == null && board.RuleEngine.GetRuleStopDropOn(board, new PieceDrop(point.Position, side)) == null
                    orderby point.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
                    select point;
         }
 
-        private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
+        private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, Side side, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
         {
-            return findPointsFuncs.Select(f => f().ToList()).First(l => l.Count > 0);
+            return findPointsFuncs.SelectMany(f => f().ToList())
+                                  .Where(p => p.Status == null && board.RuleEngine.GetRuleStopDropOn(board, new PieceDrop(p.Position, side)) == null);
         }
     }
 }
