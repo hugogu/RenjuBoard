@@ -1,6 +1,7 @@
 ﻿namespace Renju.Infrastructure.AI.Weight
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -13,8 +14,8 @@
     public class WeightingStrategy : IDropWeightEvaluator
     {
         private readonly IList<WeightingRule> rules = new List<WeightingRule>();
-        private readonly IDictionary<WeightingPattern, double> weightingPatterns = new Dictionary<WeightingPattern, double>();
-        private Regex regularPatternRegex = new Regex("[+-._,]+");
+        private readonly ConcurrentDictionary<string, WeightingInfo> weightingPatterns = new ConcurrentDictionary<string, WeightingInfo>();
+        private readonly Regex regularPatternRegex = new Regex("[+-._,]+");
 
         [InjectionConstructor]
         public WeightingStrategy(string weightPatternFile)
@@ -30,7 +31,7 @@
 
         public int PatternLength { get; private set; }
 
-        public IDictionary<WeightingPattern, double> WeightingPatterns
+        public IDictionary<string, WeightingInfo> WeightingPatterns
         {
             get { return weightingPatterns; }
         }
@@ -68,18 +69,11 @@
             {
                 foreach (var pattern in rule.GenerateAllPatterns(PatternLength))
                 {
-                    var existing = weightingPatterns.Keys.FirstOrDefault(p => p.Pattern.Equals(pattern.Pattern));
-                    if (existing != null)
-                    {
-                        if (existing.OriginPattern.Length < pattern.OriginPattern.Length)
-                        {
-                            weightingPatterns[pattern] = rule.Weight ?? (rules.Count - rule.Priority) * 4;
-                        }
-                    }
-                    else
-                    {
-                        weightingPatterns[pattern] = rule.Weight ?? (rules.Count - rule.Priority) * 4;
-                    }
+                    weightingPatterns.AddOrUpdate(pattern, 
+                        key => new WeightingInfo(pattern.OriginPattern, rule.Weight ?? (rules.Count - rule.Priority) * 4),
+                        (key, old) => old.OriginPattern.Length < pattern.OriginPattern.Length ?
+                                new WeightingInfo(pattern.OriginPattern, rule.Weight ?? (rules.Count - rule.Priority) * 4) :
+                                old);
                 }
             }
         }
@@ -87,18 +81,19 @@
         public double CalculateWeight(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
         {
             return board.GetRowsFromPoint(drop, true)
-                        .Select(l => l.ExtendTo(PatternLength, drop.Position)
+                        .Where(l => l.Length <= PatternLength)
+                        .Select(l => l.ResizeTo(PatternLength, drop.Position)
                                       .GetPatternStringOfSide(drop.Position, dropSide))
                         .Sum(p => FindWeightForPattern(p));
         }
 
         private double FindWeightForPattern(string pattern)
         {
-            double weight = 0.0;
+            WeightingInfo weight = null;
             if (weightingPatterns.TryGetValue(pattern, out weight) ||
                 weightingPatterns.TryGetValue(Reverse(pattern), out weight))
             {
-                return weight;
+                return weight.Weight;
             }
             Trace.WriteLine("Pattern {0} not found", pattern);
 

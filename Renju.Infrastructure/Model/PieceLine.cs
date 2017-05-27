@@ -63,6 +63,11 @@
             get { return Math.Max(Math.Abs(StartPosition.X - EndPosition.X), Math.Abs(StartPosition.Y - EndPosition.Y)) + 1; }
         }
 
+        public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
+        {
+            get { return Points.Where(p => p.Status != null); }
+        }
+
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
             get { return Positions.Where(p => p.IsOnBoard(Board)).Select(p => Board[p]); }
@@ -148,10 +153,9 @@
             return String.Concat(Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_")));
         }
 
-        public PieceLine ExtendTo(int length, BoardPosition centerPoint)
+        public PieceLine ResizeTo(int length, BoardPosition centerPoint)
         {
             Contract.Assert(centerPoint.IsInLine(this));
-            Contract.Assert(Length <= length);
 
             var result = this;
             while (result.Length < length)
@@ -163,6 +167,18 @@
                 else
                 {
                     result = result + 1;
+                }
+            }
+            while(result.Length > length)
+            {
+                if (centerPoint.LineDistanceTo(result.StartPosition) < centerPoint.LineDistanceTo(result.EndPosition)
+                    && (result.DroppedPoints.Count() > 1 || Board[EndPosition].Status == null))
+                {
+                    result = result - 1;
+                }
+                else
+                {
+                    result = 1 - result;
                 }
             }
 

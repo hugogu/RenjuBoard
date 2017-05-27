@@ -22,6 +22,11 @@
             return new WeightingPattern(pattern, String.Empty);
         }
 
+        public static implicit operator String(WeightingPattern pattern)
+        {
+            return pattern.Pattern;
+        }
+
         public override string ToString()
         {
             return string.Format("WeightPattern[({1})->{0}]", Pattern, OriginPattern);
