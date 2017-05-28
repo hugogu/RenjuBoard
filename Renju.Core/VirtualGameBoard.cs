@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using Debugging;
     using Infrastructure;
@@ -23,8 +22,8 @@
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(size > 0, nameof(size) + " must be positive.");
-            Contract.Requires<ArgumentNullException>(createPoint != null);
+            Debug.Assert(size > 0, nameof(size) + " must be positive.");
+            Debug.Assert(createPoint != null);
 
             Size = size;
             _points = new List<TPoint>(Enumerable.Range(0, size * size).Select(createPoint));

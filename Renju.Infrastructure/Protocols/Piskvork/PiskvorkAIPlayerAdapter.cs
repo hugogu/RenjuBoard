@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Reactive.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -22,7 +21,7 @@
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
-            Contract.Requires(aiFile != null);
+            Debug.Assert(aiFile != null);
 
             _process = new Lazy<Process>(() => StartProcess(aiFile));
             _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
@@ -41,13 +40,13 @@
 
         public async Task BeginAsync()
         {
-            Contract.Assert(_process.IsValueCreated);
+            Debug.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("BEGIN").ConfigureAwait(false);
         }
 
         public async Task EndAsync()
         {
-            Contract.Assert(_process.IsValueCreated);
+            Debug.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("END").ConfigureAwait(false);
         }
 
@@ -64,14 +63,14 @@
 
         public async Task LoadAsync(IEnumerable<PieceDrop> drops)
         {
-            Contract.Assert(_process.IsValueCreated);
+            Debug.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("BOARD").ConfigureAwait(false);
             await Messenger.SendAsync("DONE").ConfigureAwait(false);
         }
 
         public async Task OpponentDropsAsync(BoardPosition stone)
         {
-            Contract.Assert(_process.IsValueCreated);
+            Debug.Assert(_process.IsValueCreated);
             await Messenger.SendAsync("TURN " + stone.AsString()).ConfigureAwait(false);
         }
 

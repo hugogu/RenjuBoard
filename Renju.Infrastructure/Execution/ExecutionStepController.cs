@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Threading;
     using Microsoft.Practices.Unity;
     using Model;
@@ -106,7 +105,7 @@
         [Conditional("DEBUG")]
         private void ValidateCurrentThreadID()
         {
-            Contract.Assert(Thread.CurrentThread.ManagedThreadId == _executionID,
+            Debug.Assert(Thread.CurrentThread.ManagedThreadId == _executionID,
                 "This execution step controller doesn't support multi-threaded execution environment.");
         }
     }

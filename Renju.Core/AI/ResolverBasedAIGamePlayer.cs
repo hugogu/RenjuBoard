@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
@@ -22,7 +21,7 @@
 
         public ResolverBasedAIGamePlayer([Description("AI")] IDropResolver resolver)
         {
-            Contract.Requires(resolver != null);
+            Debug.Assert(resolver != null);
 
             Resolver = resolver;
 
@@ -77,8 +76,8 @@
 
         protected override void OnPlayerStarting()
         {
-            Contract.Assert(!VirtualAIGameBoard.DroppedPoints.Any(), "Starting event is not valid when game already started.");
-            Contract.Assert(Side == Side.Black);
+            Debug.Assert(!VirtualAIGameBoard.DroppedPoints.Any(), "Starting event is not valid when game already started.");
+            Debug.Assert(Side == Side.Black);
             Operator.Put(new PieceDrop(new BoardPosition(7, 7), Side));
         }
 

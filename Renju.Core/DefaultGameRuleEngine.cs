@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using Infrastructure.Model;
 
@@ -14,8 +13,8 @@
 
         public DefaultGameRuleEngine(IEnumerable<IGameRule> rules)
         {
-            Contract.Requires(rules != null);
-            Contract.Requires(rules.Any());
+            Debug.Assert(rules != null);
+            Debug.Assert(rules.Any());
             _rules = rules;
             foreach (var rule in rules)
                 Trace.WriteLine("Loaded rule " + rule.Name);

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using System.Windows.Input;
     using Prism.Commands;
@@ -19,7 +19,7 @@
         public NewGameSettingsViewModel(Func<Type, Side, GamePlayerSetupViewModel> createPlayerSetupVM)
         {
             GamePlayers = typeof(IGamePlayer).FindAllImplementations();
-            Contract.Assert(GamePlayers.Any(), "No Gameplayer found");
+            Debug.Assert(GamePlayers.Any(), "No Gameplayer found");
             AutoDispose(this.ObserveProperty(() => BlackPlayerType).Subscribe(e =>
                 BlackPlayerBuilder = createPlayerSetupVM(BlackPlayerType, Side.Black)));
             AutoDispose(this.ObserveProperty(() => WhitePlayerType).Subscribe(e =>

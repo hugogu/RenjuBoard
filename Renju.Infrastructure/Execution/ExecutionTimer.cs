@@ -1,7 +1,7 @@
 ﻿namespace Renju.Infrastructure.Execution
 {
     using System;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Reactive.Linq;
 
     public class ExecutionTimer : DisposableModelBase
@@ -40,7 +40,7 @@
 
         public void Pause()
         {
-            Contract.Assert(IsExecutorRunning, "Can't pause when it is not executing.");
+            Debug.Assert(IsExecutorRunning, "Can't pause when it is not executing.");
             _pausedDuration = DateTime.Now - _lastExecutionStartTime.Value;
             _lastExecutionStartTime = null;
         }
@@ -61,7 +61,7 @@
 
         private void OnExecutorFinished(object sender, EventArgs e)
         {
-            Contract.Assert(IsExecutorRunning || !_pausedDuration.HasValue, "Can't handle finished event while paused.");
+            Debug.Assert(IsExecutorRunning || !_pausedDuration.HasValue, "Can't handle finished event while paused.");
 
             if (IsExecutorRunning)
             {

@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Windows.Input;
@@ -24,8 +24,8 @@
 
         public AIControllerViewModel(IStepController aiStepController, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator, GameOptions gameOptions)
         {
-            Contract.Assert(aiStepController != null);
-            Contract.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
+            Debug.Assert(aiStepController != null);
+            Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
             eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
             eventAggregator.GetEvent<EvaluatedPointEvent>().Subscribe(OnEvaluatingPoint);

@@ -1,13 +1,13 @@
 ﻿namespace Renju.Infrastructure.Events
 {
     using System;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
 
     public class GenericEventArgs<T> : EventArgs
     {
         public GenericEventArgs(T message)
         {
-            Contract.Requires(message != null);
+            Debug.Assert(message != null);
 
             Message = message;
         }

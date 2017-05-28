@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using Infrastructure;
     using Infrastructure.Model;
@@ -55,7 +55,7 @@
 
         public void UndoDrop()
         {
-            Contract.Requires(CanUndo, "There is no drop to undo.");
+            Debug.Assert(CanUndo, "There is no drop to undo.");
 
             var drop = _undoDrops.Last();
             _undoDrops.RemoveAt(_undoDrops.Count - 1);
@@ -67,7 +67,7 @@
 
         public void RedoDrop()
         {
-            Contract.Requires(CanRedo, "There is no drop to redo.");
+            Debug.Assert(CanRedo, "There is no drop to redo.");
 
             var drop = _redoDrops.Last();
             _redoDrops.RemoveAt(_redoDrops.Count - 1);

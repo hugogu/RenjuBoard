@@ -2,7 +2,7 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Globalization;
 
     public class PieceDropTypeConverter : TypeConverter
@@ -14,10 +14,10 @@
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            Contract.Assert(value != null);
-            Contract.Assert(value is string);
+            Debug.Assert(value != null);
+            Debug.Assert(value is string);
             var values = (value as string).Split(' ');
-            Contract.Assert(values.Length == 3, "String form of PeiceDrop must have 3 segments.");
+            Debug.Assert(values.Length == 3, "String form of PeiceDrop must have 3 segments.");
 
             return new PieceDrop(Convert.ToInt32(values[0]), Convert.ToInt32(values[1]), (Side)Enum.Parse(typeof(Side), values[2]));
         }
@@ -29,8 +29,8 @@
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            Contract.Assert(value != null);
-            Contract.Assert(typeof(string).IsAssignableFrom(destinationType));
+            Debug.Assert(value != null);
+            Debug.Assert(typeof(string).IsAssignableFrom(destinationType));
             var drop = value as PieceDrop;
 
             return String.Format("{0} {1} {2}", drop.X, drop.Y, drop.Side);

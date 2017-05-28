@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using Microsoft.Practices.Unity;
     using Prism.Modularity;
@@ -32,7 +32,7 @@
             container.RegisterInstance<Func<Type, Side, GamePlayerSetupViewModel>>((playerType, side) =>
                 container.BuildUp(new GamePlayerSetupViewModel(playerType, side)));
             container.RegisterInstance<Func<Type, ResolverOverride[], IGamePlayer>>((playerType, overrides) => {
-                Contract.Assert(typeof(IGamePlayer).IsAssignableFrom(playerType));
+                Debug.Assert(typeof(IGamePlayer).IsAssignableFrom(playerType));
                 var player = container.Resolve(playerType, overrides) as IGamePlayer;
                 container.RegisterInstance(player.Side.ToString(), player);
                 return player;

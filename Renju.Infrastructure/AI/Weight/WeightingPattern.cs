@@ -1,14 +1,14 @@
 ﻿namespace Renju.Infrastructure.AI.Weight
 {
     using System;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
 
     public class WeightingPattern : IEquatable<WeightingPattern>
     {
         public WeightingPattern(string pattern, string originRegularPattern)
         {
-            Contract.Assert(pattern != null);
-            Contract.Assert(originRegularPattern != null);
+            Debug.Assert(pattern != null);
+            Debug.Assert(originRegularPattern != null);
             Pattern = pattern;
             OriginPattern = originRegularPattern;
         }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.Linq;
     using ReadOnlyBoard = IReadBoardState<IReadOnlyBoardPoint>;
@@ -19,7 +20,7 @@
         [Pure]
         public static Side SideOfLastDrop(this ReadOnlyBoard board)
         {
-            Contract.Requires(board.DroppedPoints.Any(), "board should have some drops by now.");
+            Debug.Assert(board.DroppedPoints.Any(), "board should have some drops by now.");
 
             return board.DroppedPoints.Last().Status.Value;
         }
@@ -69,7 +70,7 @@
         [Pure]
         public static PieceLine GetContinuousRowOnBoard(this ReadOnlyBoard board, BoardPosition position, BoardPosition direction)
         {
-            Contract.Requires(position.IsDropped(board), "ContinousLine can't start with blank.");
+            Debug.Assert(position.IsDropped(board), "ContinousLine can't start with blank.");
 
             var endPosition = position + direction;
             while (endPosition.IsOnBoard(board) && endPosition.IsDropped(board) && board[endPosition].Status.Value == board[position].Status.Value)
@@ -106,21 +107,21 @@
                 var combinedLine = line + oppositeLine;
                 if (combinedLine != null)
                 {
-                    Contract.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
-                    Contract.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
+                    Debug.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
+                    Debug.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
                     yield return combinedLine;
                     continue;
                 }
 
                 if (line != null)
                 {
-                    Contract.Assert(line.EndPosition.IsDropped(board), "line must be dropped on start position.");
+                    Debug.Assert(line.EndPosition.IsDropped(board), "line must be dropped on start position.");
                     yield return line;
                 }
 
                 if (oppositeLine != null)
                 {
-                    Contract.Assert(oppositeLine.EndPosition.IsDropped(board), "opposite Line must be dropped on start position.");
+                    Debug.Assert(oppositeLine.EndPosition.IsDropped(board), "opposite Line must be dropped on start position.");
                     yield return oppositeLine;
                 }
             }
@@ -129,7 +130,7 @@
         [Pure]
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithoutPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
-            Contract.Requires(point.Status == null, "point mustn't been dropped.");
+            Debug.Assert(point.Status == null, "point mustn't been dropped.");
 
             foreach (var line in board.Lines)
             {
@@ -151,7 +152,7 @@
         [Pure]
         public static IEnumerable<PieceLine> FindAllLinesOnBoardWithNewPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
-            Contract.Requires(point.Status.HasValue, "point must be dropped,");
+            Debug.Assert(point.Status.HasValue, "point must be dropped,");
 
             foreach (var line in board.Lines)
             {

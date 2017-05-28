@@ -1,7 +1,7 @@
 ﻿namespace RenjuBoard
 {
     using System;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Windows;
     using Microsoft.Practices.Unity;
     using Renju.Core;
@@ -29,9 +29,9 @@
             newGameViewModel.CreateViewModelDialog("Start New Game").ShowDialog();
             var blackplayer = newGameViewModel.BlackPlayerBuilder.CreatedPlayer;
             var whiteplayer = newGameViewModel.WhitePlayerBuilder.CreatedPlayer;
-            Contract.Assert(blackplayer != whiteplayer);
-            Contract.Assert(blackplayer.Side == Side.Black);
-            Contract.Assert(whiteplayer.Side == Side.White);
+            Debug.Assert(blackplayer != whiteplayer);
+            Debug.Assert(blackplayer.Side == Side.Black);
+            Debug.Assert(whiteplayer.Side == Side.White);
             ShowResourceMonitorForPlayer(blackplayer);
             ShowResourceMonitorForPlayer(whiteplayer);
             Application.Current.MainWindow.DataContext = _currentGameContainer.Resolve<MainWindowViewModel>();
@@ -55,7 +55,7 @@
         {
             _currentGameContainer?.Dispose();
             _currentGameContainer = CreateGameContainer();
-            Contract.Assert(_currentGameContainer.Parent != null);
+            Debug.Assert(_currentGameContainer.Parent != null);
             Array.ForEach(GameContainerRegistrators, register => register(_currentGameContainer));
             var options = _currentGameContainer.Resolve<NewGameOptions>();
             _currentGameContainer.RegisterInstance(options);

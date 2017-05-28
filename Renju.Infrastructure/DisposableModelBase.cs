@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reactive.Disposables;
 
@@ -42,7 +41,7 @@
 
         protected void AutoCallOnDisposing(Action action)
         {
-            Contract.Requires(action != null);
+            Debug.Assert(action != null);
             _disposables.Add(Disposable.Create(action));
         }
 
@@ -67,7 +66,7 @@
         [Conditional("DEBUG")]
         private void CheckDisposableReference(IDisposable disposable)
         {
-            Contract.Assert(!_disposables.Any(d => d == disposable), String.Format("IDisposable of Type {0} has already been added.", disposable.GetType().Name));
+            Debug.Assert(!_disposables.Any(d => d == disposable), String.Format("IDisposable of Type {0} has already been added.", disposable.GetType().Name));
         }
     }
 }

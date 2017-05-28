@@ -2,13 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
     using Events;
     using Model;
     using Protocols;
 
-    [ContractClass(typeof(AIControllerContract))]
     public interface IAIController
     {
         event EventHandler<GenericEventArgs<BoardPosition>> Dropping;

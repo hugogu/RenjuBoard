@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -15,9 +15,9 @@
 
         public ResolveOverrideItem(string name, string displayName, IEnumerable<object> candidates, bool isReadOnly = false)
         {
-            Contract.Requires(name != null);
-            Contract.Requires(candidates != null);
-            Contract.Requires<ArgumentException>(!isReadOnly || !candidates.Any(), "Readonly property shouldn't have any value candidates. ");
+            Debug.Assert(name != null);
+            Debug.Assert(candidates != null);
+            Debug.Assert(!isReadOnly || !candidates.Any(), "Readonly property shouldn't have any value candidates. ");
 
             Name = name;
             DisplayName = displayName;

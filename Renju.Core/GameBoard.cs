@@ -1,7 +1,7 @@
 ﻿namespace Renju.Core
 {
     using System;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using Infrastructure;
     using Infrastructure.Model;
@@ -51,9 +51,9 @@
         public void Take(BoardPosition position)
         {
             var point = GetPoint(position);
-            Contract.Assert(point.Status != null, String.Format("{0} hasn't been dropped.", position));
+            Debug.Assert(point.Status != null, String.Format("{0} hasn't been dropped.", position));
             var lastPoint = DroppedPoints.Last();
-            Contract.Assert(Equals(point, lastPoint), String.Format("{0} wasn't the last drop.", position));
+            Debug.Assert(Equals(point, lastPoint), String.Format("{0} wasn't the last drop.", position));
             _expectedNextTurn = point.Status.Value;
             point.ResetToEmpty();
             RaisePieceTakenEvent(position);

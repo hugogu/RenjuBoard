@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.Linq;
 
@@ -9,7 +10,7 @@
     {
         public WeightingRule(string regularPattern, int priority)
         {
-            Contract.Assert(regularPattern != null);
+            Debug.Assert(regularPattern != null);
             Priority = priority;
             var patternWithWeight = regularPattern.Split(':');
             RegularPatterns = patternWithWeight[0].Split(',');
@@ -19,7 +20,7 @@
             }
             foreach (var pattern in RegularPatterns)
             {
-                Contract.Assert(pattern.Contains("."), "A pattern should contain a '.'");
+                Debug.Assert(pattern.Contains("."), "A pattern should contain a '.'");
             }
         }
 

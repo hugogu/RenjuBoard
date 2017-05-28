@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using Infrastructure;
     using Infrastructure.Events;
     using Infrastructure.Model;
@@ -27,7 +26,7 @@
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
-            Contract.Requires(monitor != null);
+            Debug.Assert(monitor != null);
 
             monitor.Initailizing += OnInitailizing;
             monitor.Loading += OnLoadingBoard;

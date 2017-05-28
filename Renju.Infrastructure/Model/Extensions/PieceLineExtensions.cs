@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.Linq;
 
@@ -33,7 +34,7 @@
         [Pure]
         public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Contract.Requires(position.IsWithInLine(line), "Position is not within line");
+            Debug.Assert(position.IsWithInLine(line), "Position is not within line");
 
             var startLine = new PieceLine(board, line.StartPosition, position, line.Direction);
             if (startLine.Length > 2)
@@ -64,9 +65,9 @@
         [Pure]
         public static IEnumerable<IReadOnlyBoardPoint> GetBlockPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Contract.Requires(line.DroppedCount >= 3, "line must have at least 3 drops.");
-            Contract.Requires(line.StartPosition.IsDropped(board), "line start position must be dropped.");
-            Contract.Requires(line.EndPosition.IsDropped(board), "line end position must be dropped.");
+            Debug.Assert(line.DroppedCount >= 3, "line must have at least 3 drops.");
+            Debug.Assert(line.StartPosition.IsDropped(board), "line start position must be dropped.");
+            Debug.Assert(line.EndPosition.IsDropped(board), "line end position must be dropped.");
 
             if (line.DroppedCount >= 4)
             {
@@ -83,9 +84,9 @@
         [Pure]
         public static IEnumerable<IReadOnlyBoardPoint> GetContinousPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Contract.Requires(line.DroppedCount == 2, "line must have 2 drops.");
-            Contract.Requires(line.EndPosition.IsDropped(board), "line end must be dropped.");
-            Contract.Requires(line.StartPosition.IsDropped(board), "line start must be dropped.");
+            Debug.Assert(line.DroppedCount == 2, "line must have 2 drops.");
+            Debug.Assert(line.EndPosition.IsDropped(board), "line end must be dropped.");
+            Debug.Assert(line.StartPosition.IsDropped(board), "line start must be dropped.");
 
             return (2 + line + 2).Points.Where(p => !p.Position.IsDropped(board));
         }
@@ -93,7 +94,7 @@
         [Pure]
         public static bool FindSubLineMatch(this PieceLine line, Func<IReadOnlyBoardPoint, bool>[] pattern, out PieceLine result)
         {
-            Contract.Requires(line.Length >= 3, "line must be longer than 2.");
+            Debug.Assert(line.Length >= 3, "line must be longer than 2.");
             for (var i = 0; i < line.Length; i++)
             {
                 for (var c = 0; c < pattern.Length && i + c < line.Length; c++)
@@ -131,7 +132,7 @@
         [Pure]
         internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Contract.Requires(line.DroppedCount >= 4, "line must contains at least 4 drops");
+            Debug.Assert(line.DroppedCount >= 4, "line must contains at least 4 drops");
             if (line.Length == line.DroppedCount)
             {
                 var end = (line + 1).EndPosition;
@@ -162,8 +163,8 @@
         [Pure]
         internal static bool IsClosedFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Contract.Requires(line.Length > 3, "line must be longer than 3");
-            Contract.Requires(line.DroppedCount >= 4, "line must contains at least 4 drops.");
+            Debug.Assert(line.Length > 3, "line must be longer than 3");
+            Debug.Assert(line.DroppedCount >= 4, "line must contains at least 4 drops.");
             if (line.Length == 4)
             {
                 var opponentSide = Sides.Opposite(line.Side);

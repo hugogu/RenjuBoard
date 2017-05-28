@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using Debugging;
     using Infrastructure;
@@ -21,8 +20,8 @@
 
         public GameBoardDecoration(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint decorationPoint)
         {
-            Contract.Requires(!decorationPoint.Position.IsDropped(board), "Can't decorate with a point already in use.");
-            Contract.Requires<ArgumentException>(decorationPoint.Status.HasValue, nameof(decorationPoint) + "much has a Side. ");
+            Debug.Assert(!decorationPoint.Position.IsDropped(board), "Can't decorate with a point already in use.");
+            Debug.Assert(decorationPoint.Status.HasValue, nameof(decorationPoint) + "much has a Side. ");
 
             var lastPoint = board.DroppedPoints.LastOrDefault();
             if ((lastPoint == null && decorationPoint.Status == Side.White) ||

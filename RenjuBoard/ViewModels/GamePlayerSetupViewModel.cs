@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using Microsoft.Practices.Unity;
@@ -49,10 +49,10 @@
 
         public GamePlayerSetupViewModel(Type playerType, Side side)
         {
-            Contract.Requires(playerType != null);
-            Contract.Requires(typeof(IGamePlayer).IsAssignableFrom(playerType));
+            Debug.Assert(playerType != null);
+            Debug.Assert(typeof(IGamePlayer).IsAssignableFrom(playerType));
             Constructor = playerType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-            Contract.Assert(Constructor != null, "playerType doesn't have a valid constructor.");
+            Debug.Assert(Constructor != null, "playerType doesn't have a valid constructor.");
             _side = side;
             _playerType = playerType;
             Parameters = ResolveOverrideItem.BuildParameterModels(Constructor).ToList();

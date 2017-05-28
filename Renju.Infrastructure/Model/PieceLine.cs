@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Windows;
     using Extensions;
@@ -25,8 +24,8 @@
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
         {
-            Contract.Requires<ArgumentException>(!Equals(start, end), "Point start and end are the same. ");
-            Contract.Requires<ArgumentException>(start.IsOnLineWith(end), "Point start and end in not on the same line. ");
+            Debug.Assert(!Equals(start, end), "Point start and end are the same. ");
+            Debug.Assert(start.IsOnLineWith(end), "Point start and end in not on the same line. ");
 
             Board = board;
             StartPosition = start;
@@ -96,7 +95,7 @@
         {
             get
             {
-                Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < Length);
+                Debug.Assert(index >= 0 && index < Length);
 
                 return Board[StartPosition + Direction * index];
             }
@@ -106,7 +105,7 @@
         {
             if (a == null || b == null)
                 return null;
-            Contract.Assert(a?.Board == b?.Board, "Two line is not on the same game board.");
+            Debug.Assert(a?.Board == b?.Board, "Two line is not on the same game board.");
 
             if (a.Side != b.Side)
                 return null;
@@ -148,14 +147,14 @@
 
         public string GetPatternStringOfSide(BoardPosition drop, Side side)
         {
-            Contract.Assert(Board[drop].Status == null);
+            Debug.Assert(Board[drop].Status == null);
 
             return String.Concat(Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_")));
         }
 
         public PieceLine ResizeTo(int length, BoardPosition centerPoint)
         {
-            Contract.Assert(centerPoint.IsInLine(this));
+            Debug.Assert(centerPoint.IsInLine(this));
 
             var result = this;
             while (result.Length < length)
@@ -226,7 +225,7 @@
         [Conditional("DEBUG")]
         private void ValidatePoint()
         {
-            Contract.Assert(Points.GroupBy(p => p.Status).Count() <= 2, "A PieceLine shouldn't contains 3 kinds of states.");
+            Debug.Assert(Points.GroupBy(p => p.Status).Count() <= 2, "A PieceLine shouldn't contains 3 kinds of states.");
         }
     }
 }
