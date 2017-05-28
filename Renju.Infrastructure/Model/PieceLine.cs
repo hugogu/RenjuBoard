@@ -87,38 +87,6 @@
             return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
         }
 
-        public PieceLine ResizeTo(int length, BoardPosition centerPoint)
-        {
-            Debug.Assert(centerPoint.IsInLine(this));
-
-            var result = this;
-            while (result.Length < length)
-            {
-                if (centerPoint.LineDistanceTo(result.StartPosition) < centerPoint.LineDistanceTo(result.EndPosition))
-                {
-                    result = 1 + result;
-                }
-                else
-                {
-                    result = result + 1;
-                }
-            }
-            while(result.Length > length)
-            {
-                if (centerPoint.LineDistanceTo(result.StartPosition) < centerPoint.LineDistanceTo(result.EndPosition)
-                    && (result.DroppedPoints.Count() > 1 || Board[EndPosition].Status == null))
-                {
-                    result = result - 1;
-                }
-                else
-                {
-                    result = 1 - result;
-                }
-            }
-
-            return result;
-        }
-
         public PieceLine Trim()
         {
             var trimEnd = TrimEnd();

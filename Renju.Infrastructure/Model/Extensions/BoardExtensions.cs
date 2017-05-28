@@ -105,7 +105,7 @@
                 endPosition += direction;
             }
 
-            return (Equals(endPosition, position) || firstState == null) ?
+            return (endPosition.Equals(position) || firstState == null) ?
                     null : new PieceLine(board, position, endPosition).TrimEnd();
         }
 

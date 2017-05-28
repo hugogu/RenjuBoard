@@ -32,7 +32,7 @@
         [Dependency]
         public IEventAggregator EventAggregator { get; set; }
 
-        public int Depth { get; set; } = 5;
+        public int Depth { get; set; } = 6;
 
         public int Width { get; set; } = 4;
 

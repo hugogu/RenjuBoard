@@ -1,6 +1,8 @@
 ﻿namespace Renju.Infrastructure.Model.Extensions
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
 
     public static class BoardPositionExtensions
@@ -16,6 +18,21 @@
         public static int LineDistanceTo(this BoardPosition x, BoardPosition that)
         {
             return Math.Abs(x.X - that.X) + Math.Abs(x.Y - that.Y);
+        }
+
+        public static IEnumerable<BoardPosition> StepTo(this BoardPosition from, BoardPosition to, BoardPosition direction)
+        {
+            Debug.Assert(to != null);
+            Debug.Assert(from != null);
+            Debug.Assert(from.IsOnLineWith(to));
+
+            var position = from;
+            while (!position.Equals(to))
+            {
+                yield return position;
+                position += direction;
+            }
+            yield return position;
         }
 
         [Pure]

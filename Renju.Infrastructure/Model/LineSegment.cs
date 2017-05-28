@@ -4,20 +4,20 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Windows;
+    using System.Text;
     using Extensions;
 
     [Serializable]
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
     public class LineSegment
     {
-        public BoardPosition StartPosition { get; protected set; }
+        public BoardPosition StartPosition { get; private set; }
 
-        public BoardPosition EndPosition { get; protected set; }
+        public BoardPosition EndPosition { get; private set; }
 
-        public IReadBoardState<IReadOnlyBoardPoint> Board { get; protected set; }
+        public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
 
-        public BoardPosition Direction { get; protected set; }
+        public BoardPosition Direction { get; private set; }
 
         public LineSegment(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
             : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)))
@@ -30,11 +30,8 @@
             EndPosition = end;
             StartPosition = start;
             Direction = direction;
-        }
-
-        public Point MiddlePosition
-        {
-            get { return new Point(((double)StartPosition.X + EndPosition.X) / 2, ((double)StartPosition.Y + EndPosition.Y) / 2); }
+            Positions = StartPosition.StepTo(EndPosition, direction);
+            Points = Positions.Where(p => p.IsOnBoard(Board)).Select(p => Board[p]);
         }
 
         public int Length
@@ -42,29 +39,14 @@
             get { return Math.Max(Math.Abs(StartPosition.X - EndPosition.X), Math.Abs(StartPosition.Y - EndPosition.Y)) + 1; }
         }
 
-        public IEnumerable<IReadOnlyBoardPoint> Points
-        {
-            get { return Positions.Where(p => p.IsOnBoard(Board)).Select(p => Board[p]); }
-        }
+        public IEnumerable<IReadOnlyBoardPoint> Points { get; private set; }
 
         public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
         {
             get { return Points.Where(p => p.Status.HasValue); }
         }
 
-        public IEnumerable<BoardPosition> Positions
-        {
-            get
-            {
-                var position = StartPosition;
-                while (!Equals(position, EndPosition))
-                {
-                    yield return position;
-                    position += Direction;
-                }
-                yield return position;
-            }
-        }
+        public IEnumerable<BoardPosition> Positions { get; private set; }
 
         public IReadOnlyBoardPoint this[int index]
         {
@@ -80,7 +62,9 @@
         {
             Debug.Assert(Board[drop].Status == null);
 
-            return String.Concat(Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_")));
+            return Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_"))
+                            .Aggregate(new StringBuilder(Length), (builder, p) => builder.Append(p))
+                            .ToString();
         }
 
         internal static int GetDirection(int a, int b)
