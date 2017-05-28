@@ -80,17 +80,14 @@
 
         public double CalculateWeight(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
         {
-            return board.GetRowsFromPoint(drop, true)
-                        .Where(l => l.Length <= PatternLength)
-                        .Select(l => l.ResizeTo(PatternLength, drop.Position)
-                                      .GetPatternStringOfSide(drop.Position, dropSide))
+            return board.GetAllLineAroundPoint(drop, (PatternLength - 1) / 2)
+                        .Select(l => l.GetPatternStringOfSide(drop.Position, dropSide))
                         .Sum(p => FindWeightForPattern(p));
         }
 
         private double FindWeightForPattern(string pattern)
         {
-            WeightingInfo weight = null;
-            if (weightingPatterns.TryGetValue(pattern, out weight) ||
+            if (weightingPatterns.TryGetValue(pattern, out WeightingInfo weight) ||
                 weightingPatterns.TryGetValue(Reverse(pattern), out weight))
             {
                 return weight.Weight;

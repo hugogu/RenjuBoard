@@ -1,16 +1,14 @@
 ﻿namespace Renju.Infrastructure.Model
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Windows;
     using Extensions;
 
     [Serializable]
     [DebuggerVisualizer("Renju.Core.Debugging.RenjuBoardVisualizer, Renju.Core")]
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
-    public class PieceLine
+    public class PieceLine : LineSegment
     {
         public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
             : this(board, start, end, true)
@@ -23,67 +21,21 @@
         }
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
+            : base(board, start, end, direction)
         {
             Debug.Assert(!Equals(start, end), "Point start and end are the same. ");
             Debug.Assert(start.IsOnLineWith(end), "Point start and end in not on the same line. ");
-
-            Board = board;
-            StartPosition = start;
-            EndPosition = end;
-            Direction = direction;
             Side = Points.Select(p => p.Status).First(s => s.HasValue).Value;
 
             if (validate)
                 ValidatePoint();
         }
 
-        public BoardPosition StartPosition { get; private set; }
-
-        public BoardPosition EndPosition { get; private set; }
-
-        public Point MiddlePosition
-        {
-            get { return new Point(((double)StartPosition.X + EndPosition.X) / 2, ((double)StartPosition.Y + EndPosition.Y) / 2); }
-        }
-
-        public BoardPosition Direction { get; private set; }
-
         public Side Side { get; private set; }
-
-        public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
 
         public int Weight
         {
             get { return this.GetWeightOnBoard(Board); }
-        }
-
-        public int Length
-        {
-            get { return Math.Max(Math.Abs(StartPosition.X - EndPosition.X), Math.Abs(StartPosition.Y - EndPosition.Y)) + 1; }
-        }
-
-        public IEnumerable<IReadOnlyBoardPoint> DroppedPoints
-        {
-            get { return Points.Where(p => p.Status != null); }
-        }
-
-        public IEnumerable<IReadOnlyBoardPoint> Points
-        {
-            get { return Positions.Where(p => p.IsOnBoard(Board)).Select(p => Board[p]); }
-        }
-
-        public IEnumerable<BoardPosition> Positions
-        {
-            get
-            {
-                var position = StartPosition;
-                while (!Equals(position, EndPosition))
-                {
-                    yield return position;
-                    position += Direction;
-                }
-                yield return position;
-            }
         }
 
         public int DroppedCount
@@ -91,21 +43,11 @@
             get { return Points.Count(p => p.Status.HasValue); }
         }
 
-        public IReadOnlyBoardPoint this[int index]
-        {
-            get
-            {
-                Debug.Assert(index >= 0 && index < Length);
-
-                return Board[StartPosition + Direction * index];
-            }
-        }
-
         public static PieceLine operator +(PieceLine a, PieceLine b)
         {
-            if (a == null || b == null)
-                return null;
-            Debug.Assert(a?.Board == b?.Board, "Two line is not on the same game board.");
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(a.Board == b.Board, "Two line is not on the same game board.");
 
             if (a.Side != b.Side)
                 return null;
@@ -143,13 +85,6 @@
         public static PieceLine operator -(int offset, PieceLine line)
         {
             return new PieceLine(line.Board, line.StartPosition + line.Direction * offset, line.EndPosition, line.Direction);
-        }
-
-        public string GetPatternStringOfSide(BoardPosition drop, Side side)
-        {
-            Debug.Assert(Board[drop].Status == null);
-
-            return String.Concat(Positions.Select(p => p.Equals(drop) ? "." : (p.IsOnBoard(Board) ? Board[p].GetPatterOnSide(side) : "_")));
         }
 
         public PieceLine ResizeTo(int length, BoardPosition centerPoint)
@@ -215,11 +150,6 @@
             }
 
             return new PieceLine(Board, StartPosition, endPosition);
-        }
-
-        internal static int GetDirection(int a, int b)
-        {
-            return a == b ? 0 : a < b ? 1 : -1;
         }
 
         [Conditional("DEBUG")]

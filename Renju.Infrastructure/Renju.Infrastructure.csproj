@@ -109,6 +109,7 @@
     <Compile Include="Execution\IReportResourceUsage.cs" />
     <Compile Include="Execution\ProcessResourceUsageMonitor.cs" />
     <Compile Include="Execution\ResourceUsageInformation.cs" />
+    <Compile Include="Model\LineSegment.cs" />
     <Compile Include="Protocols\IAIController.cs" />
     <Compile Include="Protocols\Piskvork\PiskvorkAIPlayerAdapter.cs" />
     <Compile Include="IO\MessengerExtensions.cs" />

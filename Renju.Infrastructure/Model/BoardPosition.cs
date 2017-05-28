@@ -46,6 +46,11 @@
             return new BoardPosition(drop.X, drop.Y);
         }
 
+        public BoardPosition MoveAlone(BoardPosition direction, int steps)
+        {
+            return this + (direction * steps);
+        }
+
         public override string ToString()
         {
             return String.Format("({0},{1})", X, Y);

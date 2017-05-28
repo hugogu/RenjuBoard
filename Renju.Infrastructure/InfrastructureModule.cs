@@ -27,8 +27,8 @@
 
         private static void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterType<IDropSelector, PrioritizedDropsSelector>(new PerResolveLifetimeManager());
-            //container.RegisterType<IDropSelector, WeightPatternDropSelector>(new PerResolveLifetimeManager());
+            //container.RegisterType<IDropSelector, PrioritizedDropsSelector>(new PerResolveLifetimeManager());
+            container.RegisterType<IDropSelector, WeightPatternDropSelector>(new PerResolveLifetimeManager());
             container.RegisterType<IStepController, ExecutionStepController>(new ContainerControlledLifetimeManager());
             container.RegisterType<IBoardMonitor, LocalGameBoardMonitor>(new ContainerControlledLifetimeManager());
             container.RegisterType<IBoardOperator, LocalGameBoardOperator>(new ContainerControlledLifetimeManager());

@@ -20,6 +20,8 @@
 
         public GameBoardDecoration(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint decorationPoint)
         {
+            Debug.Assert(board != null);
+            Debug.Assert(decorationPoint != null);
             Debug.Assert(!decorationPoint.Position.IsDropped(board), "Can't decorate with a point already in use.");
             Debug.Assert(decorationPoint.Status.HasValue, nameof(decorationPoint) + "much has a Side. ");
 
@@ -85,7 +87,7 @@
 
         public IReadOnlyBoardPoint this[BoardPosition position]
         {
-            get { return Equals(_decorationPoint.Position, position) ? _decorationPoint : _decoratedBoard[position]; }
+            get { return _decorationPoint.Position.Equals(position) ? _decorationPoint : _decoratedBoard[position]; }
         }
 
         public IReadOnlyBoardPoint this[int x, int y]

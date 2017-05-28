@@ -36,6 +36,18 @@
         }
 
         [Pure]
+        public static IEnumerable<LineSegment> GetAllLineAroundPoint(this ReadOnlyBoard board, IReadOnlyBoardPoint point, int distance)
+        {
+            foreach(var direction in GetHalfDirections())
+            {
+                var endPoint = point.Position.MoveAlone(direction, distance);
+                var startPoint = point.Position.MoveAlone(-direction, distance);
+
+                yield return new LineSegment(board, startPoint, endPoint);
+            }
+        }
+
+        [Pure]
         public static IEnumerable<IReadOnlyBoardPoint> IterateNearbyPointsOf(this ReadOnlyBoard board, IReadOnlyBoardPoint point, int distance = 4, bool onLineOnly = true)
         {
             for (var x = Math.Max(0, point.Position.X - distance); x <= Math.Min(board.Size - 1, point.Position.X + distance); x++)
@@ -104,9 +116,9 @@
             {
                 var line = board.GetRowOnBoard(point.Position, direction, includeBlank);
                 var oppositeLine = board.GetRowOnBoard(point.Position, -direction, includeBlank);
-                var combinedLine = line + oppositeLine;
-                if (combinedLine != null)
+                if (line != null && oppositeLine != null && line.Side == oppositeLine.Side)
                 {
+                    var combinedLine = line + oppositeLine;
                     Debug.Assert(combinedLine.StartPosition.IsDropped(board), "combined Line must be dropped on start position.");
                     Debug.Assert(combinedLine.EndPosition.IsDropped(board), "combined Line must be dropped on end position.");
                     yield return combinedLine;
