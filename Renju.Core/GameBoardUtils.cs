@@ -1,5 +1,6 @@
 ﻿namespace Renju.Core
 {
+    using System.Linq;
     using Infrastructure.Execution;
     using Infrastructure.Model;
     using AI;
@@ -13,7 +14,7 @@
 
         public static IReadOnlyBoardPoint As(this IReadOnlyBoardPoint point, Side side, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            return new VirtualBoardPoint(point, side, board.DropsCount + 1);
+            return new VirtualBoardPoint(point, side, board.DroppedPoints.Count() + 1);
         }
 
         public static ExecutionTimer GetExecutionTimer(this IGameBoard<IReadOnlyBoardPoint> gameBoard, IGamePlayer player)

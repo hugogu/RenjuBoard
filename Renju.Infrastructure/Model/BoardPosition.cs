@@ -17,9 +17,9 @@
             Y = y;
         }
 
-        public int X { get; set; }
+        public int X { get; protected set; }
 
-        public int Y { get; set; }
+        public int Y { get; protected set; }
 
         public static BoardPosition operator +(BoardPosition a, BoardPosition b)
         {
@@ -44,6 +44,11 @@
         public static implicit operator BoardPosition(PieceDrop drop)
         {
             return new BoardPosition(drop.X, drop.Y);
+        }
+
+        public BoardPosition MoveAlone(BoardPosition direction, int steps)
+        {
+            return this + (direction * steps);
         }
 
         public override string ToString()

@@ -113,8 +113,8 @@
         [Conditional("DEBUG")]
         private void ValidateCurrentThreadID()
         {
-            if (Thread.CurrentThread.ManagedThreadId != _executionID)
-                throw new NotSupportedException("This execution step controller doesn't support multi-threaded execution environment.");
+            Debug.Assert(Thread.CurrentThread.ManagedThreadId == _executionID,
+                "This execution step controller doesn't support multi-threaded execution environment.");
         }
     }
 }

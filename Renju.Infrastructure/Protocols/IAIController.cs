@@ -15,18 +15,18 @@
 
         AIInfo AIInfo { get; }
 
-        Task Initialize(int boardSize);
+        Task InitializeAsync(int boardSize);
 
-        Task Begin();
+        Task BeginAsync();
 
-        Task Info(GameInfo inf);
+        Task InfoAsync(GameInfo inf);
 
-        Task Load(IEnumerable<PieceDrop> drops);
+        Task LoadAsync(IEnumerable<PieceDrop> drops);
 
-        Task OpponentDrops(BoardPosition stone);
+        Task OpponentDropsAsync(BoardPosition stone);
 
-        Task End();
+        Task EndAsync();
 
-        Task RequestAbout();
+        Task RequestAboutAsync();
     }
 }

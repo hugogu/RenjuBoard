@@ -3,10 +3,12 @@
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Threading;
+    using Reflection4Net.Extensions;
 
     [Serializable]
     public class ModelBase : INotifyPropertyChanged
@@ -19,6 +21,7 @@
         [field: NonSerialized]
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
+        [SuppressMessage("General", "RCS1047:Non-asynchronous method name should not end with 'Async'.", Justification = "Asynchronous in dispatcher.")]
         protected internal virtual void RaisePropertyChangedAsync(string propertyName)
         {
             RunInDispatcher(new Action(() => OnPropertyChanged(propertyName)), DispatcherPriority.Background);

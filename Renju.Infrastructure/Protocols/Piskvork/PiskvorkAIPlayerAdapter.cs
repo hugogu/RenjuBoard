@@ -9,7 +9,6 @@
     using AI;
     using Events;
     using IO;
-    using Microsoft.Practices.Unity.Utility;
     using Model;
     using Protocols;
 
@@ -19,11 +18,10 @@
         private static readonly Regex InfoItemPattern = new Regex("\\w+=\"[^ \"]+\"");
         private readonly Lazy<Process> _process;
         private readonly Lazy<IMessenger<string, string>> _aiMessenger;
-        private readonly AIInfo _info = new AIInfo();
 
         public PiskvorkAIPlayerAdapter(string aiFile)
         {
-            Guard.ArgumentNotNull(aiFile, "aiFile");
+            Debug.Assert(aiFile != null);
 
             _process = new Lazy<Process>(() => StartProcess(aiFile));
             _aiMessenger = new Lazy<IMessenger<string, string>>(CreateMessenger);
@@ -33,53 +31,47 @@
 
         public event EventHandler<GenericEventArgs<string>> Says;
 
-        public AIInfo AIInfo
+        public AIInfo AIInfo { get; } = new AIInfo();
+
+        public async Task RequestAboutAsync()
         {
-            get { return _info; }
+            await Messenger.SendAsync("ABOUT").ConfigureAwait(false);
         }
 
-        public async Task RequestAbout()
-        {
-            await Messenger.SendAsync("ABOUT");
-        }
-
-        public async Task Begin()
+        public async Task BeginAsync()
         {
             Debug.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("BEGIN");
+            await Messenger.SendAsync("BEGIN").ConfigureAwait(false);
         }
 
-        public async Task End()
+        public async Task EndAsync()
         {
             Debug.Assert(_process.IsValueCreated);
-            await Messenger.SendAsync("END");
+            await Messenger.SendAsync("END").ConfigureAwait(false);
         }
 
-        public async Task Info(GameInfo info)
+        public async Task InfoAsync(GameInfo info)
         {
-            Guard.ArgumentNotNull(info, "info");
             foreach (var message in info.ToMessages())
-                await Messenger.SendAsync(message);
+                await Messenger.SendAsync(message).ConfigureAwait(false);
         }
 
-        public async Task Initialize(int boardSize)
+        public async Task InitializeAsync(int boardSize)
         {
-            await Messenger.SendAsync("START " + boardSize);
+            await Messenger.SendAsync("START " + boardSize).ConfigureAwait(false);
         }
 
-        public async Task Load(IEnumerable<PieceDrop> drops)
-        {
-            Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(drops, "drops");
-            await Messenger.SendAsync("BOARD");
-            await Messenger.SendAsync("DONE");
-        }
-
-        public async Task OpponentDrops(BoardPosition stone)
+        public async Task LoadAsync(IEnumerable<PieceDrop> drops)
         {
             Debug.Assert(_process.IsValueCreated);
-            Guard.ArgumentNotNull(stone, "stone");
-            await Messenger.SendAsync("TURN " + stone.AsString());
+            await Messenger.SendAsync("BOARD").ConfigureAwait(false);
+            await Messenger.SendAsync("DONE").ConfigureAwait(false);
+        }
+
+        public async Task OpponentDropsAsync(BoardPosition stone)
+        {
+            Debug.Assert(_process.IsValueCreated);
+            await Messenger.SendAsync("TURN " + stone.AsString()).ConfigureAwait(false);
         }
 
         protected override void Dispose(bool disposing)
@@ -89,7 +81,7 @@
                 try
                 {
                     // Send Stream Ending to Terminate the process.
-                    Messenger.SendAsync("\0x1a");
+                    Messenger.SendAsync("\0x1a").ConfigureAwait(false);
                 }
                 catch (InvalidOperationException)
                 {
@@ -105,7 +97,7 @@
             get { return _aiMessenger.Value; }
         }
 
-        protected Process Process
+        protected internal Process Process
         {
             get { return _process.Value; }
         }
@@ -124,7 +116,7 @@
             process.Exited += OnAIProcessExit;
             AutoDispose(process);
 
-            Task.Run(async () => await RequestAbout());
+            Task.Run(async () => await RequestAboutAsync().ConfigureAwait(false));
 
             return process;
         }
@@ -151,7 +143,6 @@
         private void OnReceivingAIMessage(string airesponse)
         {
             var drop = DropPattern.Match(airesponse);
-            
             if (airesponse.StartsWith("MESSAGE") || airesponse.StartsWith("DEBUG") || airesponse.StartsWith("ERROR"))
             {
                 RaiseEvent(Says, new GenericEventArgs<string>(airesponse));
@@ -169,13 +160,13 @@
                     var key = item.Substring(0, item.IndexOf('='));
                     var value = item.Substring(item.IndexOf('"') + 1).TrimEnd('"');
                     if (key == "name")
-                        _info.Name = value;
+                        AIInfo.Name = value;
                     else if (key == "author")
-                        _info.Author = value;
+                        AIInfo.Author = value;
                     else if (key == "country")
-                        _info.Country = value;
+                        AIInfo.Country = value;
                     else if (key == "version")
-                        _info.Version = value;
+                        AIInfo.Version = value;
                 }
             }
         }

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
 
     public static class PieceLineExtensions
@@ -13,6 +14,7 @@
         private static Func<IReadOnlyBoardPoint, bool>[] dded = new[] { _dropped, _dropped, _empty, _dropped };
         private static Func<IReadOnlyBoardPoint, bool>[] dedd = new[] { _dropped, _empty, _dropped, _dropped };
 
+        [Pure]
         public static int GetWeightOnBoard(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             if (line.IsClosed(board))
@@ -29,9 +31,10 @@
             }
         }
 
+        [Pure]
         public static IEnumerable<PieceLine> BreakWith(this PieceLine line, BoardPosition position, IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            Debug.Assert(position.IsWithInLine(line), String.Format("Position {0} is not within line {1}", position, line));
+            Debug.Assert(position.IsWithInLine(line), "Position is not within line");
 
             var startLine = new PieceLine(board, line.StartPosition, position, line.Direction);
             if (startLine.Length > 2)
@@ -50,6 +53,7 @@
             }
         }
 
+        [Pure]
         public static bool IsClosed(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             if (line.DroppedCount <= 3)
@@ -58,6 +62,7 @@
                 return line.IsClosedFour(board);
         }
 
+        [Pure]
         public static IEnumerable<IReadOnlyBoardPoint> GetBlockPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Debug.Assert(line.DroppedCount >= 3, "line must have at least 3 drops.");
@@ -76,6 +81,7 @@
             return new IReadOnlyBoardPoint[0];
         }
 
+        [Pure]
         public static IEnumerable<IReadOnlyBoardPoint> GetContinousPoints(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Debug.Assert(line.DroppedCount == 2, "line must have 2 drops.");
@@ -85,6 +91,7 @@
             return (2 + line + 2).Points.Where(p => !p.Position.IsDropped(board));
         }
 
+        [Pure]
         public static bool FindSubLineMatch(this PieceLine line, Func<IReadOnlyBoardPoint, bool>[] pattern, out PieceLine result)
         {
             Debug.Assert(line.Length >= 3, "line must be longer than 2.");
@@ -106,6 +113,7 @@
             return false;
         }
 
+        [Pure]
         public static bool TryFindThreeInLine(this PieceLine line, out PieceLine result)
         {
             return line.FindSubLineMatch(ddd, out result) ||
@@ -113,6 +121,7 @@
                    line.FindSubLineMatch(dedd, out result);
         }
 
+        [Pure]
         public static bool HasOpenThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             PieceLine three;
@@ -120,6 +129,7 @@
             return line.TryFindThreeInLine(out three) ? !three.IsClosed(board) : false;
         }
 
+        [Pure]
         internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Debug.Assert(line.DroppedCount >= 4, "line must contains at least 4 drops");
@@ -144,11 +154,13 @@
             }
         }
 
+        [Pure]
         internal static IEnumerable<IReadOnlyBoardPoint> GetBlockPointsForThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             return (1 + line + 1).Points.Where(p => !p.Position.IsDropped(board));
         }
 
+        [Pure]
         internal static bool IsClosedFour(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             Debug.Assert(line.Length > 3, "line must be longer than 3");
@@ -171,6 +183,7 @@
             }
         }
 
+        [Pure]
         internal static bool IsClosedThree(this PieceLine line, IReadBoardState<IReadOnlyBoardPoint> board)
         {
             var opponentSide = Sides.Opposite(line.Side);

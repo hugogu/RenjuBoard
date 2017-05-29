@@ -17,7 +17,6 @@
 
         private static void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterType<IDropSelector, WeightedDropSelector>(new PerResolveLifetimeManager());
             container.RegisterType<IDropResolver, WinRateGameResolver>(new PerResolveLifetimeManager());
         }
     }

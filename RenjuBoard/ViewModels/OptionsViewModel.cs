@@ -6,16 +6,17 @@
     using System.Windows.Input;
     using Microsoft.Practices.Unity;
     using Prism.Commands;
+    using Properties;
+    using Reflection4Net.Extensions;
     using Renju.Infrastructure;
     using Renju.Infrastructure.Model;
-    using Properties;
 
     public class OptionsViewModel : ModelBase
     {
         public OptionsViewModel(GameOptions options)
         {
             Options = options;
-            CancelCommand = new DelegateCommand(() => Application.Current.Windows.Cast<Window>().Last().DialogResult = false);
+            CancelCommand = new DelegateCommand(() => FindWindowOfThisViewModel().DialogResult = false);
             SaveCommand = new DelegateCommand(OnSaveCommand);
             ShowOptionsCommand = new DelegateCommand(OnShowOptionsCommand);
         }
@@ -33,33 +34,25 @@
 
         private void OnShowOptionsCommand()
         {
-            var optionsCopy = new OptionsViewModel(new GameOptions(Options)) { Rules = this.Rules };
-            var optionsWindow = new Window()
-            {
-                Owner = Application.Current.MainWindow,
-                Title = "Renju Options",
-                DataContext = optionsCopy,
-                MinHeight = 200,
-                MinWidth = 300,
-                ResizeMode = ResizeMode.NoResize,
-                SizeToContent = SizeToContent.WidthAndHeight,
-                ShowInTaskbar = false,
-                Topmost = true,
-                WindowStyle = WindowStyle.SingleBorderWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            if (optionsWindow.ShowDialog() == true)
-            {
-                Options.CopyFrom(optionsCopy.Options);
-            }
+            var optionsCopy = new OptionsViewModel(new GameOptions().CopyFrom(Options)) { Rules = this.Rules };
+            optionsCopy.CreateViewModelDialog("Renju Options")
+                       .WithMinSize(300, 200)
+                       .OnOKDo(() => Options.CopyFrom(optionsCopy.Options))
+                       .ShowDialog();
         }
 
         private void OnSaveCommand()
         {
-            Settings.Default.CopyFromObject(Options);
+            Settings.Default.MapFrom(Options);
             Settings.Default.Save();
-            var optionWindow = Application.Current.Windows.Cast<Window>().Last();
+            var optionWindow = FindWindowOfThisViewModel();
             optionWindow.DialogResult = true;
         }
+
+        private Window FindWindowOfThisViewModel()
+        {
+            return Application.Current.Windows.Cast<Window>().Single(w => w.DataContext == this);
+        }
+
     }
 }

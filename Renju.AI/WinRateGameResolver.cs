@@ -34,7 +34,7 @@
         [Dependency]
         public IEventAggregator EventAggregator { get; set; }
 
-        public int Depth { get; set; } = 5;
+        public int Depth { get; set; } = 6;
 
         public int Width { get; set; } = 4;
 
@@ -42,14 +42,11 @@
 
         public async Task<IReadOnlyBoardPoint> ResolveAsync(IGameBoard<IReadOnlyBoardPoint> board, Side side)
         {
-            return await Task.Run(() => Resolve(board, side).First());
+            return await Task.Run(() => Resolve(board, side).First()).ConfigureAwait(false);
         }
 
         protected internal virtual void PublishResolvingBoardEvent(IReadBoardState<IReadOnlyBoardPoint> board)
         {
-            if (EventAggregator == null)
-                return;
-
             EventAggregator.GetEvent<ResolvingBoardEvent>().Publish(board);
         }
 
@@ -60,9 +57,8 @@
             {
                 RaiseStartedEvent();
                 foreach (var pointWithRate in from point in SelectDropsWithinWidth(board, side)
-                                              let weight = point.Weight
                                               let winRateWithPath = GetWinRateOf(board, point.As(side, board), side, 1)
-                                              orderby winRateWithPath.WinRate descending, weight descending
+                                              orderby winRateWithPath.WinRate descending, point.Weight descending
                                               select new { Point = point, WinRate = winRateWithPath })
                 {
                     Debug.Assert(pointWithRate.Point.Status == null, "A point candidate must be empty.");

@@ -1,86 +1,41 @@
 ﻿namespace Renju.Infrastructure.Model
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Windows;
     using Extensions;
 
     [Serializable]
     [DebuggerVisualizer("Renju.Core.Debugging.RenjuBoardVisualizer, Renju.Core")]
     [DebuggerDisplay("({StartPosition.X},{StartPosition.Y})->({EndPosition.X},{EndPosition.Y})")]
-    public class PieceLine
+    public class PieceLine : LineSegment
     {
         public PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end)
             : this(board, start, end, true)
         {
         }
 
-        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate) 
+        protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, bool validate)
             : this(board, start, end, new BoardPosition(GetDirection(start.X, end.X), GetDirection(start.Y, end.Y)), validate)
         {
         }
 
         protected internal PieceLine(IReadBoardState<IReadOnlyBoardPoint> board, BoardPosition start, BoardPosition end, BoardPosition direction, bool validate = false)
+            : base(board, start, end, direction)
         {
-            if (start.X != end.X &&
-                start.Y != end.Y &&
-                Math.Abs(start.X - end.X) != Math.Abs(start.Y - end.Y))
-                throw new ArgumentException(String.Format("Point {0} and {1} in not on the same line. ", start, end));
-
-            if (start.X == end.X && start.Y == end.Y)
-                throw new ArgumentException(String.Format("Point {0} and {1} are the same. ", start, end));
-
-            Board = board;
-            StartPosition = start;
-            EndPosition = end;
-            Direction = direction;
-            Side = Points.Select(p => p.Status).Where(s => s.HasValue).First().Value;
+            Debug.Assert(!Equals(start, end), "Point start and end are the same. ");
+            Debug.Assert(start.IsOnLineWith(end), "Point start and end in not on the same line. ");
+            Side = Points.Select(p => p.Status).First(s => s.HasValue).Value;
 
             if (validate)
                 ValidatePoint();
         }
 
-        public BoardPosition StartPosition { get; private set; }
-
-        public BoardPosition EndPosition { get; private set; }
-
-        public Point MiddlePosition
-        {
-            get { return new Point(((double)StartPosition.X + EndPosition.X) / 2, ((double)StartPosition.Y + EndPosition.Y) / 2); }
-        }
-
-        public BoardPosition Direction { get; private set; }
-
         public Side Side { get; private set; }
-
-        public IReadBoardState<IReadOnlyBoardPoint> Board { get; private set; }
 
         public int Weight
         {
             get { return this.GetWeightOnBoard(Board); }
-        }
-
-        public int Length
-        {
-            get { return Math.Max(Math.Abs(StartPosition.X - EndPosition.X), Math.Abs(StartPosition.Y - EndPosition.Y)) + 1; }
-        }
-
-        public IEnumerable<IReadOnlyBoardPoint> Points
-        {
-            get
-            {
-                var position = StartPosition;
-                while (!Equals(position, EndPosition))
-                {
-                    if (position.IsOnBoard(Board))
-                        yield return Board[position];
-                    position += Direction;
-                }
-
-                yield return Board[EndPosition];
-            }
         }
 
         public int DroppedCount
@@ -88,23 +43,11 @@
             get { return Points.Count(p => p.Status.HasValue); }
         }
 
-        public IReadOnlyBoardPoint this[int index]
-        {
-            get
-            {
-                if (index < 0 || index >= Length)
-                    throw new ArgumentOutOfRangeException("index");
-                return Board[StartPosition + Direction * index];
-            }
-        }
-
         public static PieceLine operator +(PieceLine a, PieceLine b)
         {
-            if (a == null || b == null)
-                return null;
-
-            if (a.Board != b.Board)
-                throw new InvalidOperationException("Two line is not on the same game board.");
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(a.Board == b.Board, "Two line is not on the same game board.");
 
             if (a.Side != b.Side)
                 return null;
@@ -177,16 +120,10 @@
             return new PieceLine(Board, StartPosition, endPosition);
         }
 
-        internal static int GetDirection(int a, int b)
-        {
-            return a == b ? 0 : a < b ? 1 : -1;
-        }
-
         [Conditional("DEBUG")]
         private void ValidatePoint()
         {
-            if (Points.GroupBy(p => p.Status).Count() > 2)
-                throw new InvalidOperationException("A PieceLine shouldn't contains 3 kinds of states.");
+            Debug.Assert(Points.GroupBy(p => p.Status).Count() <= 2, "A PieceLine shouldn't contains 3 kinds of states.");
         }
     }
 }

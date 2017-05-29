@@ -11,7 +11,6 @@
     using Controls;
     using Infrastructure;
     using Infrastructure.Model;
-    using Microsoft.Practices.Unity.Utility;
     using Microsoft.VisualStudio.DebuggerVisualizers;
 
     public class RenjuBoardVisualizer : DialogDebuggerVisualizer
@@ -27,8 +26,8 @@
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
-            Guard.ArgumentNotNull(windowService, "windowService");
-            Guard.ArgumentNotNull(objectProvider, "objectProvider");
+            Debug.Assert(windowService != null);
+            Debug.Assert(objectProvider != null);
 
             var data = objectProvider.GetObject();
             var board = data as IReadBoardState<IReadOnlyBoardPoint>;

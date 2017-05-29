@@ -8,7 +8,6 @@
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using Events;
-    using Microsoft.Practices.Unity.Utility;
 
     public class StreamMessenger<REQ, RES> : DisposableModelBase, IMessenger<REQ, RES>
     {
@@ -16,12 +15,18 @@
         private static readonly TypeConverter _requestConverter = TypeDescriptor.GetConverter(typeof(REQ));
         private readonly ActionBlock<String> _writeBlock;
 
+        static StreamMessenger()
+        {
+            Debug.Assert(_requestConverter.CanConvertTo(typeof(string)), "Request message type must be convertable to String.");
+            Debug.Assert(_responseConverter.CanConvertFrom(typeof(string)), "Response message type must be convertable from String.");
+        }
+
         public StreamMessenger(StreamReader inputReader, StreamWriter outputWriter)
         {
-            Guard.ArgumentNotNull(inputReader, "inputReader");
-            Guard.ArgumentNotNull(outputWriter, "outputWriter");
+            Debug.Assert(inputReader != null);
+            Debug.Assert(outputWriter != null);
 
-            _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s));
+            _writeBlock = new ActionBlock<string>(async s => await outputWriter.WriteLineAsync(s).ConfigureAwait(false));
             _writeBlock.Completion.ContinueWith(_ => outputWriter.Dispose());
 
             AutoDispose(inputReader.ReadAllLines().Subscribe(OnReceivingStdOut));
@@ -32,27 +37,20 @@
         public StreamMessenger(Stream inputStream, Stream outputStream)
             : this(new StreamReader(inputStream), new StreamWriter(outputStream))
         {
-            Guard.ArgumentNotNull(inputStream, "inputStream");
-            Guard.ArgumentNotNull(outputStream, "outputStream");
+            Debug.Assert(inputStream != null);
+            Debug.Assert(outputStream != null);
             Debug.Assert(inputStream.CanRead, "input stream should be readable.");
             Debug.Assert(outputStream.CanWrite, "output stream should be writable.");
-
-            if (!_responseConverter.CanConvertFrom(typeof(string)))
-                throw new ArgumentException(String.Format("Response message type {0} must be convertable from String.", typeof(RES)));
-
-            if (!_requestConverter.CanConvertTo(typeof(string)))
-                throw new ArgumentException(String.Format("Request message type {0} must be convertable to String.", typeof(REQ)));
         }
 
         public virtual event EventHandler<GenericEventArgs<RES>> MessageReceived;
 
         public async virtual Task SendAsync(REQ message)
         {
-            Guard.ArgumentNotNull(message, "message");
             var messageText = _requestConverter.ConvertToString(message);
-            if (!await _writeBlock.SendAsync(messageText))
+            if (!await _writeBlock.SendAsync(messageText).ConfigureAwait(false))
             {
-                throw new ObjectDisposedException("_writeBlock");
+                throw new ObjectDisposedException(nameof(_writeBlock));
             }
         }
 

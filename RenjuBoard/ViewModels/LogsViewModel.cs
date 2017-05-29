@@ -5,6 +5,7 @@
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
+    using System.Windows.Threading;
     using Prism.Commands;
     using Renju.Infrastructure;
 
@@ -60,7 +61,7 @@
 
         private void PrependMessage(string message)
         {
-            RunInDispatcher(() => LogText = String.Format("[{0}] {1}", DateTime.Now, message + LogText));
+            RunInDispatcher(() => LogText = String.Format("[{0}] {1}", DateTime.Now, message + LogText), DispatcherPriority.Input);
         }
 
         private class LogsViewModelAdeptor : TraceListener

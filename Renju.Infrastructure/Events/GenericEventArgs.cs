@@ -1,13 +1,13 @@
 ﻿namespace Renju.Infrastructure.Events
 {
     using System;
-    using Microsoft.Practices.Unity.Utility;
+    using System.Diagnostics;
 
     public class GenericEventArgs<T> : EventArgs
     {
         public GenericEventArgs(T message)
         {
-            Guard.ArgumentNotNull(message, "message");
+            Debug.Assert(message != null);
 
             Message = message;
         }

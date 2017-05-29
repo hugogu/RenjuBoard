@@ -18,7 +18,8 @@
             if (drop.Side == Side.White)
                 return true;
 
-            var longLines = (from line in board.GetRowsFromPoint(board[drop], true)
+            var longLines = (from line in board.Lines
+                             where ((BoardPosition)drop).IsOnLine(line)
                              where line.Side == drop.Side && line.DroppedCount >= 2
                              select line).ToList();
 

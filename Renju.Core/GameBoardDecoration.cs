@@ -20,16 +20,15 @@
 
         public GameBoardDecoration(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint decorationPoint)
         {
-            if (decorationPoint.Position.IsDropped(board))
-                throw new InvalidOperationException("Can't decorate with a point already in use.");
+            Debug.Assert(board != null);
+            Debug.Assert(decorationPoint != null);
+            Debug.Assert(!decorationPoint.Position.IsDropped(board), "Can't decorate with a point already in use.");
+            Debug.Assert(decorationPoint.Status.HasValue, nameof(decorationPoint) + "much has a Side. ");
 
-            if (!decorationPoint.Status.HasValue)
-                throw new ArgumentException("decoration Point much has a Side. ", "decorationPoint");
-
-            var lastPoint = board.Points.Where(p => p.Index.HasValue).OrderByDescending(p => p.Index.Value).FirstOrDefault();
+            var lastPoint = board.DroppedPoints.LastOrDefault();
             if ((lastPoint == null && decorationPoint.Status == Side.White) ||
                 (lastPoint != null && lastPoint.Status.Value == decorationPoint.Status.Value))
-                throw new ArgumentException("Side of decorationPoint is wrong.", "decorationPoint");
+                throw new ArgumentException("Side of decorationPoint is wrong.", nameof(decorationPoint));
 
             _decoratedBoard = board;
             _decorationPoint = decorationPoint;
@@ -55,11 +54,6 @@
 
         [field: NonSerialized]
         public event EventHandler<BoardPosition> Taken;
-
-        public int DropsCount
-        {
-            get { return _decoratedBoard.DropsCount + 1; }
-        }
 
         public IEnumerable<IReadOnlyBoardPoint> Points
         {
@@ -93,7 +87,7 @@
 
         public IReadOnlyBoardPoint this[BoardPosition position]
         {
-            get { return Equals(_decorationPoint.Position, position) ? _decorationPoint : _decoratedBoard[position]; }
+            get { return _decorationPoint.Position.Equals(position) ? _decorationPoint : _decoratedBoard[position]; }
         }
 
         public IReadOnlyBoardPoint this[int x, int y]

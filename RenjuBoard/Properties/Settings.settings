@@ -26,5 +26,8 @@
     <Setting Name="AITimeLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">500000</Value>
     </Setting>
+    <Setting Name="ShowPointWeight" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

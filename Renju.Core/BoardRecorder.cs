@@ -1,12 +1,12 @@
 ﻿namespace Renju.Core
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
-    using Prism.Commands;
     using Infrastructure;
     using Infrastructure.Model;
+    using Prism.Commands;
 
     public class BoardRecorder : ModelBase
     {
@@ -39,12 +39,12 @@
 
         public bool CanUndo
         {
-            get { return _undoDrops.Any(); }
+            get { return _undoDrops.Count > 0; }
         }
 
         public bool CanRedo
         {
-            get { return _redoDrops.Any(); }
+            get { return _redoDrops.Count > 0; }
         }
 
         public void ClearGameBoard()
@@ -55,8 +55,7 @@
 
         public void UndoDrop()
         {
-            if (_undoDrops.Count == 0)
-                throw new InvalidOperationException("There is no drop to undo.");
+            Debug.Assert(CanUndo, "There is no drop to undo.");
 
             var drop = _undoDrops.Last();
             _undoDrops.RemoveAt(_undoDrops.Count - 1);
@@ -68,8 +67,7 @@
 
         public void RedoDrop()
         {
-            if (_redoDrops.Count == 0)
-                throw new InvalidOperationException("There is no drop to redo.");
+            Debug.Assert(CanRedo, "There is no drop to redo.");
 
             var drop = _redoDrops.Last();
             _redoDrops.RemoveAt(_redoDrops.Count - 1);

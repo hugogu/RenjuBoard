@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Microsoft.Practices.Unity.Utility;
     using Renju.Infrastructure;
 
     public class ResolveOverrideItem : ModelBase
@@ -15,12 +15,9 @@
 
         public ResolveOverrideItem(string name, string displayName, IEnumerable<object> candidates, bool isReadOnly = false)
         {
-            Guard.ArgumentNotNull(name, "name");
-            Guard.ArgumentNotNull(candidates, "candidates");
-            if (isReadOnly && candidates.Any())
-            {
-                throw new ArgumentException("Readonly property shouldn't have any value candidates. ", "candidates");
-            }
+            Debug.Assert(name != null);
+            Debug.Assert(candidates != null);
+            Debug.Assert(!isReadOnly || !candidates.Any(), "Readonly property shouldn't have any value candidates. ");
 
             Name = name;
             DisplayName = displayName;
@@ -74,7 +71,10 @@
             if (dataType == typeof(string))
             {
                 if (valueName.EndsWith("file", StringComparison.OrdinalIgnoreCase))
-                    return Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories);
+                {
+                    var entryFileName = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().CodeBase);
+                    return Directory.EnumerateFiles(".", "*.exe", SearchOption.AllDirectories).Where(f => !f.Contains(entryFileName));
+                }
                 else
                     return new object[0];
             }

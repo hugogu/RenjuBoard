@@ -3,16 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reactive.Linq;
     using System.Windows.Input;
-    using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
     using Prism.Commands;
     using Prism.Events;
     using Renju.Core;
     using Renju.Infrastructure;
-    using Renju.Infrastructure.AI;
     using Renju.Infrastructure.Events;
     using Renju.Infrastructure.Execution;
     using Renju.Infrastructure.Model;
@@ -23,9 +22,9 @@
         private readonly ObservableCollection<PieceLine> _previewLines = new ObservableCollection<PieceLine>();
         private readonly VirtualGameBoard<BoardPoint> _resolvingBoard;
 
-        public AIControllerViewModel(IStepController aiStepController, IDropResolver dropResolver, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator)
+        public AIControllerViewModel(IStepController aiStepController, IGameBoard<IReadOnlyBoardPoint> gameBoard, IEventAggregator eventAggregator, GameOptions gameOptions)
         {
-            Guard.ArgumentNotNull(aiStepController, "aiStepController");
+            Debug.Assert(aiStepController != null);
             Debug.Assert(aiStepController.CurrentStep == 0, "A new step controller should be used.");
             _resolvingBoard = new VirtualGameBoard<BoardPoint>(gameBoard.Size, BoardPoint.CreateIndexBasedFactory(gameBoard.Size));
             eventAggregator.GetEvent<ResolvingBoardEvent>().Subscribe(OnResolvingBoard);
@@ -37,16 +36,19 @@
             PreviewLinesCommand = new DelegateCommand<IReadOnlyBoardPoint>(
                 point => ShowPreviewLines(gameBoard, point),
                 p => Options.ShowPreviewLine);
-            AutoDispose(aiStepController.ObserveProperty(() => aiStepController.IsPaused).ObserveOnDispatcher().Subscribe(_ =>
-            {
-                PauseAICommand.RaiseCanExecuteChanged();
-                ContinueAICommand.RaiseCanExecuteChanged();
-                NextAIStepComand.RaiseCanExecuteChanged();
-            }));
+            Options = gameOptions;
+            AutoDispose(
+                gameOptions.ObserveProperty(() => gameOptions.ShowPointWeight).Subscribe(OnShowPointWeightChanged));
+            AutoDispose(
+                aiStepController.ObserveProperty(() => aiStepController.IsPaused).ObserveOnDispatcher().Subscribe(_ =>
+                {
+                    PauseAICommand.RaiseCanExecuteChanged();
+                    ContinueAICommand.RaiseCanExecuteChanged();
+                    NextAIStepComand.RaiseCanExecuteChanged();
+                }));
         }
 
-        [Dependency]
-        public GameOptions Options { get; internal set; }
+        public GameOptions Options { get; private set; }
 
         public DelegateCommand PauseAICommand { get; private set; }
 
@@ -74,9 +76,20 @@
             _previewLines.AddRange(gameBoard.GetRowsFromPoint(point, true));
         }
 
+        private void OnShowPointWeightChanged(PropertyChangedEventArgs args)
+        {
+            if (!Options.ShowPointWeight)
+            {
+                ResolvingPoints.ToList().ForEach(p => p.Weight = 0);
+            }
+        }
+
         private void OnEvaluatingPoint(IReadOnlyBoardPoint evaluatedPoint)
         {
-            _resolvingBoard[evaluatedPoint.Position].Weight = evaluatedPoint.Weight;
+            if (Options.ShowPointWeight)
+            {
+                _resolvingBoard[evaluatedPoint.Position].Weight = evaluatedPoint.Weight;
+            }
         }
 
         private void OnResolvingBoard(IReadBoardState<IReadOnlyBoardPoint> board)
@@ -84,7 +97,7 @@
             foreach (var showingPoint in _resolvingBoard.Points)
             {
                 var virtualPoint = board == null ? null : board[showingPoint.Position];
-                if (virtualPoint is VirtualBoardPoint && Options.ShowAISteps)
+                if (virtualPoint != null && Options.ShowAISteps)
                 {
                     showingPoint.Index = virtualPoint.Index;
                     showingPoint.Status = virtualPoint.Status;

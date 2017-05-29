@@ -9,7 +9,6 @@
     using Infrastructure.Model;
     using Infrastructure.Protocols;
     using Microsoft.Practices.Unity;
-    using Microsoft.Practices.Unity.Utility;
 
     public abstract class RenjuBoardAIPlayer : DisposableModelBase, IGamePlayer
     {
@@ -22,11 +21,12 @@
         [DisplayName("Name")]
         public virtual string Name { get; set; }
 
+        [Dependency]
         public virtual Side Side { get; set; }
 
         public virtual void PlayOn(IBoardMonitor monitor)
         {
-            Guard.ArgumentNotNull(monitor, "monitor");
+            Debug.Assert(monitor != null);
 
             monitor.Initailizing += OnInitailizing;
             monitor.Loading += OnLoadingBoard;

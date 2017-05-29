@@ -1,17 +1,16 @@
-﻿namespace Renju.AI
+﻿namespace Renju.Infrastructure.AI
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Events;
     using Infrastructure;
-    using Infrastructure.AI;
-    using Infrastructure.Events;
-    using Infrastructure.Model;
-    using Infrastructure.Model.Extensions;
     using Microsoft.Practices.Unity;
+    using Model;
+    using Model.Extensions;
     using Prism.Events;
 
-    public class WeightedDropSelector : IDropSelector
+    public class PrioritizedDropsSelector : IDropSelector
     {
         public bool RandomEqualSelections { get; set; } = true;
 
@@ -22,6 +21,7 @@
         {
             var prioritizedDrops = FindDropsFromPrioritizedTargets(
                 board,
+                side,
                 () => board.GetLines(c => c >= 4, side, true).SelectMany(l => l.GetBlockPoints(board)),
                 () => board.GetLines(c => c >= 4, Sides.Opposite(side), true).SelectMany(l => l.GetBlockPoints(board)),
                 () => board.GetLines(c => c == 3, side, true).SelectMany(l => l.GetBlockPoints(board)),
@@ -35,28 +35,29 @@
             return OrderCandidatesPointsByWeight(prioritizedDrops, board, side);
         }
 
+        protected virtual double CacluateWeightOfPoint(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
+        {
+            return board.GetRowsFromPoint(drop, true).Sum(_ => _.Weight);
+        }
+
         private IEnumerable<IReadOnlyBoardPoint> OrderCandidatesPointsByWeight(IEnumerable<IReadOnlyBoardPoint> pointsCandidates, IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
             foreach (var pointToWeight in pointsCandidates.Where(p => p.Status == null && p.RequiresReevaluateWeight))
             {
                 pointToWeight.RequiresReevaluateWeight = false;
-                pointToWeight.Weight = board.GetRowsFromPoint(pointToWeight, true).Sum(_ => _.Weight);
+                pointToWeight.Weight = Convert.ToInt32(CacluateWeightOfPoint(board, pointToWeight, side));
                 EventAggregator.GetEvent<EvaluatedPointEvent>().Publish(pointToWeight);
             }
 
             return from point in pointsCandidates
-                   where point.Status == null && board.RuleEngine.CanDropOn(board, new PieceDrop(point.Position, side))
                    orderby point.Weight descending, RandomEqualSelections ? NumberUtils.NewRandom() : 0
                    select point;
         }
 
-        private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
+        private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, Side side, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
         {
-            foreach (var points in findPointsFuncs.Select(f => f().ToList()))
-                if (points.Count > 0)
-                    return points;
-
-            throw new InvalidOperationException("Can't find any point to drop. One side must have won the game.");
+            return findPointsFuncs.SelectMany(f => f().ToList())
+                                  .Where(p => p.Status == null && board.RuleEngine.GetRuleStopDropOn(board, new PieceDrop(p.Position, side)) == null);
         }
     }
 }

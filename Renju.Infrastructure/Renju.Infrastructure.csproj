@@ -58,6 +58,10 @@
       <HintPath>..\packages\Prism.Wpf.6.1.0\lib\net45\Prism.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Reflection4Net, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Reflection4Net.0.2.0.0\lib\net40\Reflection4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,7 +98,18 @@
     </Compile>
     <Compile Include="AI\GameInfo.cs" />
     <Compile Include="AI\GameType.cs" />
+    <Compile Include="AI\IDropWeightEvaluator.cs" />
+    <Compile Include="AI\PrioritizedDropsSelector.cs" />
+    <Compile Include="AI\WeightPatternDropSelector.cs" />
+    <Compile Include="AI\Weight\WeightingInfo.cs" />
+    <Compile Include="AI\Weight\WeightingPattern.cs" />
+    <Compile Include="AI\Weight\WeightingRule.cs" />
+    <Compile Include="AI\Weight\WeightingStrategy.cs" />
     <Compile Include="DialogUtils.cs" />
+    <Compile Include="Execution\IReportResourceUsage.cs" />
+    <Compile Include="Execution\ProcessResourceUsageMonitor.cs" />
+    <Compile Include="Execution\ResourceUsageInformation.cs" />
+    <Compile Include="Model\LineSegment.cs" />
     <Compile Include="Protocols\IAIController.cs" />
     <Compile Include="Protocols\Piskvork\PiskvorkAIPlayerAdapter.cs" />
     <Compile Include="IO\MessengerExtensions.cs" />

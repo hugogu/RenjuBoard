@@ -10,7 +10,6 @@
     using Infrastructure.Events;
     using Infrastructure.Model;
     using Infrastructure.Model.Extensions;
-    using Microsoft.Practices.Unity.Utility;
 
     [Serializable]
     [DebuggerVisualizer(typeof(RenjuBoardVisualizer))]
@@ -18,13 +17,13 @@
         where TPoint : IReadOnlyBoardPoint
     {
         private readonly ObservableCollection<PieceLine> _lines = new ObservableCollection<PieceLine>();
+        private readonly LinkedList<TPoint> _droppedPoints = new LinkedList<TPoint>();
         private readonly List<TPoint> _points;
 
         public VirtualGameBoard(int size, Func<int, TPoint> createPoint)
         {
-            Guard.ArgumentNotNull(createPoint, "createPoint");
-            if (size <= 0)
-                throw new ArgumentOutOfRangeException("size", "size must be postive.");
+            Debug.Assert(size > 0, nameof(size) + " must be positive.");
+            Debug.Assert(createPoint != null);
 
             Size = size;
             _points = new List<TPoint>(Enumerable.Range(0, size * size).Select(createPoint));
@@ -41,12 +40,12 @@
 
         public virtual IEnumerable<TPoint> DroppedPoints
         {
-            get { throw new NotSupportedException(); }
+            get { return _droppedPoints; }
         }
 
         public virtual int DropsCount
         {
-            get { throw new NotSupportedException(); }
+            get { return _droppedPoints.Count; }
         }
 
         public virtual IEnumerable<TPoint> Points
@@ -86,18 +85,23 @@
 
         protected virtual void RaisePieceTakenEvent(BoardPosition position)
         {
+            var point = GetPoint(position);
+            _droppedPoints.RemoveLast();
+            UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithoutPoint(point).ToList());
             RaiseEvent(Taken, position);
         }
 
         protected virtual void RaisePeiceDroppedEvent(PieceDrop drop, OperatorType operatorType)
         {
+            var point = GetPoint(drop);
+            _droppedPoints.AddLast(point);
+            ((IReadBoardState<IReadOnlyBoardPoint>)this).InvalidateNearbyPointsOf(point);
+            UpdateLines(((IReadBoardState<IReadOnlyBoardPoint>)this).FindAllLinesOnBoardWithNewPoint(point).ToList());
             RaiseEvent(PieceDropped, new PieceDropEventArgs(drop, operatorType));
         }
 
         protected virtual TPoint GetPoint(BoardPosition position)
         {
-            Guard.ArgumentNotNull(position, "position");
-
             return _points[position.Y * Size + position.X];
         }
     }

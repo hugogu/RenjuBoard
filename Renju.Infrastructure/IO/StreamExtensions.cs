@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reactive.Concurrency;
     using System.Reactive.Linq;
@@ -9,6 +10,7 @@
 
     public static class StreamExtensions
     {
+        [SuppressMessage("General", "RCS1047:Non-asynchronous method name should not end with 'Async'.", Justification = "Observable objects are asynchrnous")]
         public static IObservable<string> ReadAllLinesAsync(this StreamReader reader)
         {
             return Observable.Create<string>(async subscriber =>
@@ -17,7 +19,7 @@
                 {
                     while (!reader.EndOfStream)
                     {
-                        var line = await reader.ReadLineAsync();
+                        var line = await reader.ReadLineAsync().ConfigureAwait(false);
                         subscriber.OnNext(line);
                     }
                 }
@@ -39,7 +41,7 @@
                     {
                         while (!reader.EndOfStream)
                         {
-                            var line = await reader.ReadLineAsync();
+                            var line = await reader.ReadLineAsync().ConfigureAwait(false);
                             subscriber.OnNext(line);
                         }
                     }

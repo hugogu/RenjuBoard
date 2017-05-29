@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using Microsoft.Practices.Unity;
@@ -26,7 +27,7 @@
         }
 
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public Func<Type, ResolverOverride[], IGamePlayer> CreateGamePlayer { get; set; }
 
         public string Name
         {
@@ -39,27 +40,19 @@
             {
                 var resolverOverrides = Parameters.Select(p => new ParameterOverride(p.Name, p.SelectedCandidate) as ResolverOverride)
                     .Concat(Properties.Where(p => !p.IsReadOnly).Select(p => new PropertyOverride(p.Name, p.SelectedCandidate)))
+                    .Concat(new[] { new PropertyOverride("Side", _side) })
                     .ToArray();
 
-                var player = Container.Resolve(_playerType, resolverOverrides) as IGamePlayer;
-                player.Side = _side;
-                Container.RegisterInstance(_side.ToString(), player);
-
-                return player;
+                return CreateGamePlayer(_playerType, resolverOverrides);
             }
         }
 
         public GamePlayerSetupViewModel(Type playerType, Side side)
         {
-            if (!typeof(IGamePlayer).IsAssignableFrom(playerType))
-            {
-                throw new ArgumentException(String.Format("{0} is not valid game player type", playerType));
-            }
+            Debug.Assert(playerType != null);
+            Debug.Assert(typeof(IGamePlayer).IsAssignableFrom(playerType));
             Constructor = playerType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-            if (Constructor == null)
-            {
-                throw new ArgumentException(String.Format("{0} doesn't have a valid constructor.", playerType), "playerType");
-            }
+            Debug.Assert(Constructor != null, "playerType doesn't have a valid constructor.");
             _side = side;
             _playerType = playerType;
             Parameters = ResolveOverrideItem.BuildParameterModels(Constructor).ToList();
