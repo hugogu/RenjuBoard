@@ -1,6 +1,7 @@
 ﻿namespace Renju.Infrastructure.Execution
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
     using Microsoft.Practices.Unity;
@@ -9,23 +10,28 @@
     public class ExecutionStepController : DisposableModelBase, IStepController
     {
         private readonly ManualResetEvent _event = new ManualResetEvent(true);
-        private readonly IReportExecutionStatus _executor;
+        private readonly IEnumerable<IReportExecutionStatus> _executors;
         private bool _isInSteppingMode = false;
         private int _executionID;
         private int _allowedSteps;
 
-        public ExecutionStepController([Dependency("ai")]IReportExecutionStatus executor)
+        public ExecutionStepController([Dependency] IReportExecutionStatus[] executors)
         {
-            _executor = executor;
-            executor.Started += OnExecutorStarted;
-            executor.Finished += OnExecutorFinished;
-            executor.StepFinished += OnExecutorFinishedStep;
-            AutoCallOnDisposing(() =>
+            Debug.Assert(executors != null);
+            _executors = executors;
+            foreach (var executor in executors)
             {
-                executor.Started -= OnExecutorStarted;
-                executor.Finished -= OnExecutorFinished;
-                executor.StepFinished -= OnExecutorFinishedStep;
-            });
+                executor.Started += OnExecutorStarted;
+                executor.Finished += OnExecutorFinished;
+                executor.StepFinished += OnExecutorFinishedStep;
+                AutoCallOnDisposing(() =>
+                {
+                    executor.Started -= OnExecutorStarted;
+                    executor.Finished -= OnExecutorFinished;
+                    executor.StepFinished -= OnExecutorFinishedStep;
+                });
+            }
+
             AutoDispose(_event);
         }
 
@@ -64,7 +70,8 @@
 
         protected virtual void SetEvent()
         {
-            _executor.ExecutionTimer.Resume();
+            foreach(var executor in _executors)
+                executor.ExecutionTimer.Resume();
             _event.Set();
             OnPropertyChanged(() => IsPaused);
         }
@@ -72,7 +79,8 @@
         protected virtual void ResetEvent()
         {
             _event.Reset();
-            _executor.ExecutionTimer.Pause();
+            foreach(var executor in _executors)
+                executor.ExecutionTimer.Pause();
             OnPropertyChanged(() => IsPaused);
         }
 

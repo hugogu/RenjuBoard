@@ -21,9 +21,11 @@
         private readonly IDropSelector _selector;
         private int iteratedBoardCount;
 
-        public WinRateGameResolver(IDropSelector selector)
+        public WinRateGameResolver(IDropSelector selector, IUnityContainer container)
         {
             _selector = selector;
+            // TODO: Investigate if we can do this in Registeration of WinRateGameResolver.
+            container.RegisterInstance<IReportExecutionStatus>("ai", this);
         }
 
         [Dependency]
