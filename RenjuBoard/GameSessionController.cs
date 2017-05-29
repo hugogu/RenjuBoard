@@ -6,7 +6,6 @@
     using Microsoft.Practices.Unity;
     using Renju.Core;
     using Renju.Infrastructure;
-    using Renju.Infrastructure.AI;
     using Renju.Infrastructure.Execution;
     using Renju.Infrastructure.Model;
     using Renju.Infrastructure.Protocols;
@@ -60,8 +59,6 @@
             var options = _currentGameContainer.Resolve<NewGameOptions>();
             _currentGameContainer.RegisterInstance(options);
             _currentGameContainer.RegisterInstance(BoardPoint.CreateIndexBasedFactory(options.BoardSize));
-            var ai = _currentGameContainer.Resolve<IDropResolver>();
-            _currentGameContainer.RegisterInstance<IReportExecutionStatus>(nameof(ai), ai);
         }
     }
 }
