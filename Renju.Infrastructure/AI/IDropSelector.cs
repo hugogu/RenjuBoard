@@ -5,6 +5,8 @@
 
     public interface IDropSelector
     {
+        IDictionary<IReadOnlyBoardPoint, int> EvaluateWeight(IReadBoardState<IReadOnlyBoardPoint> board, IEnumerable<IReadOnlyBoardPoint> points, Side nextSide);
+
         IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side);
     }
 }

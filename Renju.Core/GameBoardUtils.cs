@@ -7,7 +7,7 @@
 
     public static class GameBoardUtils
     {
-        public static IReadBoardState<IReadOnlyBoardPoint> With(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
+        public static GameBoardDecoration With(this IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint point)
         {
             return new GameBoardDecoration(board, point);
         }

@@ -36,7 +36,6 @@
             _decoratedBoard.PieceDropped += OnDecoratedBoardPieceDropped;
             _decoratedBoard.Taken += OnDecoratedBoardPieceTaken;
             _lines = this.FindAllLinesOnBoardWithNewPoint(_decorationPoint).ToList();
-            this.InvalidateNearbyPointsOf(decorationPoint);
 
             AutoCallOnDisposing(() =>
             {

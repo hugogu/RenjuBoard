@@ -27,7 +27,7 @@
             RunInDispatcher(new Action(() => OnPropertyChanged(propertyName)), DispatcherPriority.Background);
         }
 
-        protected internal virtual void SetProperty<T>(ref T field, T newValue, bool asyncNotify = false, [CallerMemberName] string propertyName = null)
+        protected internal virtual bool SetProperty<T>(ref T field, T newValue, bool asyncNotify = false, [CallerMemberName] string propertyName = null)
         {
             if (!Equals(field, newValue))
             {
@@ -36,7 +36,10 @@
                     RaisePropertyChangedAsync(propertyName);
                 else
                     OnPropertyChanged(propertyName);
+
+                return true;
             }
+            return false;
         }
 
         /// <summary>

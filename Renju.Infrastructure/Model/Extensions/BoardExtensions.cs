@@ -9,11 +9,15 @@
 
     public static class BoardExtensions
     {
-        public static void InvalidateNearbyPointsOf(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
+        public static IEnumerable<IReadOnlyBoardPoint> InvalidateNearbyPointsOf(this ReadOnlyBoard board, IReadOnlyBoardPoint point)
         {
             foreach (var affectedPoint in board.IterateNearbyPointsOf(point))
             {
-                affectedPoint.RequiresReevaluateWeight = true;
+                if (affectedPoint.Status == null)
+                {
+                    affectedPoint.RequiresReevaluateWeight = true;
+                    yield return affectedPoint;
+                }
             }
         }
 

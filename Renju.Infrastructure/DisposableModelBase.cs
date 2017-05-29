@@ -31,8 +31,6 @@
 
             if (disposing)
             {
-                Trace.WriteLine("Disposing " + GetType().Name);
-                PrintAllDisposingObjects();
                 _disposables.Dispose();
             }
 
@@ -51,15 +49,6 @@
             {
                 CheckDisposableReference(disposable);
                 _disposables.Add(disposable);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        private void PrintAllDisposingObjects()
-        {
-            foreach (var disposable in _disposables)
-            {
-                Trace.WriteLine("Disposing " + disposable.GetType().Name);
             }
         }
 

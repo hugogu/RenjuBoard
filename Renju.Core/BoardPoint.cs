@@ -7,7 +7,7 @@
     using Infrastructure.Model;
 
     [Serializable]
-    [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}]")]
+    [DebuggerDisplay("[{Index}-({Position.X},{Position.Y}):{Status}-{Weight}]")]
     public class BoardPoint : ModelBase, IReadOnlyBoardPoint
     {
         private int? _index;

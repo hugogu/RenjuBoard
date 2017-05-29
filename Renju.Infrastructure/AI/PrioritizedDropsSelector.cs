@@ -17,7 +17,7 @@
         [Dependency]
         public IEventAggregator EventAggregator { get; set; }
 
-        public IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
+        public virtual IEnumerable<IReadOnlyBoardPoint> SelectDrops(IReadBoardState<IReadOnlyBoardPoint> board, Side side)
         {
             var prioritizedDrops = FindDropsFromPrioritizedTargets(
                 board,
@@ -28,11 +28,21 @@
                 () => board.GetLines(c => c == 3, Sides.Opposite(side), true).SelectMany(l => l.GetBlockPoints(board)),
                 () => board.GetLines(c => c == 2).SelectMany(l => l.GetContinousPoints(board)).Concat(
                       board.GetLines(c => c == 3).Where(l => l.IsClosed(board)).SelectMany(l => l.GetBlockPoints(board))),
-                () => board.IterateNearbyPointsOf(board.DroppedPoints.Last(), 2)
-                           .Where(p => p.Status == null)
-                           .OrderBy(p => p.To(board.DroppedPoints.Last(), board).Length));
+                () => board.Points.Where(p => p.Status == null).OrderByDescending(p => p.Weight));
 
             return OrderCandidatesPointsByWeight(prioritizedDrops, board, side);
+        }
+
+        public IDictionary<IReadOnlyBoardPoint, int> EvaluateWeight(IReadBoardState<IReadOnlyBoardPoint> board, IEnumerable<IReadOnlyBoardPoint> points, Side nextSide)
+        {
+            var originalWeight = new Dictionary<IReadOnlyBoardPoint, int>();
+            foreach (var point in points)
+            {
+                originalWeight.Add(point, point.Weight);
+                point.Weight = Convert.ToInt32(CacluateWeightOfPoint(board, point, nextSide));
+            }
+
+            return originalWeight;
         }
 
         protected virtual double CacluateWeightOfPoint(IReadBoardState<IReadOnlyBoardPoint> board, IReadOnlyBoardPoint drop, Side dropSide)
@@ -56,7 +66,7 @@
 
         private IEnumerable<IReadOnlyBoardPoint> FindDropsFromPrioritizedTargets(IReadBoardState<IReadOnlyBoardPoint> board, Side side, params Func<IEnumerable<IReadOnlyBoardPoint>>[] findPointsFuncs)
         {
-            return findPointsFuncs.SelectMany(f => f().ToList())
+            return findPointsFuncs.SelectMany(f => f().ToList()).Distinct()
                                   .Where(p => p.Status == null && board.RuleEngine.GetRuleStopDropOn(board, new PieceDrop(p.Position, side)) == null);
         }
     }
